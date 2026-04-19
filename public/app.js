@@ -32,7 +32,13 @@ const LS_FORM = 'GEMINI_FINAL_PROMPT_PRO_FORM_V2';
 const LS_KEY = 'userGeminiApiKey';
 const DEFAULT_MODEL = 'gemini-2.5-flash';
 
-const $ = (id) => document.getElementById(id);
+const $ = (id) => {
+  const el = document.getElementById(id);
+  if (!el) {
+    console.error(`❌ Element not found: ${id}`);
+  }
+  return el;
+};
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
@@ -658,4 +664,6 @@ async function init() {
   });
 }
 
-init();
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+});
