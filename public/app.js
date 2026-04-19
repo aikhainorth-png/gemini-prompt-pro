@@ -22,31 +22,56 @@ import {
   limit,
   getDocs
 } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
-import {
-  getFunctions,
-  httpsCallable
-} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-functions.js';
-import { firebaseConfig, functionsRegion } from './firebase-config.js';
+import { firebaseConfig } from './firebase-config.js';
 
-const LS_FORM = 'GEMINI_FINAL_PROMPT_PRO_FORM_V2';
+const LS_FORM = 'GEMINI_FINAL_PROMPT_PRO_FORM_SPARK_V1';
 const LS_KEY = 'userGeminiApiKey';
 const DEFAULT_MODEL = 'gemini-2.5-flash';
 
+/**
+ * Spark / No Functions bootstrap admins.
+ * แก้เป็นอีเมลแอดมินของคุณได้หลายคน เช่น:
+ * ['aikhainorth@gmail.com', 'admin2@gmail.com']
+ *
+ * สำคัญ:
+ * - ต้องแก้รายการนี้ใน app.js และ firestore.rules ให้ตรงกัน
+ * - คนในรายการนี้จะเป็น admin อัตโนมัติ
+ */
+const ADMIN_EMAILS = ['aikhainorth@gmail.com'];
+
 const $ = (id) => document.getElementById(id);
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+try { getAnalytics(app); } catch (_) {}
 const auth = getAuth(app);
 const db = getFirestore(app);
-const functions = getFunctions(app, functionsRegion || 'us-central1');
 const provider = new GoogleAuthProvider();
 
 let currentUser = null;
-let currentClaims = {};
 let userDocCache = null;
 let currentHistoryId = null;
 
+function el(id) {
+  return document.getElementById(id);
+}
+
+function setText(id, text) {
+  const node = el(id);
+  if (node) node.textContent = text;
+}
+
+function setDisplay(id, value) {
+  const node = el(id);
+  if (node) node.style.display = value;
+}
+
+function addClass(id, cls, enabled) {
+  const node = el(id);
+  if (node) node.classList.toggle(cls, !!enabled);
+}
+
 function showToast(message) {
-  const toast = $('toast');
+  const toast = el('toast');
+  if (!toast) return;
   toast.textContent = message;
   toast.classList.add('show');
   clearTimeout(showToast._timer);
@@ -54,19 +79,29 @@ function showToast(message) {
 }
 
 function setLoading(isLoading) {
-  $('loadingOverlay').classList.toggle('show', isLoading);
-  $('generateBtn').disabled = isLoading;
-  $('statusPill').textContent = isLoading ? 'Loading' : 'Ready';
+  addClass('loadingOverlay', 'show', isLoading);
+  const generateBtn = el('generateBtn');
+  if (generateBtn) generateBtn.disabled = isLoading;
+  setText('statusPill', isLoading ? 'Loading' : 'Ready');
 }
 
 function showError(message = '') {
-  const el = $('errorBanner');
-  el.textContent = message;
-  el.classList.toggle('show', !!message);
+  const banner = el('errorBanner');
+  if (!banner) return;
+  banner.textContent = message;
+  banner.classList.toggle('show', !!message);
 }
 
 function showPending(show) {
-  $('pendingBanner').classList.toggle('show', !!show);
+  addClass('pendingBanner', 'show', show);
+}
+
+function lowerEmail(email) {
+  return String(email || '').trim().toLowerCase();
+}
+
+function isBootstrapAdmin(email = currentUser?.email) {
+  return ADMIN_EMAILS.includes(lowerEmail(email));
 }
 
 function saveUserApiKey(key) {
@@ -86,30 +121,33 @@ function getActiveApiKey() {
 }
 
 function updateGeminiKeyStatus(message, isConnected = false) {
-  const el = $('geminiKeyStatus');
-  el.textContent = message;
-  el.style.color = isConnected ? '#9ed2ff' : '#97a2c4';
+  const node = el('geminiKeyStatus');
+  if (!node) return;
+  node.textContent = message;
+  node.style.color = isConnected ? '#9ed2ff' : '#97a2c4';
 }
 
 function updateGeminiNativeModeStatus(message) {
-  $('geminiNativeStatus').textContent = message;
+  setText('geminiNativeStatus', message);
 }
 
 function toggleGeminiApiPanel(forceOpen) {
-  const body = $('apiPanelBody');
-  const btn = $('toggleApiBtn');
+  const body = el('apiPanelBody');
+  const btn = el('toggleApiBtn');
+  if (!body || !btn) return;
   const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : body.style.display === 'none';
   body.style.display = shouldOpen ? 'block' : 'none';
   btn.textContent = shouldOpen ? '▲' : '▼';
 }
 
 function toggleGeminiKeyVisibility() {
-  const input = $('userApiKey');
+  const input = el('userApiKey');
+  if (!input) return;
   input.type = input.type === 'password' ? 'text' : 'password';
 }
 
 function connectGeminiKey() {
-  const key = ($('userApiKey').value || '').trim();
+  const key = (el('userApiKey')?.value || '').trim();
   if (!key) {
     updateGeminiKeyStatus('กรุณาวาง Gemini API Key ก่อนเชื่อมต่อ', false);
     showToast('กรุณาวาง Gemini API Key ก่อน');
@@ -122,7 +160,7 @@ function connectGeminiKey() {
 }
 
 async function testGeminiKey() {
-  const key = ($('userApiKey').value || '').trim();
+  const key = (el('userApiKey')?.value || '').trim();
   if (!key) {
     updateGeminiKeyStatus('กรุณาวาง Gemini API Key ก่อนทดสอบ', false);
     showToast('ยังไม่มี Gemini API Key');
@@ -153,7 +191,8 @@ function promptDeleteGeminiKey() {
   const ok = window.confirm('ยืนยันการลบ Gemini API Key ที่เก็บในเครื่องนี้?');
   if (!ok) return;
   saveUserApiKey('');
-  $('userApiKey').value = '';
+  const input = el('userApiKey');
+  if (input) input.value = '';
   updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode พร้อมใช้งาน');
   updateGeminiKeyStatus('ลบ Gemini API Key แล้ว • ระบบจะรอให้ใส่ Key ใหม่', false);
   showToast('ลบ Gemini API Key แล้ว');
@@ -161,25 +200,28 @@ function promptDeleteGeminiKey() {
 
 function getFormData() {
   return {
-    product: $('product').value.trim(),
-    location: $('location').value.trim(),
-    view: $('view').value.trim(),
-    sceneCount: Number($('sceneCount').value || 1),
-    duration: Number($('duration').value || 10)
+    product: el('product')?.value.trim() || '',
+    location: el('location')?.value.trim() || '',
+    view: el('view')?.value.trim() || '',
+    sceneCount: Number(el('sceneCount')?.value || 1),
+    duration: Number(el('duration')?.value || 10)
   };
 }
 
-function saveForm() { localStorage.setItem(LS_FORM, JSON.stringify(getFormData())); }
+function saveForm() {
+  localStorage.setItem(LS_FORM, JSON.stringify(getFormData()));
+}
+
 function loadForm() {
   const raw = localStorage.getItem(LS_FORM);
   if (!raw) return;
   try {
     const data = JSON.parse(raw);
-    $('product').value = data.product || '';
-    $('location').value = data.location || '';
-    $('view').value = data.view || '';
-    $('sceneCount').value = String(data.sceneCount || 1);
-    $('duration').value = String(data.duration || 10);
+    if (el('product')) el('product').value = data.product || '';
+    if (el('location')) el('location').value = data.location || '';
+    if (el('view')) el('view').value = data.view || '';
+    if (el('sceneCount')) el('sceneCount').value = String(data.sceneCount || 1);
+    if (el('duration')) el('duration').value = String(data.duration || 10);
   } catch (error) {
     console.error('Failed to load form', error);
   }
@@ -192,20 +234,24 @@ function formatPerScene(duration, sceneCount) {
 
 function updateSummary() {
   const data = getFormData();
-  $('summaryPreview').textContent = [
+  setText('summaryPreview', [
     `สินค้า: ${data.product || '-'}`,
     `สถานที่: ${data.location || '-'}`,
     `มุมมองสินค้า: ${data.view || '-'}`,
     `จำนวน Scene: ${data.sceneCount}`,
     `เวลาทั้งหมด: ${data.duration} วินาที`,
     `เวลาเฉลี่ยต่อ Scene: ${formatPerScene(data.duration, data.sceneCount)}`
-  ].join('\n');
-  $('statScene').textContent = String(data.sceneCount);
-  $('statDuration').textContent = `${data.duration}s`;
-  $('statPerScene').textContent = formatPerScene(data.duration, data.sceneCount);
+  ].join('\n'));
+
+  setText('statScene', String(data.sceneCount));
+  setText('statDuration', `${data.duration}s`);
+  setText('statPerScene', formatPerScene(data.duration, data.sceneCount));
 }
 
-function saveAndRefresh() { saveForm(); updateSummary(); }
+function saveAndRefresh() {
+  saveForm();
+  updateSummary();
+}
 
 function validateForm(data) {
   if (!data.product) return 'กรุณากรอกสินค้า';
@@ -216,9 +262,10 @@ function validateForm(data) {
 
 function setPromptEditing(type, editing) {
   const isImage = type === 'image';
-  const textarea = $(isImage ? 'imagePrompt' : 'videoPrompt');
-  const editBtn = $(isImage ? 'editImageBtn' : 'editVideoBtn');
-  const saveBtn = $(isImage ? 'saveImageBtn' : 'saveVideoBtn');
+  const textarea = el(isImage ? 'imagePrompt' : 'videoPrompt');
+  const editBtn = el(isImage ? 'editImageBtn' : 'editVideoBtn');
+  const saveBtn = el(isImage ? 'saveImageBtn' : 'saveVideoBtn');
+  if (!textarea || !editBtn || !saveBtn) return;
   textarea.readOnly = !editing;
   textarea.classList.toggle('editing', editing);
   editBtn.textContent = editing ? (isImage ? 'ยกเลิก IMAGE' : 'ยกเลิก VDO') : (isImage ? 'แก้ไข IMAGE' : 'แก้ไข VDO');
@@ -232,14 +279,14 @@ function resetPromptEditors() {
 
 function togglePromptEdit(type) {
   const isImage = type === 'image';
-  const textarea = $(isImage ? 'imagePrompt' : 'videoPrompt');
+  const textarea = el(isImage ? 'imagePrompt' : 'videoPrompt');
+  if (!textarea) return;
   const editing = textarea.readOnly;
   if (!textarea.value.trim()) {
     showToast('ยังไม่มี prompt ให้แก้ไข');
     return;
   }
   if (!editing) {
-    // cancel editing and restore current saved value by just disabling edit mode
     setPromptEditing(type, false);
     return;
   }
@@ -249,15 +296,20 @@ function togglePromptEdit(type) {
 
 async function savePromptEdit(type) {
   const isImage = type === 'image';
-  const textarea = $(isImage ? 'imagePrompt' : 'videoPrompt');
-  const value = (textarea.value || '').trim();
+  const textarea = el(isImage ? 'imagePrompt' : 'videoPrompt');
+  const value = (textarea?.value || '').trim();
   if (!value) {
     showToast('ข้อความว่างไม่ได้');
     return;
   }
   try {
     if (currentUser && currentHistoryId) {
-      await updateDoc(doc(db, 'promptHistory', currentHistoryId), isImage ? { imagePrompt: value, updatedAt: serverTimestamp() } : { videoPrompt: value, updatedAt: serverTimestamp() });
+      await updateDoc(
+        doc(db, 'promptHistory', currentHistoryId),
+        isImage
+          ? { imagePrompt: value, updatedAt: serverTimestamp() }
+          : { videoPrompt: value, updatedAt: serverTimestamp() }
+      );
       await renderHistory();
     }
     setPromptEditing(type, false);
@@ -293,25 +345,25 @@ function loadExample(type) {
   };
   const ex = examples[type];
   if (!ex) return;
-  $('product').value = ex.product;
-  $('location').value = ex.location;
-  $('view').value = ex.view;
-  $('sceneCount').value = String(ex.sceneCount);
-  $('duration').value = String(ex.duration);
+  if (el('product')) el('product').value = ex.product;
+  if (el('location')) el('location').value = ex.location;
+  if (el('view')) el('view').value = ex.view;
+  if (el('sceneCount')) el('sceneCount').value = String(ex.sceneCount);
+  if (el('duration')) el('duration').value = String(ex.duration);
   saveAndRefresh();
   showToast('โหลดตัวอย่างแล้ว');
 }
 
 function clearForm() {
-  $('product').value = '';
-  $('location').value = '';
-  $('view').value = '';
-  $('sceneCount').value = '1';
-  $('duration').value = '10';
-  $('imagePrompt').value = '';
-  $('videoPrompt').value = '';
-  $('resultsWrap').style.display = 'none';
-  $('emptyState').style.display = 'flex';
+  if (el('product')) el('product').value = '';
+  if (el('location')) el('location').value = '';
+  if (el('view')) el('view').value = '';
+  if (el('sceneCount')) el('sceneCount').value = '1';
+  if (el('duration')) el('duration').value = '10';
+  if (el('imagePrompt')) el('imagePrompt').value = '';
+  if (el('videoPrompt')) el('videoPrompt').value = '';
+  setDisplay('resultsWrap', 'none');
+  setDisplay('emptyState', 'flex');
   currentHistoryId = null;
   resetPromptEditors();
   saveAndRefresh();
@@ -395,8 +447,9 @@ async function callGeminiNative(data) {
   const text = raw?.candidates?.[0]?.content?.parts?.map((p) => p.text || '').join('').trim();
   if (!text) throw new Error('Gemini ไม่ได้ส่งข้อความกลับมา');
   let parsed;
-  try { parsed = JSON.parse(text); }
-  catch {
+  try {
+    parsed = JSON.parse(text);
+  } catch {
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('ไม่สามารถแปลงผลลัพธ์เป็น JSON ได้');
     parsed = JSON.parse(jsonMatch[0]);
@@ -418,37 +471,68 @@ async function signInGoogle() {
 
 async function syncCurrentUser() {
   if (!currentUser) return;
-  const syncUser = httpsCallable(functions, 'syncUser');
-  await syncUser();
-  const tokenResult = await currentUser.getIdTokenResult(true);
-  currentClaims = tokenResult.claims || {};
+
+  const email = lowerEmail(currentUser.email);
+  const displayName = currentUser.displayName || '';
+  const photoURL = currentUser.photoURL || '';
   const userRef = doc(db, 'users', currentUser.uid);
   const snap = await getDoc(userRef);
-  userDocCache = snap.exists() ? snap.data() : null;
+  const existing = snap.exists() ? (snap.data() || {}) : {};
+  const bootstrapAdmin = isBootstrapAdmin(email);
+
+  const baseData = {
+    email,
+    displayName,
+    photoURL,
+    lastLoginAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  };
+
+  if (!snap.exists()) {
+    await setDoc(userRef, {
+      ...baseData,
+      createdAt: serverTimestamp(),
+      approved: bootstrapAdmin,
+      role: bootstrapAdmin ? 'admin' : 'user'
+    }, { merge: true });
+  } else {
+    const patch = { ...baseData };
+    if (bootstrapAdmin && (existing.role !== 'admin' || !existing.approved)) {
+      patch.role = 'admin';
+      patch.approved = true;
+      patch.approvedAt = serverTimestamp();
+    }
+    await setDoc(userRef, patch, { merge: true });
+  }
+
+  const updated = await getDoc(userRef);
+  userDocCache = updated.exists() ? updated.data() : null;
 }
 
 function isApproved() {
-  return !!(currentClaims.approved || userDocCache?.approved);
+  return !!(isBootstrapAdmin() || userDocCache?.approved);
 }
+
 function isAdmin() {
-  return !!(currentClaims.admin || userDocCache?.role === 'admin');
+  return !!(isBootstrapAdmin() || userDocCache?.role === 'admin');
 }
 
 async function renderAuthState() {
   if (!currentUser) {
-    $('authPill').textContent = 'ยังไม่ได้เข้าสู่ระบบ';
-    $('loginBtn').style.display = 'inline-flex';
-    $('logoutBtn').style.display = 'none';
+    setText('authPill', 'ยังไม่ได้เข้าสู่ระบบ');
+    setDisplay('loginBtn', 'inline-flex');
+    setDisplay('logoutBtn', 'none');
     showPending(false);
-    $('adminPanel').classList.remove('show');
+    addClass('adminPanel', 'show', false);
     await renderHistory();
     return;
   }
-  $('authPill').textContent = `${currentUser.email || currentUser.displayName || 'Signed in'}`;
-  $('loginBtn').style.display = 'none';
-  $('logoutBtn').style.display = 'inline-flex';
+
+  setText('authPill', `${currentUser.email || currentUser.displayName || 'Signed in'}`);
+  setDisplay('loginBtn', 'none');
+  setDisplay('logoutBtn', 'inline-flex');
   showPending(!isApproved());
-  $('adminPanel').classList.toggle('show', isAdmin());
+  addClass('adminPanel', 'show', isAdmin());
   if (isAdmin()) await renderAdminUsers();
   await renderHistory();
 }
@@ -464,7 +548,8 @@ async function savePromptHistoryRecord(data, result) {
     duration: data.duration,
     imagePrompt: result.image_prompt,
     videoPrompt: result.video_prompt,
-    createdAt: serverTimestamp()
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
   });
   return ref.id;
 }
@@ -481,23 +566,26 @@ async function generatePrompts() {
   }
   const data = getFormData();
   const validationError = validateForm(data);
-  if (validationError) { showToast(validationError); return; }
+  if (validationError) {
+    showToast(validationError);
+    return;
+  }
   try {
     setLoading(true);
     updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • กำลังสร้าง Final Prompt');
     const result = await callGeminiNative(data);
-    $('imagePrompt').value = result.image_prompt;
-    $('videoPrompt').value = result.video_prompt;
-    $('resultsWrap').style.display = 'grid';
-    $('emptyState').style.display = 'none';
-    $('statusPill').textContent = 'Done';
+    if (el('imagePrompt')) el('imagePrompt').value = result.image_prompt;
+    if (el('videoPrompt')) el('videoPrompt').value = result.video_prompt;
+    setDisplay('resultsWrap', 'grid');
+    setDisplay('emptyState', 'none');
+    setText('statusPill', 'Done');
     updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • สร้าง Final Prompt สำเร็จแล้ว');
     currentHistoryId = await savePromptHistoryRecord(data, result);
     resetPromptEditors();
     await renderHistory();
     showToast('สร้าง Final Prompt สำเร็จ');
   } catch (error) {
-    $('statusPill').textContent = 'Error';
+    setText('statusPill', 'Error');
     updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • เกิดข้อผิดพลาด');
     updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${error.message}`, false);
     showError(error.message);
@@ -509,8 +597,11 @@ async function generatePrompts() {
 }
 
 async function copyBlock(id, btn) {
-  const text = $(id).value || '';
-  if (!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก');
+  const text = el(id)?.value || '';
+  if (!text.trim()) {
+    showToast('ยังไม่มีข้อความให้คัดลอก');
+    return;
+  }
   await navigator.clipboard.writeText(text);
   const old = btn.textContent;
   btn.textContent = 'คัดลอกแล้ว';
@@ -518,7 +609,8 @@ async function copyBlock(id, btn) {
 }
 
 function renderHistoryList(items) {
-  const wrap = $('historyList');
+  const wrap = el('historyList');
+  if (!wrap) return;
   if (!items.length) {
     wrap.innerHTML = '<div class="history-item"><div class="meta">ยังไม่มีประวัติ prompt</div></div>';
     return;
@@ -544,13 +636,17 @@ async function renderHistory() {
     const snap = await getDocs(qy);
     renderHistoryList(snap.docs.map((d) => d.data()));
   } catch (error) {
-    $('historyList').innerHTML = `<div class="history-item"><div class="meta">โหลดประวัติไม่สำเร็จ: ${escapeHtml(error.message)}</div></div>`;
+    const wrap = el('historyList');
+    if (wrap) {
+      wrap.innerHTML = `<div class="history-item"><div class="meta">โหลดประวัติไม่สำเร็จ: ${escapeHtml(error.message)}</div></div>`;
+    }
   }
 }
 
 async function renderAdminUsers() {
   if (!isAdmin()) return;
-  const wrap = $('adminUsers');
+  const wrap = el('adminUsers');
+  if (!wrap) return;
   try {
     const snap = await getDocs(query(collection(db, 'users'), orderBy('createdAt', 'desc'), limit(50)));
     const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -568,7 +664,7 @@ async function renderAdminUsers() {
           </div>
           <div class="row" style="max-width:270px">
             <button class="btn btn-green approve-btn" data-uid="${u.id}" ${u.approved ? 'disabled' : ''}>อนุมัติ</button>
-            <button class="btn btn-red revoke-btn" data-uid="${u.id}">ยกเลิก</button>
+            <button class="btn btn-red revoke-btn" data-uid="${u.id}" ${isBootstrapAdmin(u.email) ? 'disabled' : ''}>ยกเลิก</button>
           </div>
         </div>`;
     }).join('');
@@ -582,8 +678,22 @@ async function renderAdminUsers() {
 
 async function updateUserApproval(uid, approved) {
   try {
-    const callable = httpsCallable(functions, 'setUserApproval');
-    await callable({ uid, approved });
+    const userRef = doc(db, 'users', uid);
+    const snap = await getDoc(userRef);
+    if (!snap.exists()) throw new Error('ไม่พบผู้ใช้');
+    const current = snap.data() || {};
+    const patch = {
+      approved,
+      updatedAt: serverTimestamp()
+    };
+    if (approved && !current.approved) patch.approvedAt = serverTimestamp();
+    if (isBootstrapAdmin(current.email)) {
+      patch.role = 'admin';
+      patch.approved = true;
+    } else if (!approved && current.role !== 'admin') {
+      patch.role = 'user';
+    }
+    await updateDoc(userRef, patch);
     showToast(approved ? 'อนุมัติผู้ใช้แล้ว' : 'ยกเลิกสิทธิ์แล้ว');
     await renderAdminUsers();
   } catch (error) {
@@ -601,29 +711,35 @@ function escapeHtml(str) {
 }
 
 function bindEvents() {
-  $('toggleApiBtn').addEventListener('click', () => toggleGeminiApiPanel());
-  $('toggleEyeBtn').addEventListener('click', toggleGeminiKeyVisibility);
-  $('connectKeyBtn').addEventListener('click', connectGeminiKey);
-  $('testKeyBtn').addEventListener('click', testGeminiKey);
-  $('deleteKeyBtn').addEventListener('click', promptDeleteGeminiKey);
-  $('loginBtn').addEventListener('click', signInGoogle);
-  $('logoutBtn').addEventListener('click', () => signOut(auth));
-  $('generateBtn').addEventListener('click', generatePrompts);
-  $('copyImageBtn').addEventListener('click', () => copyBlock('imagePrompt', $('copyImageBtn')));
-  $('copyVideoBtn').addEventListener('click', () => copyBlock('videoPrompt', $('copyVideoBtn')));
-  $('editImageBtn').addEventListener('click', () => togglePromptEdit('image'));
-  $('saveImageBtn').addEventListener('click', () => savePromptEdit('image'));
-  $('editVideoBtn').addEventListener('click', () => togglePromptEdit('video'));
-  $('saveVideoBtn').addEventListener('click', () => savePromptEdit('video'));
-  $('refreshHistoryBtn').addEventListener('click', renderHistory);
-  $('refreshAdminBtn').addEventListener('click', renderAdminUsers);
-  $('clearBtn').addEventListener('click', clearForm);
-  $('exampleTissueBtn').addEventListener('click', () => loadExample('tissue'));
-  $('exampleBatteryBtn').addEventListener('click', () => loadExample('battery'));
-  $('exampleChairBtn').addEventListener('click', () => loadExample('chair'));
+  const bind = (id, event, handler) => {
+    const node = el(id);
+    if (node) node.addEventListener(event, handler);
+  };
+
+  bind('toggleApiBtn', 'click', () => toggleGeminiApiPanel());
+  bind('toggleEyeBtn', 'click', toggleGeminiKeyVisibility);
+  bind('connectKeyBtn', 'click', connectGeminiKey);
+  bind('testKeyBtn', 'click', testGeminiKey);
+  bind('deleteKeyBtn', 'click', promptDeleteGeminiKey);
+  bind('loginBtn', 'click', signInGoogle);
+  bind('logoutBtn', 'click', () => signOut(auth));
+  bind('generateBtn', 'click', generatePrompts);
+  bind('copyImageBtn', 'click', () => copyBlock('imagePrompt', el('copyImageBtn')));
+  bind('copyVideoBtn', 'click', () => copyBlock('videoPrompt', el('copyVideoBtn')));
+  bind('editImageBtn', 'click', () => togglePromptEdit('image'));
+  bind('saveImageBtn', 'click', () => savePromptEdit('image'));
+  bind('editVideoBtn', 'click', () => togglePromptEdit('video'));
+  bind('saveVideoBtn', 'click', () => savePromptEdit('video'));
+  bind('refreshHistoryBtn', 'click', renderHistory);
+  bind('refreshAdminBtn', 'click', renderAdminUsers);
+  bind('clearBtn', 'click', clearForm);
+  bind('exampleTissueBtn', 'click', () => loadExample('tissue'));
+  bind('exampleBatteryBtn', 'click', () => loadExample('battery'));
+  bind('exampleChairBtn', 'click', () => loadExample('chair'));
+
   ['product', 'location', 'view', 'sceneCount', 'duration'].forEach((id) => {
-    $(id).addEventListener('input', saveAndRefresh);
-    $(id).addEventListener('change', saveAndRefresh);
+    bind(id, 'input', saveAndRefresh);
+    bind(id, 'change', saveAndRefresh);
   });
 }
 
@@ -633,9 +749,10 @@ async function init() {
   updateSummary();
   resetPromptEditors();
   toggleGeminiApiPanel(true);
+
   const savedKey = getUserApiKey();
   if (savedKey) {
-    $('userApiKey').value = savedKey;
+    if (el('userApiKey')) el('userApiKey').value = savedKey;
     updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true);
   } else {
     updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false);
@@ -644,9 +761,9 @@ async function init() {
   onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     userDocCache = null;
-    currentClaims = {};
-    if (!user) currentHistoryId = null;
+    currentHistoryId = null;
     showError('');
+
     try {
       if (user) {
         await syncCurrentUser();
@@ -654,6 +771,7 @@ async function init() {
     } catch (error) {
       showError(`Sync user ไม่สำเร็จ: ${error.message}`);
     }
+
     await renderAuthState();
   });
 }
