@@ -712,37 +712,47 @@ function escapeHtml(str) {
 
 function bindEvents() {
   const on = (id, event, handler) => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener(event, handler);
+    const node = document.getElementById(id);
+    if (node && typeof handler === 'function') {
+      node.addEventListener(event, handler);
+    }
   };
 
-  on('toggleApiBtn', 'click', toggleApiCard);
-  on('toggleEyeBtn', 'click', toggleApiVisibility);
-  on('connectKeyBtn', 'click', saveApiKey);
-  on('testKeyBtn', 'click', testApiKey);
-  on('deleteKeyBtn', 'click', deleteApiKey);
+  on('toggleApiBtn', 'click', () => toggleGeminiApiPanel());
+  on('toggleEyeBtn', 'click', toggleGeminiKeyVisibility);
+  on('connectKeyBtn', 'click', connectGeminiKey);
+  on('testKeyBtn', 'click', testGeminiKey);
+  on('deleteKeyBtn', 'click', promptDeleteGeminiKey);
 
   on('loginBtn', 'click', signInGoogle);
-  on('logoutBtn', 'click', signOutGoogle);
+  on('logoutBtn', 'click', () => signOut(auth));
 
-  on('generateBtn', 'click', generatePrompt);
+  on('generateBtn', 'click', generatePrompts);
   on('clearBtn', 'click', clearForm);
 
-  on('copyImageBtn', 'click', copyImagePrompt);
-  on('copyVideoBtn', 'click', copyVideoPrompt);
+  on('copyImageBtn', 'click', () => copyBlock('imagePrompt', el('copyImageBtn')));
+  on('copyVideoBtn', 'click', () => copyBlock('videoPrompt', el('copyVideoBtn')));
 
-  on('editImageBtn', 'click', enableEditImage);
-  on('saveImageBtn', 'click', saveEditImage);
+  on('editImageBtn', 'click', () => togglePromptEdit('image'));
+  on('saveImageBtn', 'click', () => savePromptEdit('image'));
 
-  on('editVideoBtn', 'click', enableEditVideo);
-  on('saveVideoBtn', 'click', saveEditVideo);
+  on('editVideoBtn', 'click', () => togglePromptEdit('video'));
+  on('saveVideoBtn', 'click', () => savePromptEdit('video'));
 
   on('refreshHistoryBtn', 'click', renderHistory);
-  on('refreshAdminBtn', 'click', renderAdminPanel);
+  on('refreshAdminBtn', 'click', renderAdminUsers);
 
-  on('exampleTissueBtn', 'click', loadExampleTissue);
-  on('exampleBatteryBtn', 'click', loadExampleBattery);
-  on('exampleChairBtn', 'click', loadExampleChair);
+  on('exampleTissueBtn', 'click', () => loadExample('tissue'));
+  on('exampleBatteryBtn', 'click', () => loadExample('battery'));
+  on('exampleChairBtn', 'click', () => loadExample('chair'));
+
+  ['product', 'location', 'view', 'sceneCount', 'duration'].forEach((id) => {
+    const node = el(id);
+    if (node) {
+      node.addEventListener('input', saveAndRefresh);
+      node.addEventListener('change', saveAndRefresh);
+    }
+  });
 }
 
 async function init() {
