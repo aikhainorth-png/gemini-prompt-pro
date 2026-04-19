@@ -1,59 +1,36 @@
-# Gemini Final Prompt Pro — Firebase Edition
+# Gemini Final Prompt Pro — Spark / No Functions Edition
 
-This package adds:
-- Google Login via Firebase Auth
-- Admin approval workflow
-- Prompt history in Firestore
-- Frontend Gemini API prompt generator
+ชุดนี้ตัด Cloud Functions ออก เพื่อให้ใช้งานบน Spark plan ได้
 
-## Project structure
+รองรับ:
+- Google Login
+- ระบบรออนุมัติ
+- Admin panel
+- Prompt History
+- Gemini API key ฝั่ง browser
 
-- `public/index.html` — main UI
-- `public/app.js` — frontend logic
-- `public/firebase-config.example.js` — copy to `firebase-config.js` and fill your Firebase web config
-- `functions/index.js` — callable backend functions (`syncUser`, `setUserApproval`)
-- `firestore.rules` — Firestore security rules
-- `firebase.json` — Hosting + Functions + Firestore config
+## ไฟล์สำคัญ
+- public/index.html
+- public/app.js
+- public/firebase-config.js
+- firestore.rules
+- firebase.json
 
-## Firebase setup
+## สำคัญก่อน deploy
+แก้อีเมลแอดมินให้ตรงกัน 2 จุด:
+1. `public/app.js` → `const ADMIN_EMAILS = [...]`
+2. `firestore.rules` → `isBootstrapAdmin()`
 
-1. Create a Firebase project.
-2. Enable Google sign-in in Firebase Authentication.
-3. Create Firestore in production mode.
-4. Copy `public/firebase-config.example.js` to `public/firebase-config.js` and fill your values.
-5. Set admin email list before deploy:
-   - Linux/macOS:
-     `export ADMIN_EMAILS="you@example.com,admin2@example.com"`
-6. Deploy functions and hosting.
+ถ้าคุณใช้อีเมลอื่นเป็นแอดมิน ให้แก้ทั้งสองไฟล์เป็นอีเมลเดียวกัน
 
 ## Deploy
-
 ```bash
-npm install -g firebase-tools
-firebase login
-firebase use YOUR_PROJECT_ID
-cd functions && npm install && cd ..
-firebase deploy
+firebase deploy --only hosting,firestore
 ```
 
-## First admin
-
-Any Google account whose email is listed in `ADMIN_EMAILS` becomes:
-- approved automatically
-- role = admin
-- custom claims `admin: true`, `approved: true`
-
-## Approval flow
-
-1. Normal user signs in with Google.
-2. `syncUser` creates/updates `users/{uid}`.
-3. User sees waiting-for-approval banner.
-4. Admin opens the app and uses the Admin Approval Panel.
-5. `setUserApproval` updates Firestore and custom claims.
-6. User refreshes token by signing in again or refreshing the page.
-
-## Notes
-
-- Prompt history is stored in `promptHistory` collection.
-- Gemini API Key is still stored in browser localStorage on the user device.
-- This package does not proxy Gemini API through Firebase Functions. It keeps the current browser-side Gemini call pattern.
+## วิธีทำงาน
+- ผู้ใช้ทั่วไป login ครั้งแรก → ถูกสร้างเป็น role=user และ approved=false
+- อีเมลใน ADMIN_EMAILS → เป็น admin อัตโนมัติ และ approved=true
+- admin เปิดหน้าเว็บแล้วเห็น Admin Approval Panel
+- admin กดอนุมัติ user ได้จากหน้าเว็บโดยตรงผ่าน Firestore
+- ผู้ใช้ที่ approved แล้วจึงจะสร้าง Prompt และบันทึก Prompt History ได้
