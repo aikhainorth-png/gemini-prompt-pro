@@ -29,12 +29,12 @@
     <div style="font-size:70px;margin-bottom:18px">✨</div>
 
     <div style="font-size:42px;font-weight:900;margin-bottom:10px">
-      1click1story
+      สินค้าติดป้าย
     </div>
 
     <div style="color:#9ea8d6;font-size:18px;line-height:1.6;margin-bottom:26px">
-      Viral Intelligence 2026 — Sign in to access<br>
-      8-Scene Storyboard + Prompt Generator
+      สร้างคลิป ติดป้าย<br>
+      + Prompt Generator
     </div>
 
     <button class="btn btn-primary"
@@ -60,30 +60,48 @@
     <div class="topbar">
       <div class="brand"><div class="logo">✨</div><div><h1>Gemini Final Prompt Pro</h1><p>Firebase Edition • Google Login • Admin Approval • Prompt History</p></div></div>
       <div class="userbar">
-        <div class="pill" id="authPill"><a href="https://lin.ee/NGN1H1S"
-   target="_blank"
-   class="btn btn-dark"
-   style="text-decoration:none">
-   ติดต่อ Admin
-</a>ยังไม่ได้เข้าสู่ระบบ</div>
-        <a class="btn btn-dark" id="adminLink" href="./admin.html" style="display:none;text-decoration:none">Admin PRO MAX</a>
-        <button class="btn btn-primary" id="loginBtn">Sign in with Google</button>
-        <button class="btn btn-dark" id="logoutBtn" style="display:none">ออกจากระบบ</button>
-      </div>
+  <div class="pill" id="authPill">ยังไม่ได้เข้าสู่ระบบ</div>
+
+  <a
+    href="https://lin.ee/NGN1H1S"
+    target="_blank"
+    class="btn btn-dark"
+    style="text-decoration:none"
+  >
+    ติดต่อ Admin
+  </a>
+
+  <a class="btn btn-dark" id="adminLink" href="./admin.html" style="display:none;text-decoration:none">
+    Admin PRO MAX
+  </a>
+
+  <button class="btn btn-primary" id="loginBtn">Sign in with Google</button>
+  <button class="btn btn-dark" id="logoutBtn" style="display:none">ออกจากระบบ</button>
+</div>
     </div>
     <div class="layout">
       <aside class="panel">
-        <div class="section"><h3>Gemini API Key</h3><div class="api-card"><div class="api-head"><div><div class="api-title">🔑 Gemini API Key (Opt)</div><div class="api-sub">Key จะถูกเก็บในเครื่องนี้เท่านั้น</div></div><div style="display:flex;gap:10px;align-items:center;">
-<a href="https://aistudio.google.com/api-keys"
-   target="_blank"
-   class="btn btn-dark"
-   style="text-decoration:none;padding:10px 18px;border-radius:999px;">
-   สร้างฟรี
-</a>
+        <div class="section"><h3>Gemini API Key</h3><div class="api-card">
+		<div class="api-head">
+  <div>
+    <div class="api-title">🔑 Gemini API Key (Opt)</div>
+    <div class="api-sub">Key จะถูกเก็บในเครื่องนี้เท่านั้น</div>
+  </div>
 
-<button class="btn btn-dark" id="toggleApiBtn"
-style="padding:8px 12px">▼</button>
-</div> style="padding:8px 12px">▲</button></div><div id="apiPanelBody"><div class="api-wrap"><input id="userApiKey" type="password" placeholder="วาง Gemini API Key ของคุณ" /><button class="eye" id="toggleEyeBtn" type="button">👁️</button></div><div class="api-actions"><button class="btn btn-green" id="connectKeyBtn">เชื่อมต่อ Key</button><button class="btn btn-dark" id="testKeyBtn">ทดสอบ Key</button><button class="btn btn-red" id="deleteKeyBtn">ลบ</button></div><div class="statusline" id="geminiKeyStatus"></div><div class="native" id="geminiNativeStatus">⚡ Gemini Native Full-Engine Mode พร้อมใช้งาน</div></div></div></div>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <a
+      href="https://aistudio.google.com/api-keys"
+      target="_blank"
+      class="btn btn-dark"
+      style="text-decoration:none;padding:10px 18px;border-radius:999px;"
+    >
+      สร้างฟรี
+    </a>
+
+    <button class="btn btn-dark" id="toggleApiBtn" style="padding:8px 12px">▲</button>
+  </div>
+</div>
+<div id="apiPanelBody"><div class="api-wrap"><input id="userApiKey" type="password" placeholder="วาง Gemini API Key ของคุณ" /><button class="eye" id="toggleEyeBtn" type="button">👁️</button></div><div class="api-actions"><button class="btn btn-green" id="connectKeyBtn">เชื่อมต่อ Key</button><button class="btn btn-dark" id="testKeyBtn">ทดสอบ Key</button><button class="btn btn-red" id="deleteKeyBtn">ลบ</button></div><div class="statusline" id="geminiKeyStatus"></div><div class="native" id="geminiNativeStatus">⚡ Gemini Native Full-Engine Mode พร้อมใช้งาน</div></div></div></div>
         <div class="section"><h3>Prompt Builder</h3><div class="field"><label class="label" for="product">1. สินค้า</label><input id="product" placeholder="เช่น แบตเตอรี่ GS Tough / เก้าอี้สำนักงาน / ทิชชู่ Scott Extra" /></div><div class="field"><label class="label" for="location">2. สถานที่</label><input id="location" placeholder="เช่น ร้านแบตเตอรี่ / ห้าง / ร้านเฟอร์นิเจอร์ / โกดัง" /></div><div class="field"><label class="label" for="view">3. มุมมองสินค้า</label><textarea id="view" placeholder="เช่น ช่างยกสินค้าโชว์หน้ากล้อง ซูมป้ายเหลืองลดราคา กล้องมือถือแบบเร่งด่วน"></textarea></div><div class="row"><div class="field"><label class="label" for="sceneCount">4. จำนวน Scene</label><select id="sceneCount"><option value="1">1 Scene</option><option value="2">2 Scene</option><option value="3">3 Scene</option></select></div><div class="field"><label class="label" for="duration">5. เวลาทั้งหมด</label><select id="duration"><option value="8">8 วินาที</option><option value="10" selected>10 วินาที</option><option value="12">12 วินาที</option><option value="15">15 วินาที</option></select></div></div><div class="row"><button class="btn btn-dark" id="exampleTissueBtn">ตัวอย่างทิชชู่</button><button class="btn btn-dark" id="exampleBatteryBtn">ตัวอย่างแบต</button><button class="btn btn-dark" id="exampleChairBtn">ตัวอย่างเก้าอี้</button></div><div class="row" style="margin-top:10px"><button class="btn btn-dark" id="clearBtn">ล้างข้อมูล</button><button class="btn btn-primary" id="generateBtn">🚀 สร้าง Prompt</button></div><p class="muted" style="margin-top:10px">Spark Plan • ใช้งานผ่าน Firestore ตรง • แอดมินอนุมัติผ่านหน้า Admin PRO MAX</p></div>
         <div class="section"><h3>Summary</h3><div class="summary" id="summaryPreview"></div></div>
         <div class="section"><h3>Stats</h3><div class="stats"><div class="stat"><div class="k">Scene</div><div class="v" id="statScene">1</div></div><div class="stat"><div class="k">Duration</div><div class="v" id="statDuration">10s</div></div><div class="stat"><div class="k">Per Scene</div><div class="v" id="statPerScene">10s</div></div></div></div>
@@ -103,14 +121,28 @@ style="padding:8px 12px">▼</button>
   </div>
   <div class="overlay" id="loadingOverlay"><div class="loader"><div class="spin"></div><div style="font-weight:800;font-size:18px">กำลังประมวลผล</div><div class="muted" style="margin-top:6px">Please wait...</div></div></div>
   <div class="overlay" id="deleteModal">
-  <div class="loader" style="max-width:500px;width:calc(100% - 30px)">
-    
+  <div class="loader" style="max-width:500px;width:calc(100% - 30px);position:relative">
+
+    <!-- ปุ่ม X -->
+    <button
+      id="closeDeleteBtn"
+      class="btn btn-dark"
+      type="button"
+      style="
+        position:absolute;
+        top:12px;
+        right:12px;
+        width:42px;
+        height:42px;
+        padding:0;
+        border-radius:50%;
+        font-size:20px;
+        line-height:1;
+      "
+    >✕</button>
+
     <div style="font-size:28px;font-weight:800;margin-bottom:16px">
       🗑️ ยืนยันการลบ Gemini API Key
-    </div>
-
-    <div style="color:#bfc8ef;margin-bottom:24px">
-      ต้องการลบ Gemini API Key ที่เก็บไว้ในเครื่องนี้หรือไม่?
     </div>
 
     <div style="display:flex;gap:12px">
