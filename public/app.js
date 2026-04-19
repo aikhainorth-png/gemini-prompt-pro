@@ -1,4 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js';
 import {
   getAuth,
   GoogleAuthProvider,
@@ -33,6 +34,7 @@ const DEFAULT_MODEL = 'gemini-2.5-flash';
 
 const $ = (id) => document.getElementById(id);
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const functions = getFunctions(app, functionsRegion || 'us-central1');
