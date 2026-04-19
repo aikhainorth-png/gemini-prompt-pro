@@ -711,36 +711,38 @@ function escapeHtml(str) {
 }
 
 function bindEvents() {
-  const bind = (id, event, handler) => {
-    const node = el(id);
-    if (node) node.addEventListener(event, handler);
+  const on = (id, event, handler) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener(event, handler);
   };
 
-  bind('toggleApiBtn', 'click', () => toggleGeminiApiPanel());
-  bind('toggleEyeBtn', 'click', toggleGeminiKeyVisibility);
-  bind('connectKeyBtn', 'click', connectGeminiKey);
-  bind('testKeyBtn', 'click', testGeminiKey);
-  bind('deleteKeyBtn', 'click', promptDeleteGeminiKey);
-  bind('loginBtn', 'click', signInGoogle);
-  bind('logoutBtn', 'click', () => signOut(auth));
-  bind('generateBtn', 'click', generatePrompts);
-  bind('copyImageBtn', 'click', () => copyBlock('imagePrompt', el('copyImageBtn')));
-  bind('copyVideoBtn', 'click', () => copyBlock('videoPrompt', el('copyVideoBtn')));
-  bind('editImageBtn', 'click', () => togglePromptEdit('image'));
-  bind('saveImageBtn', 'click', () => savePromptEdit('image'));
-  bind('editVideoBtn', 'click', () => togglePromptEdit('video'));
-  bind('saveVideoBtn', 'click', () => savePromptEdit('video'));
-  bind('refreshHistoryBtn', 'click', renderHistory);
-  bind('refreshAdminBtn', 'click', renderAdminUsers);
-  bind('clearBtn', 'click', clearForm);
-  bind('exampleTissueBtn', 'click', () => loadExample('tissue'));
-  bind('exampleBatteryBtn', 'click', () => loadExample('battery'));
-  bind('exampleChairBtn', 'click', () => loadExample('chair'));
+  on('toggleApiBtn', 'click', toggleApiCard);
+  on('toggleEyeBtn', 'click', toggleApiVisibility);
+  on('connectKeyBtn', 'click', saveApiKey);
+  on('testKeyBtn', 'click', testApiKey);
+  on('deleteKeyBtn', 'click', deleteApiKey);
 
-  ['product', 'location', 'view', 'sceneCount', 'duration'].forEach((id) => {
-    bind(id, 'input', saveAndRefresh);
-    bind(id, 'change', saveAndRefresh);
-  });
+  on('loginBtn', 'click', signInGoogle);
+  on('logoutBtn', 'click', signOutGoogle);
+
+  on('generateBtn', 'click', generatePrompt);
+  on('clearBtn', 'click', clearForm);
+
+  on('copyImageBtn', 'click', copyImagePrompt);
+  on('copyVideoBtn', 'click', copyVideoPrompt);
+
+  on('editImageBtn', 'click', enableEditImage);
+  on('saveImageBtn', 'click', saveEditImage);
+
+  on('editVideoBtn', 'click', enableEditVideo);
+  on('saveVideoBtn', 'click', saveEditVideo);
+
+  on('refreshHistoryBtn', 'click', renderHistory);
+  on('refreshAdminBtn', 'click', renderAdminPanel);
+
+  on('exampleTissueBtn', 'click', loadExampleTissue);
+  on('exampleBatteryBtn', 'click', loadExampleBattery);
+  on('exampleChairBtn', 'click', loadExampleChair);
 }
 
 async function init() {
