@@ -105,51 +105,75 @@ async function upsertCurrentUser(user){ const email=String(user.email||'').toLow
 function isApproved(){ return !!(userDocCache?.approved || hasAdminEmail(currentUser?.email)); }
 function isAdmin(){ return !!(userDocCache?.role==='admin' || hasAdminEmail(currentUser?.email)); }
 async function signInGoogle(){ try{ await signInWithPopup(auth, provider);}catch(e){ showError(`เข้าสู่ระบบไม่สำเร็จ: ${e.message}`); showToast('เข้าสู่ระบบไม่สำเร็จ'); } }
+
 async function renderAuthState(){
+  const approved = isApproved();
 
   // ยังไม่ login
   if(!currentUser){
-
     $('loginGate')?.classList.add('show');
 
     if($('authPill'))
-      $('authPill').textContent='ยังไม่ได้เข้าสู่ระบบ';
+      $('authPill').textContent = 'ยังไม่ได้เข้าสู่ระบบ';
 
     if($('loginBtn'))
-      $('loginBtn').style.display='inline-flex';
+      $('loginBtn').style.display = 'inline-flex';
 
     if($('logoutBtn'))
-      $('logoutBtn').style.display='none';
+      $('logoutBtn').style.display = 'none';
 
     if($('adminLink'))
-      $('adminLink').style.display='none';
+      $('adminLink').style.display = 'none';
 
     showPending(false);
     await renderHistory();
     return;
   }
 
-  // login แล้ว
+  // login แล้ว แต่ยังไม่อนุมัติ
+  if(!approved){
+    $('loginGate')?.classList.add('show');
+
+    if($('authPill'))
+      $('authPill').textContent =
+        `${currentUser.email || currentUser.displayName || 'Signed in'} • รออนุมัติ`;
+
+    if($('loginBtn'))
+      $('loginBtn').style.display = 'none';
+
+    if($('logoutBtn'))
+      $('logoutBtn').style.display = 'inline-flex';
+
+    if($('adminLink'))
+      $('adminLink').style.display =
+        isAdmin() ? 'inline-flex' : 'none';
+
+    showPending(true);
+    await renderHistory();
+    return;
+  }
+
+  // login แล้ว และอนุมัติแล้ว
   $('loginGate')?.classList.remove('show');
 
   if($('authPill'))
-    $('authPill').textContent=
+    $('authPill').textContent =
       currentUser.email || currentUser.displayName || 'Signed in';
 
   if($('loginBtn'))
-    $('loginBtn').style.display='none';
+    $('loginBtn').style.display = 'none';
 
   if($('logoutBtn'))
-    $('logoutBtn').style.display='inline-flex';
+    $('logoutBtn').style.display = 'inline-flex';
 
   if($('adminLink'))
     $('adminLink').style.display =
       isAdmin() ? 'inline-flex' : 'none';
 
-  showPending(!isApproved());
-
+  showPending(false);
   await renderHistory();
 }
+
 async function savePromptHistoryRecord(d,result){ const ref=await addDoc(collection(db,'promptHistory'),{ uid:currentUser.uid,email:currentUser.email||'',product:d.product,location:d.location,view:d.view,sceneCount:d.sceneCount,duration:d.duration,imagePrompt:result.image_prompt,videoPrompt:result.video_prompt,createdAt:serverTimestamp() }); return ref.id; }
 async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const d=getFormData(); const err=validateForm(d); if(err) return showToast(err); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • กำลังสร้าง Final Prompt'); const result=await callGeminiNative(d); if($('imagePrompt')) $('imagePrompt').value=result.image_prompt; if($('videoPrompt')) $('videoPrompt').value=result.video_prompt; if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('emptyState')) $('emptyState').style.display='none'; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,result); resetPromptEditors(); await renderHistory(); showToast('สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
 async function copyBlock(id,btn){ const text=$(id)?.value||''; if(!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก'); await navigator.clipboard.writeText(text); const old=btn.textContent; btn.textContent='คัดลอกแล้ว'; setTimeout(()=>{btn.textContent=old;},1200); }
