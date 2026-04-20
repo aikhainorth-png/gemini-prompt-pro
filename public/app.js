@@ -49,19 +49,19 @@ function deleteKeyNow(){
  closeDeleteModal();
  showToast('ลบ Key แล้ว');
 }
-function getFormData(){ return { product:$('product')?.value.trim()||'', location:$('location')?.value.trim()||'', view:$('view')?.value.trim()||'', sceneCount:Number($('sceneCount')?.value||1), duration:Number($('duration')?.value||10) }; }
+function getFormData(){ return { product:$('product')?.value.trim()||'', location:$('location')?.value.trim()||'', view:$('view')?.value.trim()||'', voiceType:$('voiceType')?.value||'หญิง', viralTone:$('viralTone')?.value||'ล้างสต๊อก', sceneCount:Number($('sceneCount')?.value||1), duration:Number($('duration')?.value||10) }; }
 function saveForm(){ localStorage.setItem(LS_FORM, JSON.stringify(getFormData())); }
-function loadForm(){ const raw=localStorage.getItem(LS_FORM); if(!raw) return; try{ const d=JSON.parse(raw); if($('product')) $('product').value=d.product||''; if($('location')) $('location').value=d.location||''; if($('view')) $('view').value=d.view||''; if($('sceneCount')) $('sceneCount').value=String(d.sceneCount||1); if($('duration')) $('duration').value=String(d.duration||10); }catch{} }
+function loadForm(){ const raw=localStorage.getItem(LS_FORM); if(!raw) return; try{ const d=JSON.parse(raw); if($('product')) $('product').value=d.product||''; if($('location')) $('location').value=d.location||''; if($('view')) $('view').value=d.view||''; if($('voiceType')) $('voiceType').value=d.voiceType||'หญิง'; if($('viralTone')) $('viralTone').value=d.viralTone||'ล้างสต๊อก'; if($('sceneCount')) $('sceneCount').value=String(d.sceneCount||1); if($('duration')) $('duration').value=String(d.duration||10); }catch{} }
 function formatPerScene(duration,sceneCount){ const v=duration/Math.max(sceneCount,1); return Number.isInteger(v)?`${v}s`:`${v.toFixed(1)}s`; }
-function updateSummary(){ const d=getFormData(); if($('summaryPreview')) $('summaryPreview').textContent=[`สินค้า: ${d.product||'-'}`,`สถานที่: ${d.location||'-'}`,`มุมมองสินค้า: ${d.view||'-'}`,`จำนวน Scene: ${d.sceneCount}`,`เวลาทั้งหมด: ${d.duration} วินาที`,`เวลาเฉลี่ยต่อ Scene: ${formatPerScene(d.duration,d.sceneCount)}`].join('\n'); if($('statScene')) $('statScene').textContent=String(d.sceneCount); if($('statDuration')) $('statDuration').textContent=`${d.duration}s`; if($('statPerScene')) $('statPerScene').textContent=formatPerScene(d.duration,d.sceneCount); }
+function updateSummary(){ const d=getFormData(); if($('summaryPreview')) $('summaryPreview').textContent=[`สินค้า: ${d.product||'-'}`,`สถานที่: ${d.location||'-'}`,`มุมมองสินค้า: ${d.view||'-'}`,`ประเภทเสียงพากย์: ${d.voiceType||'-'}`,`โทนไวรัล: ${d.viralTone||'-'}`,`จำนวน Scene: ${d.sceneCount}`,`เวลาทั้งหมด: ${d.duration} วินาที`,`เวลาเฉลี่ยต่อ Scene: ${formatPerScene(d.duration,d.sceneCount)}`].join('\n'); if($('statScene')) $('statScene').textContent=String(d.sceneCount); if($('statDuration')) $('statDuration').textContent=`${d.duration}s`; if($('statPerScene')) $('statPerScene').textContent=formatPerScene(d.duration,d.sceneCount); }
 function saveAndRefresh(){ saveForm(); updateSummary(); }
 function validateForm(d){ if(!d.product) return 'กรุณากรอกสินค้า'; if(!d.location) return 'กรุณากรอกสถานที่'; if(!d.view) return 'กรุณากรอกมุมมองสินค้า'; return ''; }
 function setPromptEditing(type, editing){ const isImage=type==='image'; const textarea=$(isImage?'imagePrompt':'videoPrompt'); const editBtn=$(isImage?'editImageBtn':'editVideoBtn'); const saveBtn=$(isImage?'saveImageBtn':'saveVideoBtn'); if(!textarea||!editBtn||!saveBtn) return; textarea.readOnly=!editing; textarea.classList.toggle('editing', editing); editBtn.textContent=editing?(isImage?'ยกเลิก IMAGE':'ยกเลิก VDO'):(isImage?'แก้ไข IMAGE':'แก้ไข VDO'); saveBtn.style.display=editing?'inline-flex':'none'; }
 function resetPromptEditors(){ setPromptEditing('image',false); setPromptEditing('video',false); }
 function togglePromptEdit(type){ const isImage=type==='image'; const textarea=$(isImage?'imagePrompt':'videoPrompt'); if(!textarea||!textarea.value.trim()) return showToast('ยังไม่มี prompt ให้แก้ไข'); if(!textarea.readOnly) return setPromptEditing(type,false); setPromptEditing(type,true); textarea.focus(); }
 async function savePromptEdit(type){ const isImage=type==='image'; const textarea=$(isImage?'imagePrompt':'videoPrompt'); const value=(textarea?.value||'').trim(); if(!value) return showToast('ข้อความว่างไม่ได้'); try{ if(currentUser && currentHistoryId){ await updateDoc(doc(db,'promptHistory',currentHistoryId), isImage?{imagePrompt:value,updatedAt:serverTimestamp()}:{videoPrompt:value,updatedAt:serverTimestamp()}); await renderHistory(); } setPromptEditing(type,false); showToast(isImage?'บันทึก IMAGE PROMPT แล้ว':'บันทึก VDO PROMPT แล้ว'); }catch(e){ showToast(`บันทึกไม่สำเร็จ: ${e.message}`); } }
-function loadExample(type){ const exs={ tissue:{product:'Scott Extra 6-roll tissue packs',location:'ห้างสรรพสินค้าช่วงลดราคา คนเดินพลุกพล่าน',view:'กองทิชชู่สูงเป็นภูเขาใหญ่กลางทางเดินห้าง ซูมป้ายเหลือง 50 บาท มีมือพนักงานแตะกองสินค้า คนเดินผ่านด้านหลังเบลอ กล้องมือถือแบบรีบๆ',sceneCount:1,duration:8}, battery:{product:'แบตเตอรี่ GS Tough สีขาวน้ำเงิน',location:'ร้านแบตเตอรี่แน่นสินค้า มีถนนด้านนอกเห็นคนผ่าน',view:'ช่างใส่ถุงมือยกแบตขึ้นโชว์หน้ากล้อง ซูมป้ายเหลืองลดราคา 300 บาท ฉากหลังเต็มไปด้วยแบตเรียงแน่น แสงร้านจริงคมชัด',sceneCount:1,duration:10}, chair:{product:'เก้าอี้สำนักงานสีดำพนักสูง',location:'ร้านเฟอร์นิเจอร์แสงสว่างจัด เรียงสินค้าเต็มร้าน',view:'เก้าอี้เรียงยาวเต็มร้าน มือคนจับเก้าอี้ตัวหน้า ซูมป้ายเหลืองลดราคา 250 บาท แพนกล้องเข้าอย่างเร็ว คนหลังฉากเบลอเล็กน้อย',sceneCount:1,duration:10}}; const ex=exs[type]; if(!ex) return; if($('product')) $('product').value=ex.product; if($('location')) $('location').value=ex.location; if($('view')) $('view').value=ex.view; if($('sceneCount')) $('sceneCount').value=String(ex.sceneCount); if($('duration')) $('duration').value=String(ex.duration); saveAndRefresh(); showToast('โหลดตัวอย่างแล้ว'); }
-function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
+function loadExample(type){ const exs={ tissue:{product:'Scott Extra 6-roll tissue packs',location:'ห้างสรรพสินค้าช่วงลดราคา คนเดินพลุกพล่าน',view:'กองทิชชู่สูงเป็นภูเขาใหญ่กลางทางเดินห้าง ซูมป้ายเหลือง 50 บาท มีมือพนักงานแตะกองสินค้า คนเดินผ่านด้านหลังเบลอ กล้องมือถือแบบรีบๆ',voiceType:'หญิง',viralTone:'คนรุมซื้อ',sceneCount:1,duration:8}, battery:{product:'แบตเตอรี่ GS Tough สีขาวน้ำเงิน',location:'ร้านแบตเตอรี่แน่นสินค้า มีถนนด้านนอกเห็นคนผ่าน',view:'ช่างใส่ถุงมือยกแบตขึ้นโชว์หน้ากล้อง ซูมป้ายเหลืองลดราคา 300 บาท ฉากหลังเต็มไปด้วยแบตเรียงแน่น แสงร้านจริงคมชัด',voiceType:'ชาย',viralTone:'ของใกล้หมด',sceneCount:1,duration:10}, chair:{product:'เก้าอี้สำนักงานสีดำพนักสูง',location:'ร้านเฟอร์นิเจอร์แสงสว่างจัด เรียงสินค้าเต็มร้าน',view:'เก้าอี้เรียงยาวเต็มร้าน มือคนจับเก้าอี้ตัวหน้า ซูมป้ายเหลืองลดราคา 250 บาท แพนกล้องเข้าอย่างเร็ว คนหลังฉากเบลอเล็กน้อย',voiceType:'หญิง',viralTone:'ล้างสต๊อก',sceneCount:1,duration:10}}; const ex=exs[type]; if(!ex) return; if($('product')) $('product').value=ex.product; if($('location')) $('location').value=ex.location; if($('view')) $('view').value=ex.view; if($('voiceType')) $('voiceType').value=ex.voiceType||'หญิง'; if($('viralTone')) $('viralTone').value=ex.viralTone||'ล้างสต๊อก'; if($('sceneCount')) $('sceneCount').value=String(ex.sceneCount); if($('duration')) $('duration').value=String(ex.duration); saveAndRefresh(); showToast('โหลดตัวอย่างแล้ว'); }
+function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('voiceType')) $('voiceType').value='หญิง'; if($('viralTone')) $('viralTone').value='ล้างสต๊อก'; if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
 function buildSystemInstruction(){ return `You are a specialist prompt engineer for Thai viral product content.
 Your job is to output FINAL-READY prompts only, not analysis.
 Generate two polished deliverables:
@@ -74,11 +74,18 @@ Rules:
 - For the image prompt, explicitly state that any uploaded or attached image must be used as the product reference only.
 - No subtitles in video prompt.
 - If people appear, avoid clear faces; prefer hands, arms, backs, or blurred passersby.
+- VOICEOVER PRO MAX: every scene in the video prompt must contain Thai voiceover dialogue.
+- Every scene must include exact Thai spoken lines ready for narration or lip-sync.
+- The selected voice type controls narrator gender.
+- The selected viral tone controls urgency, emotion, and selling pressure.
+- No silent scenes.
 - Keep both prompts fully final and ready to use.`; }
 function buildUserPrompt(d){ return `Create final production-ready prompts using these inputs.
 Product: ${d.product}
 Location: ${d.location}
 View / shot direction: ${d.view}
+Voiceover type: ${d.voiceType}
+Viral tone: ${d.viralTone}
 Scene count: ${d.sceneCount}
 Total duration: ${d.duration} seconds
 Average duration per scene: ${formatPerScene(d.duration,d.sceneCount)}
@@ -86,6 +93,10 @@ Requirements:
 - Return one final image prompt and one final video prompt.
 - The image prompt must clearly instruct the model to use the attached/uploaded image as the product reference only.
 - The video prompt must include Scene 1 to Scene ${d.sceneCount} in sequence.
+- Every scene must include Thai voiceover dialogue, not just visual direction.
+- Narration gender must follow the selected voice type: ${d.voiceType}.
+- The selling psychology and urgency must follow the selected viral tone: ${d.viralTone}.
+- Add exact spoken Thai lines for every scene, ready for voiceover or lip-sync.
 - Use a strong yellow price sign with realistic Thai price wording when suitable.
 - Final only.`; }
 function buildResponseSchema(){ return {type:'OBJECT',properties:{image_prompt:{type:'STRING'},video_prompt:{type:'STRING'}},required:['image_prompt','video_prompt'],propertyOrdering:['image_prompt','video_prompt']}; }
@@ -94,75 +105,51 @@ async function upsertCurrentUser(user){ const email=String(user.email||'').toLow
 function isApproved(){ return !!(userDocCache?.approved || hasAdminEmail(currentUser?.email)); }
 function isAdmin(){ return !!(userDocCache?.role==='admin' || hasAdminEmail(currentUser?.email)); }
 async function signInGoogle(){ try{ await signInWithPopup(auth, provider);}catch(e){ showError(`เข้าสู่ระบบไม่สำเร็จ: ${e.message}`); showToast('เข้าสู่ระบบไม่สำเร็จ'); } }
-
 async function renderAuthState(){
-  const approved = isApproved();
 
   // ยังไม่ login
   if(!currentUser){
+
     $('loginGate')?.classList.add('show');
 
     if($('authPill'))
-      $('authPill').textContent = 'ยังไม่ได้เข้าสู่ระบบ';
+      $('authPill').textContent='ยังไม่ได้เข้าสู่ระบบ';
 
     if($('loginBtn'))
-      $('loginBtn').style.display = 'inline-flex';
+      $('loginBtn').style.display='inline-flex';
 
     if($('logoutBtn'))
-      $('logoutBtn').style.display = 'none';
+      $('logoutBtn').style.display='none';
 
     if($('adminLink'))
-      $('adminLink').style.display = 'none';
+      $('adminLink').style.display='none';
 
     showPending(false);
     await renderHistory();
     return;
   }
 
-  // login แล้ว แต่ยังไม่อนุมัติ
-  if(!approved){
-    $('loginGate')?.classList.add('show');
-
-    if($('authPill'))
-      $('authPill').textContent =
-        `${currentUser.email || currentUser.displayName || 'Signed in'} • รออนุมัติ`;
-
-    if($('loginBtn'))
-      $('loginBtn').style.display = 'none';
-
-    if($('logoutBtn'))
-      $('logoutBtn').style.display = 'inline-flex';
-
-    if($('adminLink'))
-      $('adminLink').style.display =
-        isAdmin() ? 'inline-flex' : 'none';
-
-    showPending(true);
-    await renderHistory();
-    return;
-  }
-
-  // login แล้ว และอนุมัติแล้ว
+  // login แล้ว
   $('loginGate')?.classList.remove('show');
 
   if($('authPill'))
-    $('authPill').textContent =
+    $('authPill').textContent=
       currentUser.email || currentUser.displayName || 'Signed in';
 
   if($('loginBtn'))
-    $('loginBtn').style.display = 'none';
+    $('loginBtn').style.display='none';
 
   if($('logoutBtn'))
-    $('logoutBtn').style.display = 'inline-flex';
+    $('logoutBtn').style.display='inline-flex';
 
   if($('adminLink'))
     $('adminLink').style.display =
       isAdmin() ? 'inline-flex' : 'none';
 
-  showPending(false);
+  showPending(!isApproved());
+
   await renderHistory();
 }
-
 async function savePromptHistoryRecord(d,result){ const ref=await addDoc(collection(db,'promptHistory'),{ uid:currentUser.uid,email:currentUser.email||'',product:d.product,location:d.location,view:d.view,sceneCount:d.sceneCount,duration:d.duration,imagePrompt:result.image_prompt,videoPrompt:result.video_prompt,createdAt:serverTimestamp() }); return ref.id; }
 async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const d=getFormData(); const err=validateForm(d); if(err) return showToast(err); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • กำลังสร้าง Final Prompt'); const result=await callGeminiNative(d); if($('imagePrompt')) $('imagePrompt').value=result.image_prompt; if($('videoPrompt')) $('videoPrompt').value=result.video_prompt; if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('emptyState')) $('emptyState').style.display='none'; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,result); resetPromptEditors(); await renderHistory(); showToast('สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
 async function copyBlock(id,btn){ const text=$(id)?.value||''; if(!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก'); await navigator.clipboard.writeText(text); const old=btn.textContent; btn.textContent='คัดลอกแล้ว'; setTimeout(()=>{btn.textContent=old;},1200); }
@@ -171,6 +158,6 @@ function renderHistoryList(items){ const wrap=$('historyList'); if(!wrap) return
 async function renderHistory(){ try{ const ref=collection(db,'promptHistory'); const qy=currentUser?query(ref,where('uid','==',currentUser.uid),orderBy('createdAt','desc'),limit(10)):query(ref,limit(0)); const snap=await getDocs(qy); renderHistoryList(snap.docs.map(d=>d.data())); }catch(e){ if($('historyList')) $('historyList').innerHTML=`<div class="history-item"><div class="meta">โหลดประวัติไม่สำเร็จ: ${escapeHtml(e.message)}</div></div>`; } }
 function bindEvents(){ safeBind('deleteModal','click',(e)=>{
   if(e.target?.id === 'deleteModal') closeDeleteModal();
-}); safeBind('toggleApiBtn','click',()=>toggleGeminiApiPanel()); safeBind('loginGateBtn','click',signInGoogle); safeBind('closeDeleteBtn','click',closeDeleteModal); safeBind('cancelDeleteBtn','click',closeDeleteModal); safeBind('confirmDeleteBtn','click',deleteKeyNow); safeBind('toggleEyeBtn','click',toggleGeminiKeyVisibility); safeBind('connectKeyBtn','click',connectGeminiKey); safeBind('testKeyBtn','click',testGeminiKey); safeBind('deleteKeyBtn','click',promptDeleteGeminiKey); safeBind('loginBtn','click',signInGoogle); safeBind('logoutBtn','click',()=>signOut(auth)); safeBind('generateBtn','click',generatePrompts); safeBind('copyImageBtn','click',()=>copyBlock('imagePrompt',$('copyImageBtn'))); safeBind('copyVideoBtn','click',()=>copyBlock('videoPrompt',$('copyVideoBtn'))); safeBind('editImageBtn','click',()=>togglePromptEdit('image')); safeBind('saveImageBtn','click',()=>savePromptEdit('image')); safeBind('editVideoBtn','click',()=>togglePromptEdit('video')); safeBind('saveVideoBtn','click',()=>savePromptEdit('video')); safeBind('refreshHistoryBtn','click',renderHistory); safeBind('clearBtn','click',clearForm); safeBind('exampleTissueBtn','click',()=>loadExample('tissue')); safeBind('exampleBatteryBtn','click',()=>loadExample('battery')); safeBind('exampleChairBtn','click',()=>loadExample('chair')); ['product','location','view','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
+}); safeBind('toggleApiBtn','click',()=>toggleGeminiApiPanel()); safeBind('loginGateBtn','click',signInGoogle); safeBind('closeDeleteBtn','click',closeDeleteModal); safeBind('cancelDeleteBtn','click',closeDeleteModal); safeBind('confirmDeleteBtn','click',deleteKeyNow); safeBind('toggleEyeBtn','click',toggleGeminiKeyVisibility); safeBind('connectKeyBtn','click',connectGeminiKey); safeBind('testKeyBtn','click',testGeminiKey); safeBind('deleteKeyBtn','click',promptDeleteGeminiKey); safeBind('loginBtn','click',signInGoogle); safeBind('logoutBtn','click',()=>signOut(auth)); safeBind('generateBtn','click',generatePrompts); safeBind('copyImageBtn','click',()=>copyBlock('imagePrompt',$('copyImageBtn'))); safeBind('copyVideoBtn','click',()=>copyBlock('videoPrompt',$('copyVideoBtn'))); safeBind('editImageBtn','click',()=>togglePromptEdit('image')); safeBind('saveImageBtn','click',()=>savePromptEdit('image')); safeBind('editVideoBtn','click',()=>togglePromptEdit('video')); safeBind('saveVideoBtn','click',()=>savePromptEdit('video')); safeBind('refreshHistoryBtn','click',renderHistory); safeBind('clearBtn','click',clearForm); safeBind('exampleTissueBtn','click',()=>loadExample('tissue')); safeBind('exampleBatteryBtn','click',()=>loadExample('battery')); safeBind('exampleChairBtn','click',()=>loadExample('chair')); ['product','location','view','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
 async function init(){ bindEvents(); loadForm(); updateSummary(); resetPromptEditors(); toggleGeminiApiPanel(true); const savedKey=getUserApiKey(); if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } onAuthStateChanged(auth, async (user)=>{ currentUser=user; userDocCache=null; currentHistoryId=null; showError(''); try{ if(user) await upsertCurrentUser(user); }catch(e){ showError(`Sync user ไม่สำเร็จ: ${e.message}`); } await renderAuthState(); }); }
 init();
