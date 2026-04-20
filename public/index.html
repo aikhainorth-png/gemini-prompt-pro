@@ -8,23 +8,23 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#090b1a;--card:rgba(17,22,48,.82);--card2:rgba(14,18,40,.95);--line:rgba(124,92,255,.18);--text:#eef2ff;--muted:#98a2c7;--accent:#735cff;--accent2:#58b6ff;--green:#16c47f;--red:#ef5350;--yellow:#ffcf4d;--shadow:0 18px 50px rgba(0,0,0,.35);--radius:22px}
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,Prompt,sans-serif;color:var(--text);background:radial-gradient(circle at 10% 10%, rgba(115,92,255,.18), transparent 30%),radial-gradient(circle at 90% 10%, rgba(88,182,255,.14), transparent 28%),linear-gradient(180deg,#0a0d1d,#090b1a 40%,#070913);min-height:100vh}
+    :root{--bg:#07161a;--card:rgba(10,33,39,.84);--card2:rgba(8,24,29,.95);--line:rgba(111,211,198,.22);--text:#ecfbfb;--muted:#9fc3c7;--accent:#5fd3c6;--accent2:#7fdff2;--green:#20b89a;--red:#ef6b6b;--yellow:#ffd166;--shadow:0 18px 50px rgba(0,0,0,.32);--radius:22px}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,Prompt,sans-serif;color:var(--text);background:radial-gradient(circle at 10% 10%, rgba(95,211,198,.18), transparent 30%),radial-gradient(circle at 90% 10%, rgba(127,223,242,.16), transparent 28%),linear-gradient(180deg,#08181d,#07161a 40%,#061116);min-height:100vh}
     .shell{max-width:1440px;margin:0 auto;padding:22px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(24px);border-radius:20px;box-shadow:var(--shadow)}.brand .logo{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));font-size:22px}.brand h1{font-size:18px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.userbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pill{padding:10px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:12px;color:var(--muted)}
-    .btn{border:none;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer;color:#fff;transition:.2s transform}.btn:hover{transform:translateY(-1px)}.btn-primary{background:linear-gradient(135deg,#755eff,#5344df)}.btn-dark{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}.btn-green{background:linear-gradient(135deg,#16c47f,#0f9c66)}.btn-red{background:linear-gradient(135deg,#ef5350,#cc3c39)}.btn-outline{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
-    .layout{display:grid;grid-template-columns:380px 1fr;gap:18px}.panel,.maincard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);backdrop-filter:blur(24px);box-shadow:var(--shadow)}.panel{padding:18px;position:sticky;top:18px;height:fit-content}.maincard{padding:18px}.section{margin-bottom:16px}.section h3{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#c8d1ff}.field{margin-bottom:12px}.label{display:block;font-size:13px;margin-bottom:8px;color:#dce3ff}input,textarea,select{width:100%;background:rgba(255,255,255,.05);color:var(--text);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:13px 14px;font:inherit;outline:none}textarea{min-height:108px;resize:vertical}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}
-    .api-card{background:linear-gradient(180deg, rgba(7,18,60,.72), rgba(12,24,70,.45));border:1px solid rgba(88,182,255,.22);border-radius:18px;padding:14px}.api-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.api-title{font-size:14px;font-weight:800}.api-sub{font-size:12px;color:var(--muted)}.api-wrap{position:relative}.api-wrap input{padding-right:48px}.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#d7ddff;cursor:pointer;font-size:18px}.api-actions{display:flex;gap:8px;margin-top:10px}.api-actions .btn{padding:10px 12px;font-size:13px}.statusline,.muted{font-size:12px;color:var(--muted);line-height:1.5}.native{margin-top:10px;padding:10px 12px;border-radius:14px;background:rgba(115,92,255,.08);border:1px solid rgba(115,92,255,.18);font-size:12px;color:#d7ddff}
-    .summary{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:14px;white-space:pre-wrap;font-size:13px;line-height:1.6;color:#dde4ff}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);padding:12px;border-radius:16px}.stat .k{font-size:11px;color:var(--muted)}.stat .v{font-size:18px;font-weight:800;margin-top:4px}
-    .hero{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px}.hero h2{margin:0;font-size:24px}.hero p{margin:6px 0 0;color:var(--muted)}.banner{display:none;padding:16px 18px;border-radius:18px;margin-bottom:14px;font-weight:700}.banner.show{display:block}.banner.pending{background:rgba(255,207,77,.12);border:1px solid rgba(255,207,77,.3);color:#ffe7a6}.banner.error{background:rgba(239,83,80,.12);border:1px solid rgba(239,83,80,.3);color:#ffc3c2}.empty{display:flex;align-items:center;justify-content:center;min-height:360px;border:1px dashed rgba(255,255,255,.1);border-radius:20px;color:var(--muted);text-align:center;padding:20px}
-    .results{display:none;gap:16px;grid-template-columns:1fr 1fr}.prompt-card{background:var(--card2);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:16px}.prompt-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.prompt-top h3{margin:0;font-size:15px}.tag{font-size:11px;padding:6px 10px;border-radius:999px;font-weight:800;text-transform:uppercase}.tag.image{background:rgba(22,196,127,.12);color:#a8f0cf}.tag.video{background:rgba(255,207,77,.12);color:#ffe08a}.prompt-box{width:100%;min-height:340px;background:rgba(255,255,255,.04);color:#edf2ff;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:14px;font:500 13px/1.75 Inter,Prompt,sans-serif;white-space:pre-wrap}.edit-actions{display:flex;gap:8px;flex-wrap:wrap}.prompt-box.editing{border-color:rgba(115,92,255,.55);box-shadow:0 0 0 3px rgba(115,92,255,.14)}
-    .history-wrap{margin-top:18px}.history-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.history-grid{display:grid;gap:12px}.history-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:14px}.history-item h4{margin:0 0 8px;font-size:14px}.history-item .meta{font-size:12px;color:var(--muted);margin-bottom:8px}.history-item .preview{font-size:13px;color:#dbe3ff;line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-    .top-actions{display:flex;gap:10px;flex-wrap:wrap}.overlay{position:fixed;inset:0;background:rgba(3,6,18,.72);backdrop-filter:blur(10px);display:none;place-items:center;z-index:40}.overlay.show{display:grid}.loader{background:var(--card2);border:1px solid var(--line);padding:22px 26px;border-radius:24px;text-align:center;box-shadow:var(--shadow)}.spin{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:#7e6bff;margin:0 auto 12px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;transition:.25s;background:#151b37;border:1px solid rgba(255,255,255,.08);color:#fff;padding:12px 16px;border-radius:14px;z-index:50}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .btn{border:none;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer;color:#fff;transition:.2s transform}.btn:hover{transform:translateY(-1px)}.btn-primary{background:linear-gradient(135deg,#5fd3c6,#2e9fb3)}.btn-dark{background:rgba(255,255,255,.045);border:1px solid rgba(127,223,242,.14)}.btn-green{background:linear-gradient(135deg,#16c47f,#0f9c66)}.btn-red{background:linear-gradient(135deg,#ef5350,#cc3c39)}.btn-outline{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    .layout{display:grid;grid-template-columns:380px 1fr;gap:18px}.panel,.maincard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);backdrop-filter:blur(24px);box-shadow:var(--shadow)}.panel{padding:18px;position:sticky;top:18px;height:fit-content}.maincard{padding:18px}.section{margin-bottom:16px}.section h3{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#c9f5f2}.field{margin-bottom:12px}.label{display:block;font-size:13px;margin-bottom:8px;color:#d9f5f3}input,textarea,select{width:100%;background:rgba(255,255,255,.05);color:var(--text);border:1px solid rgba(127,223,242,.14);border-radius:14px;padding:13px 14px;font:inherit;outline:none}textarea{min-height:108px;resize:vertical}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}
+    .api-card{background:linear-gradient(180deg, rgba(9,40,49,.72), rgba(11,31,39,.5));border:1px solid rgba(127,223,242,.2);border-radius:18px;padding:14px}.api-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.api-title{font-size:14px;font-weight:800}.api-sub{font-size:12px;color:var(--muted)}.api-wrap{position:relative}.api-wrap input{padding-right:48px}.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#d7ddff;cursor:pointer;font-size:18px}.api-actions{display:flex;gap:8px;margin-top:10px}.api-actions .btn{padding:10px 12px;font-size:13px}.statusline,.muted{font-size:12px;color:var(--muted);line-height:1.5}.native{margin-top:10px;padding:10px 12px;border-radius:14px;background:rgba(95,211,198,.09);border:1px solid rgba(95,211,198,.2);font-size:12px;color:#d8fbf6}
+    .summary{background:rgba(255,255,255,.04);border:1px solid rgba(127,223,242,.12);border-radius:16px;padding:14px;white-space:pre-wrap;font-size:13px;line-height:1.6;color:#e4fbfb}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:rgba(255,255,255,.04);border:1px solid rgba(127,223,242,.12);padding:12px;border-radius:16px}.stat .k{font-size:11px;color:var(--muted)}.stat .v{font-size:18px;font-weight:800;margin-top:4px}
+    .hero{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px}.hero h2{margin:0;font-size:24px}.hero p{margin:6px 0 0;color:var(--muted)}.banner{display:none;padding:16px 18px;border-radius:18px;margin-bottom:14px;font-weight:700}.banner.show{display:block}.banner.pending{background:rgba(95,211,198,.12);border:1px solid rgba(95,211,198,.28);color:#ccfaf2}.banner.error{background:rgba(239,83,80,.12);border:1px solid rgba(239,83,80,.3);color:#ffc3c2}.empty{display:flex;align-items:center;justify-content:center;min-height:360px;border:1px dashed rgba(127,223,242,.16);border-radius:20px;color:var(--muted);text-align:center;padding:20px}
+    .results{display:none;gap:16px;grid-template-columns:1fr 1fr}.prompt-card{background:var(--card2);border:1px solid rgba(127,223,242,.12);border-radius:20px;padding:16px}.prompt-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.prompt-top h3{margin:0;font-size:15px}.tag{font-size:11px;padding:6px 10px;border-radius:999px;font-weight:800;text-transform:uppercase}.tag.image{background:rgba(95,211,198,.14);color:#c9faf4}.tag.video{background:rgba(127,223,242,.14);color:#d8f8ff}.prompt-box{width:100%;min-height:340px;background:rgba(255,255,255,.04);color:#edfdfd;border:1px solid rgba(127,223,242,.12);border-radius:16px;padding:14px;font:500 13px/1.75 Inter,Prompt,sans-serif;white-space:pre-wrap}.edit-actions{display:flex;gap:8px;flex-wrap:wrap}.prompt-box.editing{border-color:rgba(95,211,198,.5);box-shadow:0 0 0 3px rgba(95,211,198,.14)}
+    .history-wrap{margin-top:18px}.history-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.history-grid{display:grid;gap:12px}.history-item{background:rgba(255,255,255,.04);border:1px solid rgba(127,223,242,.12);border-radius:18px;padding:14px}.history-item h4{margin:0 0 8px;font-size:14px}.history-item .meta{font-size:12px;color:var(--muted);margin-bottom:8px}.history-item .preview{font-size:13px;color:#dff9f7;line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .top-actions{display:flex;gap:10px;flex-wrap:wrap}.overlay{position:fixed;inset:0;background:rgba(3,12,16,.74);backdrop-filter:blur(10px);display:none;place-items:center;z-index:40}.overlay.show{display:grid}.loader{background:var(--card2);border:1px solid var(--line);padding:22px 26px;border-radius:24px;text-align:center;box-shadow:var(--shadow)}.spin{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:#5fd3c6;margin:0 auto 12px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;transition:.25s;background:#10242a;border:1px solid rgba(127,223,242,.16);color:#fff;padding:12px 16px;border-radius:14px;z-index:50}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
     @media (max-width:1100px){.layout{grid-template-columns:1fr}.panel{position:relative;top:0}.results{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
 <div class="overlay show" id="loginGate">
-  <div class="loader" style="max-width:520px;width:calc(100% - 30px);padding:34px;border-radius:28px;background:#0d1230;">
+  <div class="loader" style="max-width:520px;width:calc(100% - 30px);padding:34px;border-radius:28px;background:#0b2026;">
     
     <div style="font-size:70px;margin-bottom:18px">✨</div>
 
@@ -32,7 +32,7 @@
       สินค้าติดป้าย
     </div>
 
-    <div style="color:#9ea8d6;font-size:18px;line-height:1.6;margin-bottom:26px">
+    <div style="color:#a5cfd2;font-size:18px;line-height:1.6;margin-bottom:26px">
       สร้างคลิป ติดป้าย<br>
       + Prompt Generator
     </div>
@@ -43,7 +43,7 @@
       Sign in with Google
     </button>
 
-    <div style="margin-top:18px;font-size:15px;color:#98a2c7">
+    <div style="margin-top:18px;font-size:15px;color:#9fc3c7">
       🔒 ต้องการใช้งานแจ้ง Admin คลิ๊ก!
     </div>
 
@@ -58,18 +58,18 @@
 </div>
 
 <div class="overlay" id="pendingGate">
-  <div class="loader" style="max-width:520px;width:calc(100% - 30px);padding:34px;border-radius:28px;background:#0d1230;text-align:center;">
+  <div class="loader" style="max-width:520px;width:calc(100% - 30px);padding:34px;border-radius:28px;background:#0b2026;text-align:center;">
     <div style="font-size:70px;margin-bottom:18px">🎨</div>
 
-    <div style="font-size:42px;font-weight:900;margin-bottom:10px;color:#ff6b6b">
+    <div style="font-size:42px;font-weight:900;margin-bottom:10px;color:#6fe0d4">
       รอแอดมินอนุมัติ
     </div>
 
-    <div id="pendingUserEmail" style="color:#7f8cff;font-size:20px;font-weight:700;margin-bottom:10px;">
+    <div id="pendingUserEmail" style="color:#7fdff2;font-size:20px;font-weight:700;margin-bottom:10px;">
       user@email.com
     </div>
 
-    <div style="color:#98a2c7;font-size:18px;line-height:1.7;margin-bottom:18px;">
+    <div style="color:#9fc3c7;font-size:18px;line-height:1.7;margin-bottom:18px;">
       ระบบได้รับคำขอของคุณแล้ว<br>
       กรุณารอแอดมินตรวจสอบและอนุมัติการเข้าใช้งาน
     </div>
@@ -128,8 +128,8 @@
       href="https://aistudio.google.com/api-keys"
       target="_blank"
       class="btn btn-dark"
-      style="font-size:0.68rem;color:#8b5cf6;text-decoration:none;border:1px solid rgba(99,102,241,0.45);
-padding:4px 9px;border-radius:8px;background:rgba(49,46,129,0.18);">สร้างฟรี</a>
+      style="font-size:0.68rem;color:#5fd3c6;text-decoration:none;border:1px solid rgba(95,211,198,0.35);
+padding:4px 9px;border-radius:8px;background:rgba(16,90,98,0.18);">สร้างฟรี</a>
 
     <button class="btn btn-dark" id="toggleApiBtn" style="padding:8px 12px">▲</button>
   </div>
@@ -143,7 +143,7 @@ padding:4px 9px;border-radius:8px;background:rgba(49,46,129,0.18);">สร้า
         <div class="hero"><div><h2>Final Prompt Workspace</h2><p>ได้ Final IMAGE PROMPT และ VDO PROMPT แยกบล็อก พร้อมบันทึกประวัติอัตโนมัติหลังสร้างสำเร็จ</p></div><div class="pill" id="statusPill">Ready</div></div>
         <div class="banner pending" id="pendingBanner">บัญชีของคุณยังไม่ได้รับอนุมัติจากแอดมิน เข้า Google Login แล้วรอแอดมินอนุมัติในหน้า Admin PRO MAX</div>
         <div class="banner error" id="errorBanner"></div>
-        <div class="empty" id="emptyState"><div><div style="font-size:52px;margin-bottom:12px">🧠</div><div style="font-size:22px;font-weight:800;color:#f2f5ff;margin-bottom:8px">พร้อมสร้าง Final Prompt</div><div>ล็อกอินด้วย Google, รอแอดมินอนุมัติ, ใส่ข้อมูลสินค้า แล้วกดสร้าง Prompt</div></div></div>
+        <div class="empty" id="emptyState"><div><div style="font-size:52px;margin-bottom:12px">🧠</div><div style="font-size:22px;font-weight:800;color:#ecfbfb;margin-bottom:8px">พร้อมสร้าง Final Prompt</div><div>ล็อกอินด้วย Google, รอแอดมินอนุมัติ, ใส่ข้อมูลสินค้า แล้วกดสร้าง Prompt</div></div></div>
         <div class="results" id="resultsWrap">
           <section class="prompt-card"><div class="prompt-top"><h3>IMAGE PROMPT</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag image">Image</span><div class="edit-actions"><button class="btn btn-outline" id="editImageBtn" style="padding:10px 12px">แก้ไข IMAGE</button><button class="btn btn-green" id="saveImageBtn" style="padding:10px 12px;display:none">บันทึก IMAGE</button><button class="btn btn-dark" id="copyImageBtn" style="padding:10px 12px">คัดลอก</button></div></div></div><textarea class="prompt-box" id="imagePrompt" readonly></textarea></section>
           <section class="prompt-card"><div class="prompt-top"><h3>VDO PROMPT</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag video">Video</span><div class="edit-actions"><button class="btn btn-outline" id="editVideoBtn" style="padding:10px 12px">แก้ไข VDO</button><button class="btn btn-green" id="saveVideoBtn" style="padding:10px 12px;display:none">บันทึก VDO</button><button class="btn btn-dark" id="copyVideoBtn" style="padding:10px 12px">คัดลอก</button></div></div></div><textarea class="prompt-box" id="videoPrompt" readonly></textarea></section>
