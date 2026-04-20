@@ -31,6 +31,7 @@ function updateGeminiKeyStatus(message,isConnected=false){ const el=$('geminiKey
 function updateGeminiNativeModeStatus(message){ const el=$('geminiNativeStatus'); if(el) el.textContent=message; }
 function toggleGeminiApiPanel(forceOpen){ const body=$('apiPanelBody'); const btn=$('toggleApiBtn'); if(!body||!btn) return; const open=typeof forceOpen==='boolean'?forceOpen:body.style.display==='none'; body.style.display=open?'block':'none'; btn.textContent=open?'▲':'▼'; }
 function toggleGeminiKeyVisibility(){ const input=$('userApiKey'); if(input) input.type=input.type==='password'?'text':'password'; }
+function lockMainPage(lock=true){ const shell=document.querySelector('.shell'); if(lock){ document.body.style.overflow='hidden'; if(shell){ shell.style.pointerEvents='none'; shell.style.userSelect='none'; shell.style.filter='blur(4px)'; } } else { document.body.style.overflow=''; if(shell){ shell.style.pointerEvents=''; shell.style.userSelect=''; shell.style.filter=''; } } }
 function connectGeminiKey(){ const key=($('userApiKey')?.value||'').trim(); if(!key){ updateGeminiKeyStatus('กรุณาวาง Gemini API Key ก่อนเชื่อมต่อ'); return showToast('กรุณาวาง Gemini API Key ก่อน'); } saveUserApiKey(key); updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • ใช้ Key ส่วนตัวแล้ว'); updateGeminiKeyStatus('เชื่อมต่อ Key เรียบร้อย • ระบบจะใช้ Key นี้ในการเรียก Gemini', true); showToast('เชื่อมต่อ Gemini API Key แล้ว'); }
 async function testGeminiKey(){ const key=($('userApiKey')?.value||'').trim(); if(!key){ updateGeminiKeyStatus('กรุณาวาง Gemini API Key ก่อนทดสอบ'); return showToast('ยังไม่มี Gemini API Key'); } updateGeminiKeyStatus('กำลังทดสอบ Gemini API Key...'); try{ const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`); const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d?.error?.message||`Gemini API Error ${r.status}`); saveUserApiKey(key); updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • ทดสอบ Key ผ่านแล้ว'); updateGeminiKeyStatus('ทดสอบ Key สำเร็จ • พร้อมใช้งาน', true); showToast('ทดสอบ Gemini API Key สำเร็จ'); }catch(e){ updateGeminiKeyStatus(`ทดสอบ Key ไม่ผ่าน • ${e.message}`); showToast('ทดสอบ Key ไม่ผ่าน'); } }
 function promptDeleteGeminiKey(){
@@ -112,6 +113,7 @@ async function renderAuthState(){
   // ยังไม่ login
   if(!currentUser){
     $('loginGate')?.classList.add('show');
+    lockMainPage(true);
 
     if($('authPill'))
       $('authPill').textContent = 'ยังไม่ได้เข้าสู่ระบบ';
@@ -133,6 +135,7 @@ async function renderAuthState(){
   // login แล้ว แต่ยังไม่อนุมัติ
   if(!approved){
     $('loginGate')?.classList.add('show');
+    lockMainPage(true);
 
     if($('authPill'))
       $('authPill').textContent =
@@ -155,6 +158,7 @@ async function renderAuthState(){
 
   // login แล้ว และอนุมัติแล้ว
   $('loginGate')?.classList.remove('show');
+  lockMainPage(false);
 
   if($('authPill'))
     $('authPill').textContent =
