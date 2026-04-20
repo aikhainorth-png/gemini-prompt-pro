@@ -25,6 +25,18 @@ function showToast(message){ const t=$('toast'); if(!t) return; t.textContent=me
 function setLoading(v){ $('loadingOverlay')?.classList.toggle('show', !!v); if($('generateBtn')) $('generateBtn').disabled=!!v; if($('statusPill')) $('statusPill').textContent=v?'Loading':'Ready'; }
 function showError(message=''){ const el=$('errorBanner'); if(!el) return; el.textContent=message; el.classList.toggle('show', !!message); }
 function showPending(v){ $('pendingBanner')?.classList.toggle('show', !!v); }
+function setAppAccessLock(lock = true){
+  const shell = document.querySelector('.shell');
+  if(!shell) return;
+
+  if(lock){
+    shell.style.display = 'none';
+    document.body.style.overflow = 'hidden';
+  }else{
+    shell.style.display = '';
+    document.body.style.overflow = '';
+  }
+}
 function saveUserApiKey(key){ if(key?.trim()) localStorage.setItem(LS_KEY,key.trim()); else localStorage.removeItem(LS_KEY); }
 function getUserApiKey(){ return localStorage.getItem(LS_KEY)||''; }
 function updateGeminiKeyStatus(message,isConnected=false){ const el=$('geminiKeyStatus'); if(!el) return; el.textContent=message; el.style.color=isConnected?'#9ed2ff':'#97a2c4'; }
@@ -104,28 +116,6 @@ async function callGeminiNative(d){ const apiKey=getUserApiKey(); if(!apiKey) th
 async function upsertCurrentUser(user){ const email=String(user.email||'').toLowerCase(); const ref=doc(db,'users',user.uid); const snap=await getDoc(ref); const now=serverTimestamp(); const base={uid:user.uid,email,displayName:user.displayName||'',photoURL:user.photoURL||'',lastLoginAt:now,updatedAt:now}; if(hasAdminEmail(email)){ await setDoc(ref,{...base,createdAt:snap.exists()?snap.data().createdAt||now:now,approved:true,role:'admin',approvedAt:now},{merge:true}); } else if(!snap.exists()){ await setDoc(ref,{...base,createdAt:now,approved:false,role:'user'},{merge:true}); } else { await setDoc(ref,base,{merge:true}); } const updated=await getDoc(ref); userDocCache=updated.exists()?updated.data():null; }
 function isApproved(){ return !!(userDocCache?.approved || hasAdminEmail(currentUser?.email)); }
 function isAdmin(){ return !!(userDocCache?.role==='admin' || hasAdminEmail(currentUser?.email)); }
-function lockMainPage(lock = true){
-  const shell = document.querySelector('.shell');
-
-  if(lock){
-    document.body.style.overflow = 'hidden';
-
-    if(shell){
-      shell.style.pointerEvents = 'none';
-      shell.style.userSelect = 'none';
-      shell.style.filter = 'blur(4px)';
-    }
-    return;
-  }
-
-  document.body.style.overflow = '';
-
-  if(shell){
-    shell.style.pointerEvents = '';
-    shell.style.userSelect = '';
-    shell.style.filter = '';
-  }
-}
 async function signInGoogle(){ try{ await signInWithPopup(auth, provider);}catch(e){ showError(`เข้าสู่ระบบไม่สำเร็จ: ${e.message}`); showToast('เข้าสู่ระบบไม่สำเร็จ'); } }
 
 async function renderAuthState(){
@@ -134,7 +124,7 @@ async function renderAuthState(){
   // ยังไม่ login
   if(!currentUser){
     $('loginGate')?.classList.add('show');
-    lockMainPage(true);
+    setAppAccessLock(true);
 
     if($('authPill'))
       $('authPill').textContent = 'ยังไม่ได้เข้าสู่ระบบ';
@@ -156,7 +146,7 @@ async function renderAuthState(){
   // login แล้ว แต่ยังไม่อนุมัติ
   if(!approved){
     $('loginGate')?.classList.add('show');
-    lockMainPage(true);
+    setAppAccessLock(true);
 
     if($('authPill'))
       $('authPill').textContent =
@@ -179,7 +169,7 @@ async function renderAuthState(){
 
   // login แล้ว และอนุมัติแล้ว
   $('loginGate')?.classList.remove('show');
-  lockMainPage(false);
+  setAppAccessLock(false);
 
   if($('authPill'))
     $('authPill').textContent =
@@ -208,5 +198,5 @@ async function renderHistory(){ try{ const ref=collection(db,'promptHistory'); c
 function bindEvents(){ safeBind('deleteModal','click',(e)=>{
   if(e.target?.id === 'deleteModal') closeDeleteModal();
 }); safeBind('toggleApiBtn','click',()=>toggleGeminiApiPanel()); safeBind('loginGateBtn','click',signInGoogle); safeBind('closeDeleteBtn','click',closeDeleteModal); safeBind('cancelDeleteBtn','click',closeDeleteModal); safeBind('confirmDeleteBtn','click',deleteKeyNow); safeBind('toggleEyeBtn','click',toggleGeminiKeyVisibility); safeBind('connectKeyBtn','click',connectGeminiKey); safeBind('testKeyBtn','click',testGeminiKey); safeBind('deleteKeyBtn','click',promptDeleteGeminiKey); safeBind('loginBtn','click',signInGoogle); safeBind('logoutBtn','click',()=>signOut(auth)); safeBind('generateBtn','click',generatePrompts); safeBind('copyImageBtn','click',()=>copyBlock('imagePrompt',$('copyImageBtn'))); safeBind('copyVideoBtn','click',()=>copyBlock('videoPrompt',$('copyVideoBtn'))); safeBind('editImageBtn','click',()=>togglePromptEdit('image')); safeBind('saveImageBtn','click',()=>savePromptEdit('image')); safeBind('editVideoBtn','click',()=>togglePromptEdit('video')); safeBind('saveVideoBtn','click',()=>savePromptEdit('video')); safeBind('refreshHistoryBtn','click',renderHistory); safeBind('clearBtn','click',clearForm); safeBind('exampleTissueBtn','click',()=>loadExample('tissue')); safeBind('exampleBatteryBtn','click',()=>loadExample('battery')); safeBind('exampleChairBtn','click',()=>loadExample('chair')); ['product','location','view','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
-async function init(){ lockMainPage(true); bindEvents(); loadForm(); updateSummary(); resetPromptEditors(); toggleGeminiApiPanel(true); const savedKey=getUserApiKey(); if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } onAuthStateChanged(auth, async (user)=>{ currentUser=user; userDocCache=null; currentHistoryId=null; showError(''); try{ if(user) await upsertCurrentUser(user); }catch(e){ showError(`Sync user ไม่สำเร็จ: ${e.message}`); } await renderAuthState(); }); }
+async function init(){ bindEvents(); setAppAccessLock(true); loadForm(); updateSummary(); resetPromptEditors(); toggleGeminiApiPanel(true); const savedKey=getUserApiKey(); if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } onAuthStateChanged(auth, async (user)=>{ currentUser=user; userDocCache=null; currentHistoryId=null; showError(''); try{ if(user) await upsertCurrentUser(user); }catch(e){ showError(`Sync user ไม่สำเร็จ: ${e.message}`); } await renderAuthState(); }); }
 init();
