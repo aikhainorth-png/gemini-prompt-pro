@@ -56,6 +56,41 @@
 
   </div>
 </div>
+
+<div class="overlay" id="pendingGate">
+  <div class="loader" style="max-width:520px;width:calc(100% - 30px);padding:34px;border-radius:28px;background:#0d1230;text-align:center;">
+    <div style="font-size:70px;margin-bottom:18px">⏳</div>
+
+    <div style="font-size:42px;font-weight:900;margin-bottom:10px;color:#ff6b6b">
+      รอแอดมินอนุมัติ
+    </div>
+
+    <div id="pendingUserEmail" style="color:#7f8cff;font-size:20px;font-weight:700;margin-bottom:10px;">
+      user@email.com
+    </div>
+
+    <div style="color:#98a2c7;font-size:18px;line-height:1.7;margin-bottom:18px;">
+      ระบบได้รับคำขอของคุณแล้ว<br>
+      กรุณารอแอดมินตรวจสอบและอนุมัติการเข้าใช้งาน
+    </div>
+
+    <a
+      href="https://lin.ee/NGN1H1S"
+      target="_blank"
+      class="btn btn-dark"
+      style="width:100%;height:64px;font-size:22px;border-radius:18px;text-decoration:none;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
+      ติดต่อ LINE Admin
+    </a>
+
+    <button
+      class="btn btn-dark"
+      id="pendingBackToLoginBtn"
+      style="width:100%;height:64px;font-size:22px;border-radius:18px;">
+      ← กลับไปหน้า Login
+    </button>
+  </div>
+</div>
+
   <div class="shell">
     <div class="topbar">
       <div class="brand"><div class="logo">✨</div><div><h1>Gemini Final Prompt Pro</h1><p>Firebase Edition • Google Login • Admin Approval • Prompt History</p></div></div>
@@ -88,15 +123,13 @@
     <div class="api-sub">Key จะถูกเก็บในเครื่องนี้เท่านั้น</div>
   </div>
 
-  <div style="display:flex;gap:10px;align-items:center;">
+  <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
     <a
       href="https://aistudio.google.com/api-keys"
       target="_blank"
       class="btn btn-dark"
-      style="text-decoration:none;padding:10px 18px;border-radius:999px;"
-    >
-      สร้างฟรี
-    </a>
+      style="font-size:0.68rem;color:#8b5cf6;text-decoration:none;border:1px solid rgba(99,102,241,0.45);
+padding:4px 9px;border-radius:8px;background:rgba(49,46,129,0.18);">สร้างฟรี</a>
 
     <button class="btn btn-dark" id="toggleApiBtn" style="padding:8px 12px">▲</button>
   </div>

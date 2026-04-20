@@ -25,18 +25,10 @@ function showToast(message){ const t=$('toast'); if(!t) return; t.textContent=me
 function setLoading(v){ $('loadingOverlay')?.classList.toggle('show', !!v); if($('generateBtn')) $('generateBtn').disabled=!!v; if($('statusPill')) $('statusPill').textContent=v?'Loading':'Ready'; }
 function showError(message=''){ const el=$('errorBanner'); if(!el) return; el.textContent=message; el.classList.toggle('show', !!message); }
 function showPending(v){ $('pendingBanner')?.classList.toggle('show', !!v); }
-function setAppAccessLock(lock = true){
-  const shell = document.querySelector('.shell');
-  if(!shell) return;
-
-  if(lock){
-    shell.style.display = 'none';
-    document.body.style.overflow = 'hidden';
-  }else{
-    shell.style.display = '';
-    document.body.style.overflow = '';
-  }
-}
+function showLoginGate(v){ $('loginGate')?.classList.toggle('show', !!v); }
+function showPendingGate(v){ $('pendingGate')?.classList.toggle('show', !!v); }
+function updatePendingGateUser(){ const el=$('pendingUserEmail'); if(!el) return; el.textContent=currentUser?.email || currentUser?.displayName || 'Signed in'; }
+function setAppAccessLock(lock = true){ const shell=document.querySelector('.shell'); if(shell) shell.style.display = lock ? 'none' : ''; document.body.style.overflow = lock ? 'hidden' : ''; }
 function saveUserApiKey(key){ if(key?.trim()) localStorage.setItem(LS_KEY,key.trim()); else localStorage.removeItem(LS_KEY); }
 function getUserApiKey(){ return localStorage.getItem(LS_KEY)||''; }
 function updateGeminiKeyStatus(message,isConnected=false){ const el=$('geminiKeyStatus'); if(!el) return; el.textContent=message; el.style.color=isConnected?'#9ed2ff':'#97a2c4'; }
@@ -117,73 +109,50 @@ async function upsertCurrentUser(user){ const email=String(user.email||'').toLow
 function isApproved(){ return !!(userDocCache?.approved || hasAdminEmail(currentUser?.email)); }
 function isAdmin(){ return !!(userDocCache?.role==='admin' || hasAdminEmail(currentUser?.email)); }
 async function signInGoogle(){ try{ await signInWithPopup(auth, provider);}catch(e){ showError(`เข้าสู่ระบบไม่สำเร็จ: ${e.message}`); showToast('เข้าสู่ระบบไม่สำเร็จ'); } }
+async function refreshCurrentUserDoc(){ if(!currentUser) return; const snap=await getDoc(doc(db,'users',currentUser.uid)); userDocCache=snap.exists()?snap.data():null; }
 
 async function renderAuthState(){
   const approved = isApproved();
 
-  // ยังไม่ login
   if(!currentUser){
-    $('loginGate')?.classList.add('show');
+    showLoginGate(true);
+    showPendingGate(false);
     setAppAccessLock(true);
 
-    if($('authPill'))
-      $('authPill').textContent = 'ยังไม่ได้เข้าสู่ระบบ';
-
-    if($('loginBtn'))
-      $('loginBtn').style.display = 'inline-flex';
-
-    if($('logoutBtn'))
-      $('logoutBtn').style.display = 'none';
-
-    if($('adminLink'))
-      $('adminLink').style.display = 'none';
+    if($('authPill')) $('authPill').textContent = 'ยังไม่ได้เข้าสู่ระบบ';
+    if($('loginBtn')) $('loginBtn').style.display = 'inline-flex';
+    if($('logoutBtn')) $('logoutBtn').style.display = 'none';
+    if($('adminLink')) $('adminLink').style.display = 'none';
 
     showPending(false);
     await renderHistory();
     return;
   }
 
-  // login แล้ว แต่ยังไม่อนุมัติ
   if(!approved){
-    $('loginGate')?.classList.add('show');
+    updatePendingGateUser();
+    showLoginGate(false);
+    showPendingGate(true);
     setAppAccessLock(true);
 
-    if($('authPill'))
-      $('authPill').textContent =
-        `${currentUser.email || currentUser.displayName || 'Signed in'} • รออนุมัติ`;
-
-    if($('loginBtn'))
-      $('loginBtn').style.display = 'none';
-
-    if($('logoutBtn'))
-      $('logoutBtn').style.display = 'inline-flex';
-
-    if($('adminLink'))
-      $('adminLink').style.display =
-        isAdmin() ? 'inline-flex' : 'none';
+    if($('authPill')) $('authPill').textContent = `${currentUser.email || currentUser.displayName || 'Signed in'} • รออนุมัติ`;
+    if($('loginBtn')) $('loginBtn').style.display = 'none';
+    if($('logoutBtn')) $('logoutBtn').style.display = 'inline-flex';
+    if($('adminLink')) $('adminLink').style.display = isAdmin() ? 'inline-flex' : 'none';
 
     showPending(true);
     await renderHistory();
     return;
   }
 
-  // login แล้ว และอนุมัติแล้ว
-  $('loginGate')?.classList.remove('show');
+  showLoginGate(false);
+  showPendingGate(false);
   setAppAccessLock(false);
 
-  if($('authPill'))
-    $('authPill').textContent =
-      currentUser.email || currentUser.displayName || 'Signed in';
-
-  if($('loginBtn'))
-    $('loginBtn').style.display = 'none';
-
-  if($('logoutBtn'))
-    $('logoutBtn').style.display = 'inline-flex';
-
-  if($('adminLink'))
-    $('adminLink').style.display =
-      isAdmin() ? 'inline-flex' : 'none';
+  if($('authPill')) $('authPill').textContent = currentUser.email || currentUser.displayName || 'Signed in';
+  if($('loginBtn')) $('loginBtn').style.display = 'none';
+  if($('logoutBtn')) $('logoutBtn').style.display = 'inline-flex';
+  if($('adminLink')) $('adminLink').style.display = isAdmin() ? 'inline-flex' : 'none';
 
   showPending(false);
   await renderHistory();
@@ -197,6 +166,6 @@ function renderHistoryList(items){ const wrap=$('historyList'); if(!wrap) return
 async function renderHistory(){ try{ const ref=collection(db,'promptHistory'); const qy=currentUser?query(ref,where('uid','==',currentUser.uid),orderBy('createdAt','desc'),limit(10)):query(ref,limit(0)); const snap=await getDocs(qy); renderHistoryList(snap.docs.map(d=>d.data())); }catch(e){ if($('historyList')) $('historyList').innerHTML=`<div class="history-item"><div class="meta">โหลดประวัติไม่สำเร็จ: ${escapeHtml(e.message)}</div></div>`; } }
 function bindEvents(){ safeBind('deleteModal','click',(e)=>{
   if(e.target?.id === 'deleteModal') closeDeleteModal();
-}); safeBind('toggleApiBtn','click',()=>toggleGeminiApiPanel()); safeBind('loginGateBtn','click',signInGoogle); safeBind('closeDeleteBtn','click',closeDeleteModal); safeBind('cancelDeleteBtn','click',closeDeleteModal); safeBind('confirmDeleteBtn','click',deleteKeyNow); safeBind('toggleEyeBtn','click',toggleGeminiKeyVisibility); safeBind('connectKeyBtn','click',connectGeminiKey); safeBind('testKeyBtn','click',testGeminiKey); safeBind('deleteKeyBtn','click',promptDeleteGeminiKey); safeBind('loginBtn','click',signInGoogle); safeBind('logoutBtn','click',()=>signOut(auth)); safeBind('generateBtn','click',generatePrompts); safeBind('copyImageBtn','click',()=>copyBlock('imagePrompt',$('copyImageBtn'))); safeBind('copyVideoBtn','click',()=>copyBlock('videoPrompt',$('copyVideoBtn'))); safeBind('editImageBtn','click',()=>togglePromptEdit('image')); safeBind('saveImageBtn','click',()=>savePromptEdit('image')); safeBind('editVideoBtn','click',()=>togglePromptEdit('video')); safeBind('saveVideoBtn','click',()=>savePromptEdit('video')); safeBind('refreshHistoryBtn','click',renderHistory); safeBind('clearBtn','click',clearForm); safeBind('exampleTissueBtn','click',()=>loadExample('tissue')); safeBind('exampleBatteryBtn','click',()=>loadExample('battery')); safeBind('exampleChairBtn','click',()=>loadExample('chair')); ['product','location','view','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
-async function init(){ bindEvents(); setAppAccessLock(true); loadForm(); updateSummary(); resetPromptEditors(); toggleGeminiApiPanel(true); const savedKey=getUserApiKey(); if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } onAuthStateChanged(auth, async (user)=>{ currentUser=user; userDocCache=null; currentHistoryId=null; showError(''); try{ if(user) await upsertCurrentUser(user); }catch(e){ showError(`Sync user ไม่สำเร็จ: ${e.message}`); } await renderAuthState(); }); }
+}); safeBind('toggleApiBtn','click',()=>toggleGeminiApiPanel()); safeBind('loginGateBtn','click',signInGoogle); safeBind('closeDeleteBtn','click',closeDeleteModal); safeBind('cancelDeleteBtn','click',closeDeleteModal); safeBind('confirmDeleteBtn','click',deleteKeyNow); safeBind('toggleEyeBtn','click',toggleGeminiKeyVisibility); safeBind('connectKeyBtn','click',connectGeminiKey); safeBind('testKeyBtn','click',testGeminiKey); safeBind('deleteKeyBtn','click',promptDeleteGeminiKey); safeBind('loginBtn','click',signInGoogle); safeBind('logoutBtn','click',()=>signOut(auth)); safeBind('pendingBackToLoginBtn','click', async ()=>{ try{ await signOut(auth); }catch(e){ showToast('ออกจากระบบไม่สำเร็จ'); } }); safeBind('generateBtn','click',generatePrompts); safeBind('copyImageBtn','click',()=>copyBlock('imagePrompt',$('copyImageBtn'))); safeBind('copyVideoBtn','click',()=>copyBlock('videoPrompt',$('copyVideoBtn'))); safeBind('editImageBtn','click',()=>togglePromptEdit('image')); safeBind('saveImageBtn','click',()=>savePromptEdit('image')); safeBind('editVideoBtn','click',()=>togglePromptEdit('video')); safeBind('saveVideoBtn','click',()=>savePromptEdit('video')); safeBind('refreshHistoryBtn','click',renderHistory); safeBind('clearBtn','click',clearForm); safeBind('exampleTissueBtn','click',()=>loadExample('tissue')); safeBind('exampleBatteryBtn','click',()=>loadExample('battery')); safeBind('exampleChairBtn','click',()=>loadExample('chair')); ['product','location','view','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
+async function init(){ bindEvents(); loadForm(); updateSummary(); resetPromptEditors(); toggleGeminiApiPanel(true); setAppAccessLock(true); showLoginGate(true); showPendingGate(false); const savedKey=getUserApiKey(); if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } onAuthStateChanged(auth, async (user)=>{ currentUser=user; userDocCache=null; currentHistoryId=null; showError(''); try{ if(user) await upsertCurrentUser(user); }catch(e){ showError(`Sync user ไม่สำเร็จ: ${e.message}`); } await renderAuthState(); }); setInterval(async ()=>{ if(currentUser && !isApproved()){ try{ await refreshCurrentUserDoc(); if(isApproved()){ await renderAuthState(); showToast('บัญชีได้รับอนุมัติแล้ว'); } }catch(e){} } }, 5000); }
 init();
