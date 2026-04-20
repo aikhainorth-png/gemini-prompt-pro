@@ -14,7 +14,8 @@ try { getAnalytics(app); } catch {}
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
-getRedirectResult(auth).catch(()=>{});
+
+let redirectHandled = false;
 
 let currentUser = null;
 let userDocCache = null;
@@ -109,8 +110,35 @@ async function callGeminiNative(d){ const apiKey=getUserApiKey(); if(!apiKey) th
 async function upsertCurrentUser(user){ const email=String(user.email||'').toLowerCase(); const ref=doc(db,'users',user.uid); const snap=await getDoc(ref); const now=serverTimestamp(); const base={uid:user.uid,email,displayName:user.displayName||'',photoURL:user.photoURL||'',lastLoginAt:now,updatedAt:now}; if(hasAdminEmail(email)){ await setDoc(ref,{...base,createdAt:snap.exists()?snap.data().createdAt||now:now,approved:true,role:'admin',approvedAt:now},{merge:true}); } else if(!snap.exists()){ await setDoc(ref,{...base,createdAt:now,approved:false,role:'user'},{merge:true}); } else { await setDoc(ref,base,{merge:true}); } const updated=await getDoc(ref); userDocCache=updated.exists()?updated.data():null; }
 function isApproved(){ return !!(userDocCache?.approved || hasAdminEmail(currentUser?.email)); }
 function isAdmin(){ return !!(userDocCache?.role==='admin' || hasAdminEmail(currentUser?.email)); }
-async function signInGoogle(){ try{ await signInWithRedirect(auth, provider);}catch(e){ showError(`เข้าสู่ระบบไม่สำเร็จ: ${e.message}`); showToast('เข้าสู่ระบบไม่สำเร็จ'); } }
+async function signInGoogle(){
+  try{
+    showError('');
+    showToast('กำลังพาไปเข้าสู่ระบบด้วย Google...');
+    await signInWithRedirect(auth, provider);
+  }catch(e){
+    showError(`เข้าสู่ระบบไม่สำเร็จ: ${e.message}`);
+    showToast('เข้าสู่ระบบไม่สำเร็จ');
+  }
+}
 async function refreshCurrentUserDoc(){ if(!currentUser) return; const snap=await getDoc(doc(db,'users',currentUser.uid)); userDocCache=snap.exists()?snap.data():null; }
+
+async function handleRedirectLogin(){
+  if(redirectHandled) return null;
+  redirectHandled = true;
+  try{
+    const result = await getRedirectResult(auth);
+    if(result?.user){
+      currentUser = result.user;
+      showToast('เข้าสู่ระบบสำเร็จ');
+    }
+    return result;
+  }catch(e){
+    console.error('Redirect login failed:', e);
+    showError(`Google Redirect Login ไม่สำเร็จ: ${e.message}`);
+    showToast('Google Redirect Login ไม่สำเร็จ');
+    return null;
+  }
+}
 
 async function renderAuthState(){
   const approved = isApproved();
@@ -168,5 +196,49 @@ async function renderHistory(){ try{ const ref=collection(db,'promptHistory'); c
 function bindEvents(){ safeBind('deleteModal','click',(e)=>{
   if(e.target?.id === 'deleteModal') closeDeleteModal();
 }); safeBind('toggleApiBtn','click',()=>toggleGeminiApiPanel()); safeBind('loginGateBtn','click',signInGoogle); safeBind('closeDeleteBtn','click',closeDeleteModal); safeBind('cancelDeleteBtn','click',closeDeleteModal); safeBind('confirmDeleteBtn','click',deleteKeyNow); safeBind('toggleEyeBtn','click',toggleGeminiKeyVisibility); safeBind('connectKeyBtn','click',connectGeminiKey); safeBind('testKeyBtn','click',testGeminiKey); safeBind('deleteKeyBtn','click',promptDeleteGeminiKey); safeBind('loginBtn','click',signInGoogle); safeBind('logoutBtn','click',()=>signOut(auth)); safeBind('pendingBackToLoginBtn','click', async ()=>{ try{ await signOut(auth); }catch(e){ showToast('ออกจากระบบไม่สำเร็จ'); } }); safeBind('generateBtn','click',generatePrompts); safeBind('copyImageBtn','click',()=>copyBlock('imagePrompt',$('copyImageBtn'))); safeBind('copyVideoBtn','click',()=>copyBlock('videoPrompt',$('copyVideoBtn'))); safeBind('editImageBtn','click',()=>togglePromptEdit('image')); safeBind('saveImageBtn','click',()=>savePromptEdit('image')); safeBind('editVideoBtn','click',()=>togglePromptEdit('video')); safeBind('saveVideoBtn','click',()=>savePromptEdit('video')); safeBind('refreshHistoryBtn','click',renderHistory); safeBind('clearBtn','click',clearForm); safeBind('exampleTissueBtn','click',()=>loadExample('tissue')); safeBind('exampleBatteryBtn','click',()=>loadExample('battery')); safeBind('exampleChairBtn','click',()=>loadExample('chair')); ['product','location','view','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
-async function init(){ bindEvents(); loadForm(); updateSummary(); resetPromptEditors(); toggleGeminiApiPanel(true); setAppAccessLock(true); showLoginGate(true); showPendingGate(false); const savedKey=getUserApiKey(); if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } onAuthStateChanged(auth, async (user)=>{ currentUser=user; userDocCache=null; currentHistoryId=null; showError(''); try{ if(user) await upsertCurrentUser(user); }catch(e){ showError(`Sync user ไม่สำเร็จ: ${e.message}`); } await renderAuthState(); }); setInterval(async ()=>{ if(currentUser && !isApproved()){ try{ await refreshCurrentUserDoc(); if(isApproved()){ await renderAuthState(); showToast('บัญชีได้รับอนุมัติแล้ว'); } }catch(e){} } }, 5000); }
+async function init(){
+  bindEvents();
+  loadForm();
+  updateSummary();
+  resetPromptEditors();
+  toggleGeminiApiPanel(true);
+  setAppAccessLock(true);
+  showLoginGate(true);
+  showPendingGate(false);
+
+  const savedKey=getUserApiKey();
+  if(savedKey&&$('userApiKey')){
+    $('userApiKey').value=savedKey;
+    updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true);
+  } else {
+    updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false);
+  }
+
+  await handleRedirectLogin();
+
+  onAuthStateChanged(auth, async (user)=>{
+    currentUser=user;
+    userDocCache=null;
+    currentHistoryId=null;
+    showError('');
+    try{
+      if(user) await upsertCurrentUser(user);
+    }catch(e){
+      showError(`Sync user ไม่สำเร็จ: ${e.message}`);
+    }
+    await renderAuthState();
+  });
+
+  setInterval(async ()=>{
+    if(currentUser && !isApproved()){
+      try{
+        await refreshCurrentUserDoc();
+        if(isApproved()){
+          await renderAuthState();
+          showToast('บัญชีได้รับอนุมัติแล้ว');
+        }
+      }catch(e){}
+    }
+  }, 5000);
+}
 init();
