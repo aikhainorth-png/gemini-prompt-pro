@@ -78,7 +78,7 @@ select option:checked{
 
 <div class="overlay" id="pendingGate">
   <div class="loader" style="max-width:520px;width:calc(100% - 30px);padding:34px;border-radius:28px;background:#0b2026;text-align:center;">
-    <div style="font-size:70px;margin-bottom:18px">🎨</div>
+    <div style="font-size:70px;margin-bottom:18px">⏳</div>
 
     <div style="font-size:42px;font-weight:900;margin-bottom:10px;color:#6fe0d4">
       รอแอดมินอนุมัติ
@@ -138,8 +138,8 @@ select option:checked{
         <div class="section"><h3>API Keys</h3><div class="api-card">
           <div class="api-head">
             <div>
-              <div class="api-title">🔐 Private Key Mode PRO MAX</div>
-              <div class="api-sub">Gemini และ OpenAI Key จะถูกเก็บไว้เฉพาะในเครื่องนี้เท่านั้น</div>
+              <div class="api-title">🔐 API คีย์ส่วนตัว</div>
+              <div class="api-sub">Gemini และ OpenAI Key จะถูกเก็บไว้เฉพาะในเครื่องของคุณเท่านั้น</div>
             </div>
             <button class="btn btn-dark" id="togglePrivateKeysBtn" type="button" style="padding:8px 12px">▼</button>
           </div>
@@ -148,7 +148,7 @@ select option:checked{
             <div style="background:linear-gradient(180deg, rgba(9,40,49,.72), rgba(11,31,39,.5));border:1px solid rgba(127,223,242,.2);border-radius:18px;padding:14px;">
               <div class="api-head">
                 <div>
-                  <div class="api-title">🔑 Gemini API Key (Opt)</div>
+                  <div class="api-title">💎 Gemini API Key (Opt)</div>
                   <div class="api-sub">Key จะถูกเก็บในเครื่องนี้เท่านั้น</div>
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
@@ -166,7 +166,7 @@ select option:checked{
             <div style="background:linear-gradient(180deg, rgba(9,40,49,.72), rgba(11,31,39,.5));border:1px solid rgba(127,223,242,.2);border-radius:18px;padding:14px;">
               <div class="api-head">
                 <div>
-                  <div class="api-title">🤖 OpenAI API Key (Opt)</div>
+                  <div class="api-title">🧠 OpenAI API Key (Opt)</div>
                   <div class="api-sub">Key จะถูกเก็บในเครื่องนี้เท่านั้น</div>
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
@@ -183,7 +183,7 @@ select option:checked{
           </div>
         </div>
 		<br>
-        <div class="section"><h3>Prompt Builder</h3><div class="field"><label class="label" for="product">1. สินค้า</label><input id="product" placeholder="เช่น แบตเตอรี่ GS Tough / เก้าอี้สำนักงาน / ทิชชู่ Scott Extra" /></div><div class="field"><label class="label" for="location">2. สถานที่</label><input id="location" placeholder="เช่น ร้านแบตเตอรี่ / ห้าง / ร้านเฟอร์นิเจอร์ / โกดัง" /></div><div class="field"><label class="label" for="view">3. มุมมองสินค้า</label><textarea id="view" placeholder="เช่น ช่างยกสินค้าโชว์หน้ากล้อง ซูมป้ายเหลืองลดราคา กล้องมือถือแบบเร่งด่วน"></textarea></div><div class="row"><div class="field"><label class="label" for="promptStrategy">4. Prompt Strategy</label><select id="promptStrategy"><option value="viral">Viral</option><option value="conversion">Conversion</option><option value="hybrid">Hybrid</option></select></div></div><div class="row"><div class="field"><label class="label" for="gemMode">5. GEM MODE</label><select id="gemMode"><option value="signboard" selected>สินค้าติดป้าย</option><option value="supplement_stop_scroll">อาหารเสริม คนหยุดดู</option></select></div><div class="field"><label class="label" for="providerMode">6. AI Provider</label><select id="providerMode"><option value="gemini" selected>Gemini</option><option value="openai">OpenAI</option></select></div></div><div class="row"><div class="field"><label class="label" for="voiceType">7. ประเภทเสียงพากย์</label><select id="voiceType"><option value="หญิง" selected>หญิง</option><option value="ชาย">ชาย</option></select></div><div class="field"><label class="label" for="viralTone">8. โทนไวรัล</label><select id="viralTone"><option value="ล้างสต๊อก" selected>ล้างสต๊อก</option><option value="ของใกล้หมด">ของใกล้หมด</option><option value="คนรุมซื้อ">คนรุมซื้อ</option></select></div></div><div class="row"><div class="field"><label class="label" for="sceneCount">9. จำนวน Scene</label><select id="sceneCount"><option value="1">1 Scene</option><option value="2">2 Scene</option><option value="3">3 Scene</option></select></div><div class="field"><label class="label" for="duration">10. เวลาทั้งหมด</label><select id="duration"><option value="8">8 วินาที</option><option value="10" selected>10 วินาที</option><option value="16">16 วินาที</option><option value="20">20 วินาที</option><option value="24">24 วินาที</option><option value="30">30 วินาที</option></select></div></div><div class="row"><button class="btn btn-dark" id="exampleTissueBtn">ตัวอย่างทิชชู่</button><button class="btn btn-dark" id="exampleBatteryBtn">ตัวอย่างแบต</button><button class="btn btn-dark" id="exampleChairBtn">ตัวอย่างเก้าอี้</button></div><div class="row" style="margin-top:10px"><button class="btn btn-dark" id="clearBtn">ล้างข้อมูล</button><button class="btn btn-primary" id="generateBtn">🚀 สร้าง Prompt</button></div><p class="muted" style="margin-top:10px">Voiceover PRO MAX • ทุก Scene มีเสียงพากย์ไทยพร้อมบทพูด • เลือก GEM MODE / Provider / เพศเสียง / โทนไวรัลได้ • มากกว่า 1 Scene ระบบจะใช้ CHARACTER FACTORY PRO MAX ล็อคตัวละครอัตโนมัติ</p></div>
+        <div class="section"><h3>Prompt Builder</h3><div class="field"><label class="label" for="product">1. สินค้า</label><input id="product" placeholder="เช่น แบตเตอรี่ GS Tough / เก้าอี้สำนักงาน / ทิชชู่ Scott Extra" /></div><div class="field"><label class="label" for="location">2. สถานที่</label><input id="location" placeholder="เช่น ร้านแบตเตอรี่ / ห้าง / ร้านเฟอร์นิเจอร์ / โกดัง" /></div><div class="field"><label class="label" for="view">3. มุมมองสินค้า</label><textarea id="view" placeholder="เช่น ช่างยกสินค้าโชว์หน้ากล้อง ซูมป้ายเหลืองลดราคา กล้องมือถือแบบเร่งด่วน"></textarea></div><div class="row"><div class="field"><label class="label" for="promptStrategy">4. แนวทางคลิป</label><select id="promptStrategy"><option value="viral">Viral</option><option value="conversion">Conversion</option><option value="hybrid">Hybrid</option></select></div></div><div class="row"><div class="field"><label class="label" for="gemMode">5. หมวดหมู่</label><select id="gemMode"><option value="signboard" selected>สินค้าติดป้าย</option><option value="supplement_stop_scroll">อาหารเสริม คนหยุดดู</option></select></div><div class="field"><label class="label" for="providerMode">6. ผู้ให้บริการ AI</label><select id="providerMode"><option value="gemini" selected>Gemini</option><option value="openai">OpenAI</option></select></div></div><div class="row"><div class="field"><label class="label" for="voiceType">7. ประเภทเสียงพากย์</label><select id="voiceType"><option value="หญิง" selected>หญิง</option><option value="ชาย">ชาย</option></select></div><div class="field"><label class="label" for="viralTone">8. โทนไวรัล</label><select id="viralTone"><option value="ล้างสต๊อก" selected>ล้างสต๊อก</option><option value="ของใกล้หมด">ของใกล้หมด</option><option value="คนรุมซื้อ">คนรุมซื้อ</option></select></div></div><div class="row"><div class="field"><label class="label" for="sceneCount">9. จำนวน Scene</label><select id="sceneCount"><option value="1">1 Scene</option><option value="2">2 Scene</option><option value="3">3 Scene</option></select></div><div class="field"><label class="label" for="duration">10. เวลาทั้งหมด</label><select id="duration"><option value="8">8 วินาที</option><option value="10" selected>10 วินาที</option><option value="16">16 วินาที</option><option value="20">20 วินาที</option><option value="24">24 วินาที</option><option value="30">30 วินาที</option></select></div></div><div class="row"><button class="btn btn-dark" id="exampleTissueBtn">ตัวอย่างทิชชู่</button><button class="btn btn-dark" id="exampleBatteryBtn">ตัวอย่างแบต</button><button class="btn btn-dark" id="exampleChairBtn">ตัวอย่างเก้าอี้</button></div><div class="row" style="margin-top:10px"><button class="btn btn-dark" id="clearBtn">ล้างข้อมูล</button><button class="btn btn-primary" id="generateBtn">🚀 สร้าง Prompt</button></div><p class="muted" style="margin-top:10px">การพากย์เสียง • ทุก Scene มีเสียงพากย์ไทยพร้อมบทพูด • เลือก หมวดหมู่ / ผู้ให้บริการ AI / เพศเสียง / โทนไวรัลได้ • มากกว่า 1 Scene ระบบจะใช้ CHARACTER FACTORY PRO MAX ล็อคตัวละครอัตโนมัติ</p></div>
         <div class="section"><h3>Summary</h3><div class="summary" id="summaryPreview"></div></div>
         <div class="section"><h3>Stats</h3><div class="stats"><div class="stat"><div class="k">Scene</div><div class="v" id="statScene">1</div></div><div class="stat"><div class="k">Duration</div><div class="v" id="statDuration">10s</div></div><div class="stat"><div class="k">Per Scene</div><div class="v" id="statPerScene">10s</div></div></div></div>
       </aside>
@@ -201,7 +201,7 @@ select option:checked{
       </main>
     </div>
   </div>
-  <div class="overlay" id="loadingOverlay"><div class="loader"><div class="spin"></div><div style="font-weight:800;font-size:18px">กำลังประมวลผล</div><div class="muted" style="margin-top:6px">Please wait...</div></div></div>
+  <div class="overlay" id="loadingOverlay"><div class="loader"><div class="spin"></div><div style="font-weight:800;font-size:18px">กำลังประมวลผล</div><div class="muted" style="margin-top:6px">⏳ โปรดรอสักครู่...</div></div></div>
   <div class="overlay" id="deleteModal">
   <div class="loader" style="max-width:500px;width:calc(100% - 30px);position:relative">
 
