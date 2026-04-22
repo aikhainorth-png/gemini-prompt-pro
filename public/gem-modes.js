@@ -1021,6 +1021,38 @@ Output quality:
   }
 };
 
+export function pickRandomFrom(list = []) {
+  if (!Array.isArray(list) || !list.length) return '';
+  return list[Math.floor(Math.random() * list.length)] || '';
+}
+
+export function autoDetectGemMode(productName = '') {
+  const name = String(productName || '').toLowerCase().trim();
+  if (!name) return 'signboard';
+
+  let bestMode = 'signboard';
+  let bestScore = 0;
+
+  Object.values(GEM_MODES).forEach((mode) => {
+    const keywords = Array.isArray(mode.keywords) ? mode.keywords : [];
+    let score = 0;
+
+    keywords.forEach((keyword) => {
+      const kw = String(keyword || '').toLowerCase().trim();
+      if (!kw) return;
+      if (name.includes(kw)) {
+        score += Math.max(1, kw.length);
+      }
+    });
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestMode = mode.id;
+    }
+  });
+
+  return bestMode || 'signboard';
+}
 
 export function getGemModeConfig(mode){
   return GEM_MODES[mode] || GEM_MODES.signboard;

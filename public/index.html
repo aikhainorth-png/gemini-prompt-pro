@@ -141,9 +141,10 @@ select option:checked{
               <div class="api-title">🔐 Private Key Mode PRO MAX</div>
               <div class="api-sub">Gemini และ OpenAI Key จะถูกเก็บไว้เฉพาะในเครื่องนี้เท่านั้น</div>
             </div>
+            <button class="btn btn-dark" id="togglePrivateKeysBtn" type="button" style="padding:8px 12px">▲</button>
           </div>
 
-          <div style="display:grid;gap:14px;">
+          <div id="privateKeysBody" style="display:grid;gap:14px;">
             <div style="background:linear-gradient(180deg, rgba(9,40,49,.72), rgba(11,31,39,.5));border:1px solid rgba(127,223,242,.2);border-radius:18px;padding:14px;">
               <div class="api-head">
                 <div>
@@ -152,7 +153,6 @@ select option:checked{
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
                   <a href="https://aistudio.google.com/api-keys" target="_blank" class="btn btn-dark" style="font-size:0.68rem;color:#5fd3c6;text-decoration:none;border:1px solid rgba(95,211,198,0.35);padding:4px 9px;border-radius:8px;background:rgba(16,90,98,0.18);">สร้างฟรี</a>
-                  <button class="btn btn-dark" id="toggleApiBtn" type="button" style="padding:8px 12px">▲</button>
                 </div>
               </div>
               <div id="apiPanelBody">
@@ -171,7 +171,6 @@ select option:checked{
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
                   <a href="https://platform.openai.com/api-keys" target="_blank" class="btn btn-dark" style="font-size:0.68rem;color:#7fdff2;text-decoration:none;border:1px solid rgba(127,223,242,0.35);padding:4px 9px;border-radius:8px;background:rgba(20,62,75,0.18);">สร้างฟรี</a>
-                  <button class="btn btn-dark" id="toggleOpenAIBtn" type="button" style="padding:8px 12px">▲</button>
                 </div>
               </div>
               <div id="openAIPanelBody">
