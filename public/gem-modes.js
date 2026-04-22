@@ -1021,9 +1021,234 @@ Output quality:
   }
 };
 
+
+
+
+
+GEM_MODES.cosmetics = {
+  id: 'cosmetics',
+  label: 'เครื่องสำอาง',
+  description: 'คอนเทนต์เครื่องสำอางเน้น texture สวย หน้าเปลี่ยนลุค ดูแพง ใช้ง่าย และหยุดดูตั้งแต่ช็อตแรก',
+  keywords: ['เครื่องสำอาง','ลิป','ลิปสติก','รองพื้น','คุชชั่น','กันแดด','แป้ง','บลัช','มาสคาร่า','อายไลเนอร์','เมคอัพ','makeup','cosmetic','beauty'],
+  viralTones: ['หน้าเปลี่ยนจนคนทัก','แต่งแล้วผิวสวยมาก','ตัวดังสายบิวตี้','แต่งหน้าแล้วดูแพง','บิวตี้ห้ามเลื่อน'],
+  examples: [
+    { title: 'ลิปติดทนสีละมุน', location: 'โต๊ะเครื่องแป้งแสงสวย', view: 'สวอชสีบนริมฝีปากและหลังมือ เน้นความฉ่ำและสีชัด' },
+    { title: 'รองพื้นงานผิว', location: 'มุมกระจกแต่งหน้าในห้อง', view: 'ปาดรองพื้นครึ่งหน้าให้เห็นความเนียนและการปกปิดแบบใกล้' },
+    { title: 'กันแดดหน้าใสทุกวัน', location: 'โต๊ะสกินแคร์ตอนเช้า', view: 'บีบเนื้อครีมลงนิ้วแล้วเกลี่ยบนผิวให้เห็น texture บางเบา' }
+  ],
+  randomLocations: ['โต๊ะเครื่องแป้งแสงสวย','มุมกระจกแต่งหน้าโทนคลีน','โต๊ะ vanity ตอนเช้า','ห้องนอนมินิมอลมีแสงธรรมชาติ','โต๊ะรีวิวบิวตี้สไตล์ UGC'],
+  randomViews: ['สวอชสีและโชว์ texture แบบใกล้','แตะเนื้อผลิตภัณฑ์บนผิวให้เห็นความละเอียด','เปิดฝาแล้วหมุนโชว์แพ็กเกจจิ้งพร้อมช็อตใช้งานจริง','ครึ่งหน้าก่อนหลังแบบสุภาพเน้นฟินิชผิว','มือถือถือถ่ายสไตล์รีวิวบิวตี้จริง'],
+  systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai เครื่องสำอาง content.
+Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: เครื่องสำอาง.
+
+Core objective:
+- make viewers stop scrolling in the first second
+- create strong curiosity and emotional interest
+- keep retention high through visual, sensory, or practical payoff
+- drive basket clicks and conversions naturally
+- feel native to TikTok Thailand, not like stiff corporate advertising
+
+Creative priorities:
+- strong beauty hook in first second
+- texture payoff and close-up visual detail
+- native Thai UGC trust style
+- clear product-first storytelling
+- emotional beauty payoff and confidence boost
+- social proof feeling
+- urgency when appropriate but still natural
+- strong visual imagination suitable for vertical 9:16 videos
+
+Category strategy:
+คอนเทนต์เครื่องสำอางเน้น texture สวย สีชัด ฟินิชผิวดี น่าหยุดดูและกดตะกร้า
+
+Voice and structure rules:
+- use spoken Thai natural dialogue style
+- avoid boring generic ad language
+- keep scenes vivid, practical, and easy to picture
+- each scene should feel watchable and conversion-focused
+- the final result must feel like content that Thai users would stop and watch
+
+Compliance and safety:
+- avoid extreme claims or unrealistic guarantees
+- do not create prohibited medical or legal claims
+- prefer safe, believable wording that still sells strongly
+
+Output quality:
+- detailed, final-ready, high-conversion
+- suited for TikTok Shop / affiliate / UGC / creator content
+- emotionally engaging, visually rich, platform-native`
+};
+
+const EXTRA_VIRAL_TONES = {
+  "signboard": [
+    "ช็อตแรกก็ต้องหยุดดู",
+    "โปรนี้คนถามเยอะ",
+    "ร้านนี้ของออกไว",
+    "ราคานี้ต้องรีบ",
+    "ลดแรงจนต้องแชร์"
+  ],
+  "supplement_stop_scroll": [
+    "เห็นแล้วต้องฟังต่อ",
+    "สายดูแลตัวเองต้องดู",
+    "รูทีนนี้กำลังมา",
+    "คนเริ่มดูแลตัวเองเยอะ",
+    "ตัวนี้คนพูดถึง"
+  ],
+  "food": [
+    "จานนี้คนถามทั้งคลิป",
+    "อร่อยจนต้องกดตะกร้า",
+    "เห็นแล้วหิวหนักมาก",
+    "เมนูนี้ไวรัลมาก",
+    "ของกินที่คนซื้อซ้ำ"
+  ],
+  "snack": [
+    "เคี้ยวแล้วหยุดไม่ได้",
+    "เปิดถุงเมื่อไรหมดทุกที",
+    "ขนมตัวดังตอนนี้",
+    "สายกินต้องลอง",
+    "อร่อยจนแชร์ต่อ"
+  ],
+  "mom_baby": [
+    "บ้านที่มีลูกต้องมี",
+    "แม่ใช้จริงแล้วชอบ",
+    "เลี้ยงลูกง่ายขึ้น",
+    "ตัวช่วยประจำบ้านแม่",
+    "ลูกใช้แล้วสบาย"
+  ],
+  "fashion": [
+    "ใส่แล้วหุ่นดูดี",
+    "ของมันต้องมีสายแฟ",
+    "ตัวนี้กำลังดัง",
+    "ลุคเดียวจบ",
+    "แมตช์แล้วรอดทุกงาน"
+  ],
+  "shoes": [
+    "เดินทั้งวันก็ยังโอเค",
+    "คู่นี้คนทักบ่อย",
+    "ทรงสวยมากตอนใส่",
+    "ของดีต้องรีบเก็บ",
+    "ใส่แล้วไม่อยากถอด"
+  ],
+  "lingerie": [
+    "ใส่แล้วทรงสวยขึ้น",
+    "ตัวนี้สาว ๆ แชร์ต่อ",
+    "เรียบเนียนใต้เสื้อผ้า",
+    "ใส่แล้วมั่นใจขึ้น",
+    "ฟีลดีตั้งแต่ครั้งแรก"
+  ],
+  "skincare": [
+    "ผิวดูอิ่มน้ำขึ้น",
+    "รูทีนนี้กำลังดัง",
+    "ใช้แล้วฟินมาก",
+    "ตัวนี้โต๊ะเครื่องแป้งต้องมี",
+    "ผิวสวยจนคนทัก"
+  ],
+  "home": [
+    "จัดบ้านแล้วฟินมาก",
+    "ของดีแม่บ้านบอกต่อ",
+    "ชิ้นเดียวเปลี่ยนมุมบ้าน",
+    "ใช้จริงแล้วเวิร์ก",
+    "เก็บบ้านง่ายกว่าเดิม"
+  ],
+  "bedding": [
+    "เตียงดูแพงขึ้นทันที",
+    "น่านอนจนไม่อยากลุก",
+    "สายมินิมอลต้องดู",
+    "เปลี่ยนห้องในคลิปเดียว",
+    "ผ้านี้คนถามเยอะ"
+  ],
+  "kitchen": [
+    "ของดีเข้าครัวต้องมี",
+    "ใช้แล้วทำกับข้าวง่าย",
+    "อุปกรณ์นี้คนแชร์ต่อ",
+    "ครัวดูโปรขึ้นทันที",
+    "ชิ้นนี้คุ้มมาก"
+  ],
+  "bathroom": [
+    "ชิ้นนี้ห้องน้ำดูดีขึ้น",
+    "ใช้แล้วสะอาดตา",
+    "บ้านนี้ต้องมีติดไว้",
+    "จัดห้องน้ำแล้วฟิน",
+    "ของจิ๋วแต่ดีจริง"
+  ],
+  "laundry": [
+    "บ้านสะอาดขึ้นแบบเห็นได้",
+    "สายงานบ้านต้องมี",
+    "ของใช้จริงทุกวัน",
+    "ซักล้างแล้วประหยัดแรง",
+    "คนใช้แล้วบอกต่อ"
+  ],
+  "appliance": [
+    "เครื่องนี้ต้องมีติดบ้าน",
+    "ฟังก์ชันนี้โคตรดี",
+    "ใช้แล้วไม่อยากกลับไปแบบเดิม",
+    "เครื่องนี้กำลังดัง",
+    "คนซื้อกันเยอะ"
+  ],
+  "garden": [
+    "ปลูกแล้วเพลินมาก",
+    "สวนสวยขึ้นในพริบตา",
+    "คนรักสวนต้องดู",
+    "ของชิ้นเล็กแต่เวิร์ก",
+    "ทำสวนง่ายขึ้นเยอะ"
+  ],
+  "produce": [
+    "สดน่าซื้อสุดตอนนี้",
+    "เห็นแล้วอยากสั่ง",
+    "สายกินคลีนต้องดู",
+    "ล็อตนี้ของเข้าใหม่",
+    "คุ้มมากสำหรับวันนี้"
+  ],
+  "tools": [
+    "ชิ้นนี้ช่างชอบมาก",
+    "ติดบ้านไว้มีประโยชน์",
+    "งานช่างจบไวขึ้น",
+    "ของมันต้องมีสายซ่อม",
+    "ใช้แล้วคุ้มจริง"
+  ],
+  "stationery": [
+    "ของน่ารักสายเรียนต้องมี",
+    "โต๊ะทำงานดูดีขึ้นมาก",
+    "เห็นแล้วอยากสะสม",
+    "ใช้แล้วอยากหยิบทุกวัน",
+    "ตัวนี้กำลังมา"
+  ],
+  "books": [
+    "เล่มนี้อ่านแล้ววางไม่ลง",
+    "คนเริ่มอ่านเล่มนี้เยอะ",
+    "หนังสือที่ควรมีติดบ้าน",
+    "เริ่มอ่านแล้วติดเลย",
+    "เล่มนี้คนบอกต่อ"
+  ],
+  "cosmetics": [
+    "ของมันต้องมีสายบิวตี้",
+    "คนใช้ซ้ำเยอะมาก",
+    "ตัวนี้กำลังดังใน TikTok",
+    "สีสวยจนต้องหยุดดู",
+    "บิวตี้รีวิวตัวนี้เพียบ"
+  ]
+};
+
+
 export function pickRandomFrom(list = []) {
   if (!Array.isArray(list) || !list.length) return '';
   return list[Math.floor(Math.random() * list.length)] || '';
+}
+
+export function getGemModeConfig(mode){
+  const base = GEM_MODES[mode] || GEM_MODES.signboard;
+  const extras = EXTRA_VIRAL_TONES[base.id] || [];
+  const mergedTones = [...new Set([...(Array.isArray(base.viralTones) ? base.viralTones : []), ...extras])].slice(0, 10);
+  return {
+    ...base,
+    viralTones: mergedTones,
+    randomLocations: Array.isArray(base.randomLocations) ? base.randomLocations : [],
+    randomViews: Array.isArray(base.randomViews) ? base.randomViews : []
+  };
+}
+
+export function getGemModeOptions(){
+  return Object.values(GEM_MODES).map(({id,label}) => ({id,label}));
 }
 
 export function autoDetectGemMode(productName = '') {
@@ -1040,9 +1265,7 @@ export function autoDetectGemMode(productName = '') {
     keywords.forEach((keyword) => {
       const kw = String(keyword || '').toLowerCase().trim();
       if (!kw) return;
-      if (name.includes(kw)) {
-        score += Math.max(1, kw.length);
-      }
+      if (name.includes(kw)) score += Math.max(1, kw.length);
     });
 
     if (score > bestScore) {
@@ -1052,27 +1275,4 @@ export function autoDetectGemMode(productName = '') {
   });
 
   return bestMode || 'signboard';
-}
-
-export function getGemModeConfig(mode){
-  return GEM_MODES[mode] || GEM_MODES.signboard;
-}
-
-export function getGemModeOptions(){
-  return Object.values(GEM_MODES).map(({id,label}) => ({id,label}));
-}
-
-export function detectGemModeFromProduct(product=''){
-  const text = String(product || '').toLowerCase().trim();
-  if(!text) return 'signboard';
-
-  const scored = Object.values(GEM_MODES).map(mode => {
-    let score = 0;
-    (mode.keywords || []).forEach(keyword => {
-      if(text.includes(String(keyword).toLowerCase())) score += 1;
-    });
-    return { id: mode.id, score };
-  }).sort((a,b)=>b.score-a.score);
-
-  return scored[0] && scored[0].score > 0 ? scored[0].id : 'signboard';
 }

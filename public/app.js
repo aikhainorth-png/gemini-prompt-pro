@@ -41,7 +41,7 @@ function getOpenAIKey(){ return localStorage.getItem(LS_OPENAI_KEY)||''; }
 function updateOpenAIKeyStatus(message,isConnected=false){ const el=$('openAIKeyStatus'); if(!el) return; el.textContent=message; el.style.color=isConnected?'#9ed2ff':'#97a2c4'; }
 function updateOpenAINativeModeStatus(message){ const el=$('openAINativeStatus'); if(el) el.textContent=message; }
 function toggleOpenAIPanel(forceOpen){ const body=$('openAIPanelBody'); const btn=$('toggleOpenAIBtn'); if(!body||!btn) return; const open=typeof forceOpen==='boolean'?forceOpen:body.style.display==='none'; body.style.display=open?'block':'none'; btn.textContent=open?'▲':'▼'; }
-function toggleOpenAIKeyVisibility(){ const input=$('userOpenAIKey'); if(input) input.type=input.type==='password'?'text':'password'; }
+function toggleOpenAIKeyVisibility(){ const input=$('userOpenAIKey'); const btn=$('toggleOpenAIEyeBtn'); if(!input) return; const showing=input.type==='text'; input.type=showing?'password':'text'; if(btn) btn.textContent=showing?'👁️':'🙈'; }
 function togglePrivateKeysPanel(forceOpen){ const body=$('privateKeysBody'); const btn=$('togglePrivateKeysBtn'); if(!body||!btn) return; const open=typeof forceOpen==='boolean'?forceOpen:body.style.display==='none'; body.style.display=open?'grid':'none'; btn.textContent=open?'▲':'▼'; }
 
 function connectOpenAIKey(){ const key=($('userOpenAIKey')?.value||'').trim(); if(!key){ updateOpenAIKeyStatus('กรุณาวาง OpenAI API Key ก่อนเชื่อมต่อ'); return showToast('กรุณาวาง OpenAI API Key ก่อน'); } saveOpenAIKey(key); updateOpenAINativeModeStatus('⚡ OpenAI Private Mode • ใช้ Key ส่วนตัวแล้ว'); updateOpenAIKeyStatus('เชื่อมต่อ OpenAI Key เรียบร้อย • พร้อมใช้งาน', true); showToast('เชื่อมต่อ OpenAI API Key แล้ว'); }
@@ -58,7 +58,7 @@ function promptDeleteOpenAIKey(){
 function updateGeminiKeyStatus(message,isConnected=false){ const el=$('geminiKeyStatus'); if(!el) return; el.textContent=message; el.style.color=isConnected?'#9ed2ff':'#97a2c4'; }
 function updateGeminiNativeModeStatus(message){ const el=$('geminiNativeStatus'); if(el) el.textContent=message; }
 function toggleGeminiApiPanel(forceOpen){ const body=$('apiPanelBody'); const btn=$('toggleApiBtn'); if(!body||!btn) return; const open=typeof forceOpen==='boolean'?forceOpen:body.style.display==='none'; body.style.display=open?'block':'none'; btn.textContent=open?'▲':'▼'; }
-function toggleGeminiKeyVisibility(){ const input=$('userApiKey'); if(input) input.type=input.type==='password'?'text':'password'; }
+function toggleGeminiKeyVisibility(){ const input=$('userApiKey'); const btn=$('toggleEyeBtn'); if(!input) return; const showing=input.type==='text'; input.type=showing?'password':'text'; if(btn) btn.textContent=showing?'👁️':'🙈'; }
 function connectGeminiKey(){ const key=($('userApiKey')?.value||'').trim(); if(!key){ updateGeminiKeyStatus('กรุณาวาง Gemini API Key ก่อนเชื่อมต่อ'); return showToast('กรุณาวาง Gemini API Key ก่อน'); } saveUserApiKey(key); updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • ใช้ Key ส่วนตัวแล้ว'); updateGeminiKeyStatus('เชื่อมต่อ Key เรียบร้อย • ระบบจะใช้ Key นี้ในการเรียก Gemini', true); showToast('เชื่อมต่อ Gemini API Key แล้ว'); }
 async function testGeminiKey(){ const key=($('userApiKey')?.value||'').trim(); if(!key){ updateGeminiKeyStatus('กรุณาวาง Gemini API Key ก่อนทดสอบ'); return showToast('ยังไม่มี Gemini API Key'); } updateGeminiKeyStatus('กำลังทดสอบ Gemini API Key...'); try{ const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`); const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d?.error?.message||`Gemini API Error ${r.status}`); saveUserApiKey(key); updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • ทดสอบ Key ผ่านแล้ว'); updateGeminiKeyStatus('ทดสอบ Key สำเร็จ • พร้อมใช้งาน', true); showToast('ทดสอบ Gemini API Key สำเร็จ'); }catch(e){ updateGeminiKeyStatus(`ทดสอบ Key ไม่ผ่าน • ${e.message}`); showToast('ทดสอบ Key ไม่ผ่าน'); } }
 function promptDeleteGeminiKey(){
@@ -113,6 +113,13 @@ function populateViralToneOptions(modeId, selectedTone=''){
   select.value = tones.includes(selectedTone) ? selectedTone : tones[0];
 }
 
+
+function normalizeExampleItem(example, index = 0){
+  if(!example) return { title:`ตัวอย่าง ${index + 1}`, location:'', view:'' };
+  if(typeof example === 'string') return { title: example, location:'', view:'' };
+  return { title: example.title || `ตัวอย่าง ${index + 1}`, location: example.location || '', view: example.view || '' };
+}
+
 function updateExampleButtons(modeId){
   const mode = getGemModeConfig(modeId);
   const examples = Array.isArray(mode.examples) ? mode.examples : [];
@@ -120,7 +127,7 @@ function updateExampleButtons(modeId){
   ids.forEach((id, index) => {
     const btn = $(id);
     if(!btn) return;
-    btn.textContent = examples[index] ? examples[index] : `ตัวอย่าง ${index + 1}`;
+    const ex = normalizeExampleItem(examples[index], index); btn.textContent = ex.title;
   });
 }
 
@@ -182,11 +189,12 @@ function resetPromptEditors(){ setPromptEditing('image',false); setPromptEditing
 function togglePromptEdit(type){ const map={image:'imagePrompt',video:'videoPrompt',caption:'captionPrompt'}; const textarea=$(map[type]||'videoPrompt'); const isImage=type==='image'; if(!textarea||!textarea.value.trim()) return showToast('ยังไม่มี prompt ให้แก้ไข'); if(!textarea.readOnly) return setPromptEditing(type,false); setPromptEditing(type,true); textarea.focus(); }
 async function savePromptEdit(type){ const map={image:'imagePrompt',video:'videoPrompt',caption:'captionPrompt'}; const textarea=$(map[type]||'videoPrompt'); const isImage=type==='image'; const value=(textarea?.value||'').trim(); if(!value) return showToast('ข้อความว่างไม่ได้'); try{ if(currentUser && currentHistoryId){ const updateMap={ image:{imagePrompt:value,updatedAt:serverTimestamp()}, video:{videoPrompt:value,updatedAt:serverTimestamp()}, caption:{captionHashtags:value,updatedAt:serverTimestamp()} }; await updateDoc(doc(db,'promptHistory',currentHistoryId), updateMap[type] || updateMap.video); await renderHistory(); } setPromptEditing(type,false); const msgMap={image:'บันทึก IMAGE PROMPT แล้ว',video:'บันทึก VDO PROMPT แล้ว',caption:'บันทึก CAPTION แล้ว'}; showToast(msgMap[type] || 'บันทึกแล้ว'); }catch(e){ showToast(`บันทึกไม่สำเร็จ: ${e.message}`); } }
 
+
 function loadExample(slot){
   const mode = getGemModeConfig($('gemMode')?.value || 'signboard');
   const examples = Array.isArray(mode.examples) ? mode.examples : [];
-  const exampleName = examples[slot] || examples[0];
-  if(!exampleName) return;
+  const ex = normalizeExampleItem(examples[slot] || examples[0], slot);
+  if(!ex.title) return;
 
   const exampleDefaults = {
     voiceType: ['แม่และเด็ก','ชุดชั้นใน','เครื่องสำอาง','ครีมบำรุงผิว','แฟชั่น'].some(word => mode.label.includes(word)) ? 'หญิง' : (($('voiceType')?.value) || 'หญิง'),
@@ -195,9 +203,9 @@ function loadExample(slot){
     duration: 10
   };
 
-  if($('product')) $('product').value = exampleName;
-  if($('location')) $('location').value = pickRandomFrom(mode.randomLocations || []);
-  if($('view')) $('view').value = pickRandomFrom(mode.randomViews || []);
+  if($('product')) $('product').value = ex.title;
+  if($('location')) $('location').value = ex.location || pickRandomFrom(mode.randomLocations || []);
+  if($('view')) $('view').value = ex.view || pickRandomFrom(mode.randomViews || []);
   if($('voiceType')) $('voiceType').value = exampleDefaults.voiceType;
   populateViralToneOptions(mode.id, exampleDefaults.viralTone);
   if($('sceneCount')) $('sceneCount').value = String(exampleDefaults.sceneCount);
@@ -205,6 +213,7 @@ function loadExample(slot){
   saveAndRefresh();
   showToast(`โหลดตัวอย่าง ${mode.label} แล้ว`);
 }
+
 function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('gemMode')) $('gemMode').value='signboard'; if($('providerMode')) $('providerMode').value='gemini'; if($('voiceType')) $('voiceType').value='หญิง'; populateViralToneOptions('signboard','ล้างสต๊อก'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
 function buildSystemInstruction(d = getPreparedFormData(getFormData())){
   const gem = getGemModeConfig(d.gemMode);
@@ -421,5 +430,5 @@ function rebindOpenAIButtons(){
   const eyeBtn=$('toggleOpenAIEyeBtn'); if(eyeBtn) eyeBtn.onclick=toggleOpenAIKeyVisibility;
 }
 
-async function init(){ populateGemModeOptions('signboard'); bindEvents(); rebindOpenAIButtons(); loadForm(); applyGemMode(($('gemMode')?.value || 'signboard'), { keepTone: true, skipSave: true }); updateSummary(); resetPromptEditors(); togglePrivateKeysPanel(true); setAppAccessLock(true); showLoginGate(true); showPendingGate(false); const savedKey=getUserApiKey(); if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } const savedOpenAIKey=getOpenAIKey(); if(savedOpenAIKey&&$('userOpenAIKey')){ $('userOpenAIKey').value=savedOpenAIKey; updateOpenAIKeyStatus('พบ OpenAI API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateOpenAIKeyStatus('ยังไม่ได้เชื่อมต่อ OpenAI API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } onAuthStateChanged(auth, async (user)=>{ currentUser=user; userDocCache=null; currentHistoryId=null; showError(''); try{ if(user) await upsertCurrentUser(user); }catch(e){ showError(`Sync user ไม่สำเร็จ: ${e.message}`); } await renderAuthState(); }); setInterval(async ()=>{ if(currentUser && !isApproved()){ try{ await refreshCurrentUserDoc(); if(isApproved()){ await renderAuthState(); showToast('บัญชีได้รับอนุมัติแล้ว'); } }catch(e){} } }, 5000); }
+async function init(){ populateGemModeOptions('signboard'); bindEvents(); rebindOpenAIButtons(); loadForm(); applyGemMode(($('gemMode')?.value || 'signboard'), { keepTone: true, skipSave: true }); updateSummary(); resetPromptEditors(); togglePrivateKeysPanel(false); setAppAccessLock(true); showLoginGate(true); showPendingGate(false); const savedKey=getUserApiKey(); if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } const savedOpenAIKey=getOpenAIKey(); if(savedOpenAIKey&&$('userOpenAIKey')){ $('userOpenAIKey').value=savedOpenAIKey; updateOpenAIKeyStatus('พบ OpenAI API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateOpenAIKeyStatus('ยังไม่ได้เชื่อมต่อ OpenAI API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } onAuthStateChanged(auth, async (user)=>{ currentUser=user; userDocCache=null; currentHistoryId=null; showError(''); try{ if(user) await upsertCurrentUser(user); }catch(e){ showError(`Sync user ไม่สำเร็จ: ${e.message}`); } await renderAuthState(); }); setInterval(async ()=>{ if(currentUser && !isApproved()){ try{ await refreshCurrentUserDoc(); if(isApproved()){ await renderAuthState(); showToast('บัญชีได้รับอนุมัติแล้ว'); } }catch(e){} } }, 5000); }
 document.addEventListener('DOMContentLoaded', init);

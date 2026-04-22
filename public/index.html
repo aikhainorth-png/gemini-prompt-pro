@@ -141,10 +141,10 @@ select option:checked{
               <div class="api-title">🔐 Private Key Mode PRO MAX</div>
               <div class="api-sub">Gemini และ OpenAI Key จะถูกเก็บไว้เฉพาะในเครื่องนี้เท่านั้น</div>
             </div>
-            <button class="btn btn-dark" id="togglePrivateKeysBtn" type="button" style="padding:8px 12px">▲</button>
+            <button class="btn btn-dark" id="togglePrivateKeysBtn" type="button" style="padding:8px 12px">▼</button>
           </div>
 
-          <div id="privateKeysBody" style="display:grid;gap:14px;">
+          <div id="privateKeysBody" style="display:none;gap:14px;">
             <div style="background:linear-gradient(180deg, rgba(9,40,49,.72), rgba(11,31,39,.5));border:1px solid rgba(127,223,242,.2);border-radius:18px;padding:14px;">
               <div class="api-head">
                 <div>
@@ -156,7 +156,7 @@ select option:checked{
                 </div>
               </div>
               <div id="apiPanelBody">
-                <div class="api-wrap"><input id="userApiKey" type="password" placeholder="วาง Gemini API Key ของคุณ" /><button class="eye" id="toggleEyeBtn" type="button">👁️</button></div>
+                <div class="api-wrap"><input id="userApiKey" type="password" placeholder="วาง Gemini API Key ของคุณ" /><button class="eye" id="toggleEyeBtn" type="button" title="แสดง/ซ่อน Gemini Key">👁️</button></div>
                 <div class="api-actions"><button class="btn btn-green" id="connectKeyBtn" type="button">เชื่อมต่อ Key</button><button class="btn btn-dark" id="testKeyBtn" type="button">ทดสอบ Key</button><button class="btn btn-red" id="deleteKeyBtn" type="button">ลบ</button></div>
                 <div class="statusline" id="geminiKeyStatus"></div>
                 <div class="native" id="geminiNativeStatus">⚡ Gemini Native Full-Engine Mode พร้อมใช้งาน</div>
@@ -174,7 +174,7 @@ select option:checked{
                 </div>
               </div>
               <div id="openAIPanelBody">
-                <div class="api-wrap"><input id="userOpenAIKey" type="password" placeholder="วาง OpenAI API Key ของคุณ" /><button class="eye" id="toggleOpenAIEyeBtn" type="button">👁️</button></div>
+                <div class="api-wrap"><input id="userOpenAIKey" type="password" placeholder="วาง OpenAI API Key ของคุณ" /><button class="eye" id="toggleOpenAIEyeBtn" type="button" title="แสดง/ซ่อน OpenAI Key">👁️</button></div>
                 <div class="api-actions"><button class="btn btn-green" id="connectOpenAIKeyBtn" type="button">เชื่อมต่อ Key</button><button class="btn btn-dark" id="testOpenAIKeyBtn" type="button">ทดสอบ Key</button><button class="btn btn-red" id="deleteOpenAIKeyBtn" type="button">ลบ</button></div>
                 <div class="statusline" id="openAIKeyStatus"></div>
                 <div class="native" id="openAINativeStatus">⚡ OpenAI Private Mode พร้อมใช้งาน</div>
