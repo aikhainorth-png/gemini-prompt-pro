@@ -1028,55 +1028,186 @@ Output quality:
 GEM_MODES.cosmetics = {
   id: 'cosmetics',
   label: 'เครื่องสำอาง',
-  description: 'คอนเทนต์เครื่องสำอางเน้น texture สวย หน้าเปลี่ยนลุค ดูแพง ใช้ง่าย และหยุดดูตั้งแต่ช็อตแรก',
-  keywords: ['เครื่องสำอาง','ลิป','ลิปสติก','รองพื้น','คุชชั่น','กันแดด','แป้ง','บลัช','มาสคาร่า','อายไลเนอร์','เมคอัพ','makeup','cosmetic','beauty'],
-  viralTones: ['หน้าเปลี่ยนจนคนทัก','แต่งแล้วผิวสวยมาก','ตัวดังสายบิวตี้','แต่งหน้าแล้วดูแพง','บิวตี้ห้ามเลื่อน'],
-  examples: [
-    { title: 'ลิปติดทนสีละมุน', location: 'โต๊ะเครื่องแป้งแสงสวย', view: 'สวอชสีบนริมฝีปากและหลังมือ เน้นความฉ่ำและสีชัด' },
-    { title: 'รองพื้นงานผิว', location: 'มุมกระจกแต่งหน้าในห้อง', view: 'ปาดรองพื้นครึ่งหน้าให้เห็นความเนียนและการปกปิดแบบใกล้' },
-    { title: 'กันแดดหน้าใสทุกวัน', location: 'โต๊ะสกินแคร์ตอนเช้า', view: 'บีบเนื้อครีมลงนิ้วแล้วเกลี่ยบนผิวให้เห็น texture บางเบา' }
+  description: 'COSMETICS GOD MODE V3 — ระบบสร้างไวรัลบิวตี้คอนเทนต์แบบหลายชั้น เน้น hook แรง texture payoff luxury-UGC hybrid และ conversion psychology สำหรับตลาดไทย',
+  keywords: [
+    'เครื่องสำอาง','เมคอัพ','makeup','cosmetic','beauty','บิวตี้',
+    'ลิป','ลิปสติก','lip','lipstick','tint','gloss','บาล์ม','lip oil',
+    'รองพื้น','foundation','คุชชั่น','cushion','concealer','คอนซีลเลอร์','แป้ง','powder','primer',
+    'กันแดด','sunscreen','spf','เซรั่ม','serum','essence','โทนเนอร์','toner','มอยส์เจอร์','moisturizer',
+    'บลัช','blush','บรอนเซอร์','bronzer','ไฮไลต์','highlighter',
+    'มาสคาร่า','mascara','อายไลเนอร์','eyeliner','อายแชโดว์','eyeshadow','เขียนคิ้ว','brow',
+    'พาเลตต์','palette','งานผิว','glass skin','soft glam','clean girl',
+    'รีวิวบิวตี้','sephora','watsons','eveandboy','k-beauty'
   ],
-  randomLocations: ['โต๊ะเครื่องแป้งแสงสวย','มุมกระจกแต่งหน้าโทนคลีน','โต๊ะ vanity ตอนเช้า','ห้องนอนมินิมอลมีแสงธรรมชาติ','โต๊ะรีวิวบิวตี้สไตล์ UGC'],
-  randomViews: ['สวอชสีและโชว์ texture แบบใกล้','แตะเนื้อผลิตภัณฑ์บนผิวให้เห็นความละเอียด','เปิดฝาแล้วหมุนโชว์แพ็กเกจจิ้งพร้อมช็อตใช้งานจริง','ครึ่งหน้าก่อนหลังแบบสุภาพเน้นฟินิชผิว','มือถือถือถ่ายสไตล์รีวิวบิวตี้จริง'],
-  systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai เครื่องสำอาง content.
+  viralTones: [
+    'หน้าเปลี่ยนจนคนทัก',
+    'แต่งแล้วผิวสวยมาก',
+    'ของมันต้องมีสายบิวตี้',
+    'ตัวดังใน TikTok',
+    'เมคอัพแล้วดูแพง',
+    'บิวตี้ห้ามเลื่อน',
+    'สีนี้กำลังไวรัล',
+    'รีวิวแน่นทั้งฟีด',
+    'สาวๆต้องดู',
+    'ใช้แล้วชอบมาก'
+  ],
+  subModes: {
+    lip_beauty: {
+      label: 'Lip Beauty',
+      focus: 'สีชัด ติดทน ปากสวย ดูแพง ถ่ายขึ้นกล้อง',
+      hooks: ['ลิปสีนี้ขึ้นฟีดรัวๆ', 'ปาดครั้งเดียวสีชัดมาก', 'สีนี้ทาแล้วหน้าดูแพงขึ้นทันที']
+    },
+    base_makeup: {
+      label: 'Base Makeup',
+      focus: 'งานผิว เนียนกริบ glow matte soft-focus before/after สุภาพ',
+      hooks: ['ครึ่งหน้าแล้วต่างชัดมาก', 'งานผิวแบบนี้คนถามทั้งคลิป', 'รองพื้นตัวนี้ผิวดูแพงจริง']
+    },
+    sunscreen_beauty: {
+      label: 'SPF Beauty',
+      focus: 'กันแดดเนื้อสวย ไม่วอก ใช้ทุกวัน ดูแพงแบบ skincare-makeup hybrid',
+      hooks: ['กันแดดตัวนี้คนรีวิวแน่นมาก', 'ทาแล้วผิวยังสวยไม่ดรอป', 'เนื้อดีจนอยากทาซ้ำทั้งวัน']
+    },
+    skincare_glow: {
+      label: 'Skincare Glow',
+      focus: 'ฉ่ำโกลว์ ดูสุขภาพดี texture payoff close-up',
+      hooks: ['ขวดนี้ขึ้นโต๊ะเครื่องแป้งทุกคน', 'ผิวดูอิ่มน้ำจนคนทัก', 'เท็กซ์เจอร์สวยมากจนต้องหยุดดู']
+    },
+    eye_makeup: {
+      label: 'Eye Makeup',
+      focus: 'ขนตาเด้ง ตาคม โทนตาสวย จับแสงดี',
+      hooks: ['ปัดครั้งเดียวตาตื่นเลย', 'ช็อตนี้ขนตาสวยมาก', 'ตาดูเต็มขึ้นทันทีแบบไม่ต้องพูดเยอะ']
+    }
+  },
+  beautyHooks: [
+    'ตัวนี้คนถามทั้งฟีด',
+    'ใช้ตัวไหนทำไมหน้าดูแพงขึ้น',
+    'ไม่คิดว่าจะรอด แต่รอดมาก',
+    'สีนี้ขึ้นทุกคลิปตอนนี้',
+    'ของชิ้นนี้หยิบใช้บ่อยสุด',
+    'รีวิวแน่นจนต้องลองเอง',
+    'เท็กซ์เจอร์สวยจนหยุดดู',
+    'ช็อตเดียวก็รู้ว่าดี',
+    'ตัวนี้สาวๆซื้อซ้ำเยอะ',
+    'หยิบขึ้นมาแล้ววางไม่ลง'
+  ],
+  buyerPsychology: [
+    'ดูแพงขึ้น',
+    'ผิวดูดีขึ้น',
+    'คนทักง่ายขึ้น',
+    'ของดังใน TikTok',
+    'รีวิวเยอะน่าเชื่อถือ',
+    'หยิบใช้ทุกวัน',
+    'limited feeling',
+    'สีสวยต้องรีบเก็บ',
+    'ซื้อแล้วคุ้ม',
+    'เหมาะเป็นของมันต้องมีบนโต๊ะเครื่องแป้ง'
+  ],
+  examples: [
+    { title: 'ลิปติดทนสีลูกคุณ', location: 'Sephora New York Times Square', view: 'สวอชสีบนปากและหลังมือ close-up แสงขาวคม luxury beauty shot' },
+    { title: 'รองพื้นงานผิว AI', location: 'K-beauty Seoul Mint Store', view: 'ปาดครึ่งหน้า before/after สุภาพ เน้นฟินิชผิว glow' },
+    { title: 'กันแดดหน้าใสทุกวัน', location: 'Watsons Thailand flagship store', view: 'บีบเนื้อครีม close-up แล้วเกลี่ยบนแก้ม แสงธรรมชาติ' }
+  ],
+  randomLocations: [
+    'Watsons Thailand flagship store','EVEANDBOY Bangkok pink beauty hall','Beautrium Thailand mega store','Sephora Paris Champs Elysees','Sephora New York Times Square','Sephora Dubai Mall','Sephora Singapore ION Orchard','Boots London Oxford Street','Boots Manchester Beauty Hall','Ulta Beauty Los Angeles',
+    'Ulta Beauty New York','Harrods Beauty London','Selfridges Beauty Hall London','Douglas Berlin flagship','Douglas Amsterdam luxury counter','Marionnaud Paris','Galeries Lafayette Beauty Paris','Le Bon Marche Paris Beauty Hall','K-beauty Seoul Hongdae flagship','Olive Young Seoul mega branch',
+    'Olive Young Gangnam flagship','Olive Young Myeongdong','StyleNanda Pink Hotel Seoul','3CE Seoul flagship store','Innisfree Jeju concept store','Etude House Seoul pastel store','Laneige Seoul premium counter','The Face Shop Seoul street store','Aritaum Korea beauty mall','Shinsegae Department Beauty Seoul',
+    'Isetan Tokyo beauty floor','Mitsukoshi Ginza beauty zone','Shibuya Hikarie beauty floor','Loft Tokyo cosmetics section','Don Quijote Tokyo beauty wall','Matsumoto Kiyoshi Tokyo beauty store','@Cosme Harajuku flagship','Daimaru Osaka beauty floor','Hankyu Umeda Beauty Studio','Sasa Hong Kong flagship',
+    'Mannings Hong Kong beauty store','Watsons Hong Kong premium beauty','DFS T Galleria Hong Kong','Taipei Ximending beauty plaza','Cosmed Taiwan flagship','Poya Taiwan beauty mall','Singapore Changi Duty Free Beauty','ION Orchard Singapore beauty wing','Takashimaya Singapore cosmetics floor','KLCC Kuala Lumpur beauty hall',
+    'Pavilion Kuala Lumpur Sephora','Mid Valley Malaysia Watsons','Central World Bangkok beauty zone','Siam Paragon luxury beauty hall','ICONSIAM beauty department','EmQuartier beauty floor','SM Mall Manila beauty hall','Glorietta Manila cosmetics zone','Jakarta Grand Indonesia beauty floor','Plaza Senayan Jakarta beauty zone',
+    'Sydney Westfield beauty hall','Melbourne Chadstone luxury beauty','Auckland beauty plaza','Nordstrom New York beauty floor','Bloomingdales NYC cosmetics hall','Saks Fifth Avenue beauty NYC','Macys Herald Square beauty','Beverly Center LA beauty wing','Las Vegas luxury beauty strip','Toronto Eaton Centre beauty hall',
+    'Vancouver Pacific Centre beauty','Mexico City luxury beauty mall','Sao Paulo beauty shopping district','Rio luxury mall beauty floor','Madrid El Corte Ingles beauty','Barcelona luxury beauty arcade','Milan Galleria beauty hall','Rome Rinascente beauty floor','Berlin KaDeWe beauty hall','Munich luxury cosmetics floor',
+    'Zurich Bahnhofstrasse beauty','Geneva luxury skincare boutique','Amsterdam Bijenkorf beauty hall','Brussels luxury cosmetics gallery','Stockholm Scandinavian beauty house','Copenhagen Nordic beauty lab','Oslo premium skincare gallery','Helsinki clean beauty store','Vienna department beauty floor','Prague luxury fragrance beauty',
+    'Dubai Mall luxury beauty avenue','Abu Dhabi beauty grand hall','Istanbul beauty bazaar modern hall','Doha luxury cosmetics wing','Riyadh premium beauty mall','Cape Town luxury beauty plaza','Johannesburg cosmetics mega mall','French Pharmacy beauty apothecary','Japanese minimal beauty concept store','TikTok Beauty Hall LED neon studio'
+  ],
+  sceneTypes: [
+    'Counter Editorial — product on premium tray with soft bokeh backlight',
+    'Real Store Aisle — authentic shelf-packed store with shoppers blurred behind',
+    'Display Island Hero — brand stand fully filled with hero products',
+    'Walk-By Discovery — POV walking past shelves until product dominates frame',
+    'Shelf Reveal — start at sign then pan down to fully stocked beauty shelf',
+    'Ring Light Review — creator-facing mirror setup with Gen Z beauty energy',
+    'Macro Texture Lab — ultra-close beauty texture reveal with glossy reflections',
+    'Vanity Ritual — calm morning skincare/makeup routine at a vanity desk'
+  ],
+  randomViews: [
+    'close-up swatch สีบนหลังมือ macro texture shot',
+    'ทาลิปหนึ่งปาดเต็มริมฝีปาก แสงสวย glossy',
+    'เปิดตลับคุชชั่นแล้วกด puff ช้าๆ luxury shot',
+    'ปาดรองพื้นครึ่งหน้า before/after แบบสุภาพ',
+    'หยดเซรั่มลงแก้ม close-up glow skin',
+    'หมุนแพ็กเกจจิ้งบนกระจกสะท้อนแสงหรู',
+    'ชั้นวางสินค้าแน่นเต็มเฟรม คนเดินเบลอหลัง',
+    'POV เดินเข้าร้าน beauty hall แล้วเจอสินค้าพระเอก',
+    'หยิบสินค้าออกจาก shelf แล้วซูมโลโก้',
+    'วางสินค้าบน tray หินอ่อน bokeh luxury',
+    'มือ influencer ถือมือถือรีวิวหน้ากระจก ring light',
+    'flatlay เครื่องสำอางครบเซ็ต aesthetic shot',
+    'เปิดฝาหมุนลิปสติกขึ้นช้าๆ satisfying',
+    'ใช้แปรงแต่งหน้าแตะบลัชบนแก้ม close-up',
+    'มาสคาร่าปัดขนตา one stroke macro',
+    'สาดแสงแดดตอนทากันแดด texture reveal',
+    'product hero on black marble counter with spotlight',
+    'soft pastel K-beauty shelf with hand reaching for hero item',
+    'mirror selfie creator angle with beauty product near cheek',
+    'testers lined in perfect rows then quick rack focus to hero item'
+  ],
+  influencerArchetypes: [
+    'luxury beauty editor',
+    'Thai TikTok beauty creator',
+    'clean-girl skincare reviewer',
+    'K-beauty trend hunter',
+    'pharmacy skincare girl',
+    'night market beauty deal hunter'
+  ],
+  sampleCommands: [
+    'ครีมกันแดด Gala-C | Watsons | Flow | หญิง',
+    'ลิป La Glace | Sephora | Super Grok | หญิง',
+    'คอนซีลเลอร์ AI | K-beauty | Grok | ชาย',
+    'สกินแคร์ Yamthaiy | Harrods | Flow | หญิง',
+    'ลิป Music Flower | Night Market | Flow | หญิง'
+  ],
+  systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai cosmetics content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: เครื่องสำอาง.
 
 Core objective:
 - make viewers stop scrolling in the first second
 - create strong curiosity and emotional interest
-- keep retention high through visual, sensory, or practical payoff
+- keep retention high through visual, sensory, and beauty payoff
 - drive basket clicks and conversions naturally
-- feel native to TikTok Thailand, not like stiff corporate advertising
+- feel native to TikTok Thailand, never stiff corporate advertising
 
-Creative priorities:
-- strong beauty hook in first second
-- texture payoff and close-up visual detail
-- native Thai UGC trust style
-- clear product-first storytelling
-- emotional beauty payoff and confidence boost
-- social proof feeling
-- urgency when appropriate but still natural
-- strong visual imagination suitable for vertical 9:16 videos
+COSMETICS GOD MODE V3 priorities:
+- identify likely sub-category from the product name
+- choose the most conversion-friendly beauty setting automatically
+- choose a scene type that best shows texture, payoff, and premium feel
+- prioritize visual satisfaction: swatch, texture, glow, packaging, application, finish
+- inject Thai beauty buyer psychology: look expensive, skin looks better, people ask what you use, viral-on-TikTok feeling, worth buying now
+- output must feel like a hybrid of luxury beauty editorial + native Thai UGC + beauty counter realism
 
-Category strategy:
-คอนเทนต์เครื่องสำอางเน้น texture สวย สีชัด ฟินิชผิวดี น่าหยุดดูและกดตะกร้า
+Beauty hook strategy:
+- stop-scroll hook in first second
+- product-first storytelling
+- high desirability and social proof
+- rich visual language suitable for vertical 9:16
+- use close-up, macro, reflective, glossy, vanity, ring light, shelf reveal, or luxury counter language when suitable
 
-Voice and structure rules:
-- use spoken Thai natural dialogue style
-- avoid boring generic ad language
-- keep scenes vivid, practical, and easy to picture
-- each scene should feel watchable and conversion-focused
-- the final result must feel like content that Thai users would stop and watch
+Voice rules:
+- spoken Thai natural dialogue style
+- no robotic ad language
+- every scene must feel watchable and emotionally attractive
+- beauty payoff should be vivid, specific, and easy to imagine
 
-Compliance and safety:
-- avoid extreme claims or unrealistic guarantees
-- do not create prohibited medical or legal claims
-- prefer safe, believable wording that still sells strongly
+Compliance:
+- avoid impossible claims
+- avoid medical claims
+- avoid guaranteed transformation language
+- use believable beauty wording that still sells strongly
 
 Output quality:
-- detailed, final-ready, high-conversion
+- final-ready
+- premium, detailed, conversion-focused
 - suited for TikTok Shop / affiliate / UGC / creator content
-- emotionally engaging, visually rich, platform-native`
+- visually rich, emotionally engaging, platform-native`
 };
 
 const EXTRA_VIRAL_TONES = {
