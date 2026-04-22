@@ -4,7 +4,6 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChang
 import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, addDoc, query, where, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
 import { GEM_MODES, getGemModeConfig, getGemModeOptions, autoDetectGemMode, pickRandomFrom } from './gem-modes.js';
-import { buildCharacterFactoryProfile } from './character-factory.js';
 
 const ADMIN_EMAILS = ['aikhainorth@gmail.com'];
 const LS_FORM = 'GEMINI_FINAL_PROMPT_PRO_FORM_SPARK_V1';
@@ -170,11 +169,12 @@ function loadExample(slot){
   showToast(`โหลดตัวอย่าง ${mode.label} แล้ว`);
 }
 function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('gemMode')) $('gemMode').value='signboard'; if($('voiceType')) $('voiceType').value='หญิง'; populateViralToneOptions('signboard','ล้างสต๊อก'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
-function buildSystemInstruction(d = getFormData()){
+function buildSystemInstruction(){
+  const d = getFormData();
   const gem = getGemModeConfig(d.gemMode);
-  const character = buildCharacterFactoryProfile(d);
-  const characterInstruction = character.enabled ? `\n\nCHARACTER FACTORY PRO MAX ACTIVE:\n${character.profileBlock}\n\n${character.dnaBlock}\n\n${character.lockBlock}` : '';
-  return `${gem.systemPrompt}${characterInstruction}\n\nGLOBAL OUTPUT RULES:
+  return `${gem.systemPrompt}
+
+GLOBAL OUTPUT RULES:
 - Return FINAL-READY prompts only, not analysis.
 - Generate two polished deliverables:
 1) image_prompt: a single final image generation prompt for a vertical 9:16 promotional image
@@ -191,19 +191,10 @@ function buildSystemInstruction(d = getFormData()){
 }
 function buildUserPrompt(d){
   const gem = getGemModeConfig(d.gemMode);
-  const character = buildCharacterFactoryProfile(d);
   const randomNote = d.randomizedFields?.length ? `
 AUTO RANDOM FILLED: ${d.randomizedFields.join(', ')}` : '';
-  const characterNote = character.enabled ? `
-
-CHARACTER FACTORY PRO MAX:
-${character.profileBlock}
-
-${character.dnaBlock}
-
-${character.lockBlock}` : '';
   return `GEM MODE: ${gem.label}
-GEM DESCRIPTION: ${gem.description}${randomNote}${characterNote}
+GEM DESCRIPTION: ${gem.description}${randomNote}
 
 Create final production-ready prompts using these inputs.
 Product: ${d.product}
@@ -224,13 +215,11 @@ Requirements:
 - The selling psychology and urgency must follow the selected viral tone: ${d.viralTone}.
 - Add exact spoken Thai lines for every scene, ready for voiceover or lip-sync.
 - Follow the selected GEM MODE creative strategy closely.
-- If scene count is greater than 1 and CHARACTER FACTORY PRO MAX is active, embed the locked character profile and continuity lock into the resulting prompts so the same character appears in every scene.
-- For multi-scene outputs, keep the same main character identity across all scenes with no redesign or reinterpretation.
 - Also return caption_hashtags: one Thai caption line plus exactly 5 hashtags, where 3 hashtags are product-related and 2 hashtags are trending Thai commerce/social hashtags.
 - Final only.`;
 }
 function buildResponseSchema(){ return {type:'OBJECT',properties:{image_prompt:{type:'STRING'},video_prompt:{type:'STRING'},caption_hashtags:{type:'STRING'}},required:['image_prompt','video_prompt','caption_hashtags'],propertyOrdering:['image_prompt','video_prompt','caption_hashtags']}; }
-async function callGeminiNative(d){ const apiKey=getUserApiKey(); if(!apiKey) throw new Error('ยังไม่มี Gemini API Key กรุณาวาง Key แล้วกดเชื่อมต่อก่อน'); const endpoint=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(DEFAULT_MODEL)}:generateContent?key=${encodeURIComponent(apiKey)}`; const payload={ systemInstruction:{parts:[{text:buildSystemInstruction(d)}]}, contents:[{role:'user',parts:[{text:buildUserPrompt(d)}]}], generationConfig:{temperature:0.85,maxOutputTokens:4096,responseMimeType:'application/json',responseSchema:buildResponseSchema()} }; const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); const raw=await res.json().catch(()=>({})); if(!res.ok) throw new Error(raw?.error?.message||`Gemini API Error ${res.status}`); const text=raw?.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('').trim(); if(!text) throw new Error('Gemini ไม่ได้ส่งข้อความกลับมา'); let parsed; try{ parsed=JSON.parse(text);}catch{ const m=text.match(/\{[\s\S]*\}/); if(!m) throw new Error('ไม่สามารถแปลงผลลัพธ์เป็น JSON ได้'); parsed=JSON.parse(m[0]); } return { image_prompt:String(parsed.image_prompt||'').trim(), video_prompt:String(parsed.video_prompt||'').trim(), caption_hashtags:String(parsed.caption_hashtags||'').trim() }; }
+async function callGeminiNative(d){ const apiKey=getUserApiKey(); if(!apiKey) throw new Error('ยังไม่มี Gemini API Key กรุณาวาง Key แล้วกดเชื่อมต่อก่อน'); const endpoint=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(DEFAULT_MODEL)}:generateContent?key=${encodeURIComponent(apiKey)}`; const payload={ systemInstruction:{parts:[{text:buildSystemInstruction()}]}, contents:[{role:'user',parts:[{text:buildUserPrompt(d)}]}], generationConfig:{temperature:0.85,maxOutputTokens:4096,responseMimeType:'application/json',responseSchema:buildResponseSchema()} }; const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); const raw=await res.json().catch(()=>({})); if(!res.ok) throw new Error(raw?.error?.message||`Gemini API Error ${res.status}`); const text=raw?.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('').trim(); if(!text) throw new Error('Gemini ไม่ได้ส่งข้อความกลับมา'); let parsed; try{ parsed=JSON.parse(text);}catch{ const m=text.match(/\{[\s\S]*\}/); if(!m) throw new Error('ไม่สามารถแปลงผลลัพธ์เป็น JSON ได้'); parsed=JSON.parse(m[0]); } return { image_prompt:String(parsed.image_prompt||'').trim(), video_prompt:String(parsed.video_prompt||'').trim(), caption_hashtags:String(parsed.caption_hashtags||'').trim() }; }
 async function upsertCurrentUser(user){ const email=String(user.email||'').toLowerCase(); const ref=doc(db,'users',user.uid); const snap=await getDoc(ref); const now=serverTimestamp(); const base={uid:user.uid,email,displayName:user.displayName||'',photoURL:user.photoURL||'',lastLoginAt:now,updatedAt:now}; if(hasAdminEmail(email)){ await setDoc(ref,{...base,createdAt:snap.exists()?snap.data().createdAt||now:now,approved:true,role:'admin',approvedAt:now},{merge:true}); } else if(!snap.exists()){ await setDoc(ref,{...base,createdAt:now,approved:false,role:'user'},{merge:true}); } else { await setDoc(ref,base,{merge:true}); } const updated=await getDoc(ref); userDocCache=updated.exists()?updated.data():null; }
 function isApproved(){ return !!(userDocCache?.approved || hasAdminEmail(currentUser?.email)); }
 function isAdmin(){ return !!(userDocCache?.role==='admin' || hasAdminEmail(currentUser?.email)); }
@@ -284,8 +273,8 @@ async function renderAuthState(){
   await renderHistory();
 }
 
-async function savePromptHistoryRecord(d,result){ const character = buildCharacterFactoryProfile(d); const ref=await addDoc(collection(db,'promptHistory'),{ uid:currentUser.uid,email:currentUser.email||'',product:d.product,location:d.location,view:d.view,gemMode:d.gemMode,voiceType:d.voiceType,viralTone:d.viralTone,sceneCount:d.sceneCount,duration:d.duration,characterFactorySummary: character.enabled ? character.summary : '',imagePrompt:result.image_prompt,videoPrompt:result.video_prompt,captionHashtags:result.caption_hashtags,createdAt:serverTimestamp() }); return ref.id; }
-async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • กำลังสร้าง Final Prompt'); const result=await callGeminiNative(d); if($('imagePrompt')) $('imagePrompt').value=result.image_prompt; if($('videoPrompt')) $('videoPrompt').value=result.video_prompt; if($('captionPrompt')) $('captionPrompt').value=result.caption_hashtags; if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('emptyState')) $('emptyState').style.display='none'; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,result); resetPromptEditors(); await renderHistory(); showToast(character.enabled ? `สร้าง Final Prompt สำเร็จ • ล็อคตัวละคร ${character.shortName}` : 'สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
+async function savePromptHistoryRecord(d,result){ const ref=await addDoc(collection(db,'promptHistory'),{ uid:currentUser.uid,email:currentUser.email||'',product:d.product,location:d.location,view:d.view,gemMode:d.gemMode,voiceType:d.voiceType,viralTone:d.viralTone,sceneCount:d.sceneCount,duration:d.duration,imagePrompt:result.image_prompt,videoPrompt:result.video_prompt,captionHashtags:result.caption_hashtags,createdAt:serverTimestamp() }); return ref.id; }
+async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); const err=validateForm(d); if(err) return showToast(err); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • กำลังสร้าง Final Prompt'); const result=await callGeminiNative(d); if($('imagePrompt')) $('imagePrompt').value=result.image_prompt; if($('videoPrompt')) $('videoPrompt').value=result.video_prompt; if($('captionPrompt')) $('captionPrompt').value=result.caption_hashtags; if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('emptyState')) $('emptyState').style.display='none'; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,result); resetPromptEditors(); await renderHistory(); showToast('สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
 async function copyBlock(id,btn){ const text=$(id)?.value||''; if(!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก'); await navigator.clipboard.writeText(text); const old=btn.textContent; btn.textContent='คัดลอกแล้ว'; setTimeout(()=>{btn.textContent=old;},1200); }
 function escapeHtml(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
 function renderHistoryList(items){
@@ -304,7 +293,6 @@ function renderHistoryList(items){
       <div class="preview"><strong>IMAGE:</strong> ${escapeHtml(item.imagePrompt||'')}</div>
       <div class="preview" style="margin-top:8px"><strong>VDO:</strong> ${escapeHtml(item.videoPrompt||'')}</div>
       <div class="preview" style="margin-top:8px"><strong>CAPTION:</strong> ${escapeHtml(item.captionHashtags||'')}</div>
-      ${item.characterFactorySummary ? `<div class=\"preview\" style=\"margin-top:8px\"><strong>CHARACTER:</strong> ${escapeHtml(item.characterFactorySummary)}</div>` : ''}
       <div class="row" style="margin-top:10px">
         <button class="btn btn-dark use-history-btn" data-id="${item.id}" style="padding:10px 12px">ใช้ต่อ</button>
         <button class="btn btn-red delete-history-btn" data-id="${item.id}" style="padding:10px 12px">ลบ</button>
