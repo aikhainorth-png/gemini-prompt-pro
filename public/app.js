@@ -186,7 +186,7 @@ function maybeAutoDetectGemMode(){
 
 function getPreparedFormData(raw){
   const d = { ...raw };
-  const mode = getGemModeConfig(d.gemMode);
+  const mode = getModeSource().getGemModeConfig(d.gemMode);
   let randomized = [];
   if(!d.location?.trim()){
     d.location = getModeSource().pickRandomFrom(mode.randomLocations || []) || 'พื้นที่ใช้งานจริงที่เหมาะกับสินค้า';
