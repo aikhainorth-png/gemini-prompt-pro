@@ -41,7 +41,27 @@ function getOpenAIKey(){ return localStorage.getItem(LS_OPENAI_KEY)||''; }
 function updateOpenAIKeyStatus(message,isConnected=false){ const el=$('openAIKeyStatus'); if(!el) return; el.textContent=message; el.style.color=isConnected?'#9ed2ff':'#97a2c4'; }
 function updateOpenAINativeModeStatus(message){ const el=$('openAINativeStatus'); if(el) el.textContent=message; }
 function toggleOpenAIPanel(forceOpen){ const body=$('openAIPanelBody'); const btn=$('toggleOpenAIBtn'); if(!body||!btn) return; const open=typeof forceOpen==='boolean'?forceOpen:body.style.display==='none'; body.style.display=open?'block':'none'; btn.textContent=open?'▲':'▼'; }
-function toggleOpenAIKeyVisibility(){ const input=$('userOpenAIKey'); const btn=$('toggleOpenAIEyeBtn'); if(!input) return; const showing=input.type==='text'; input.type=showing?'password':'text'; if(btn) btn.textContent=showing?'👁️':'🙈'; }
+function toggleOpenAIKeyVisibility(e){
+  if (e) e.preventDefault();
+
+  const input = document.getElementById('userOpenAIKey');
+  const btn = document.getElementById('toggleOpenAIEyeBtn');
+
+  if (!input) {
+    console.error('ไม่พบ input id=userOpenAIKey');
+    return;
+  }
+
+  const nextType = input.type === 'password' ? 'text' : 'password';
+  input.setAttribute('type', nextType);
+
+  if (btn) {
+    btn.textContent = nextType === 'text' ? '🙈' : '👁️';
+    btn.setAttribute('aria-label', nextType === 'text' ? 'ซ่อน OpenAI Key' : 'แสดง OpenAI Key');
+  }
+
+  input.focus();
+}
 function togglePrivateKeysPanel(forceOpen){ const body=$('privateKeysBody'); const btn=$('togglePrivateKeysBtn'); if(!body||!btn) return; const open=typeof forceOpen==='boolean'?forceOpen:body.style.display==='none'; body.style.display=open?'grid':'none'; btn.textContent=open?'▲':'▼'; }
 
 function connectOpenAIKey(){ const key=($('userOpenAIKey')?.value||'').trim(); if(!key){ updateOpenAIKeyStatus('กรุณาวาง OpenAI API Key ก่อนเชื่อมต่อ'); return showToast('กรุณาวาง OpenAI API Key ก่อน'); } saveOpenAIKey(key); updateOpenAINativeModeStatus('⚡ OpenAI Private Mode • ใช้ Key ส่วนตัวแล้ว'); updateOpenAIKeyStatus('เชื่อมต่อ OpenAI Key เรียบร้อย • พร้อมใช้งาน', true); showToast('เชื่อมต่อ OpenAI API Key แล้ว'); }
@@ -424,10 +444,20 @@ function bindEvents(){ safeBind('deleteModal','click',(e)=>{
 }); safeBind('togglePrivateKeysBtn','click',()=>togglePrivateKeysPanel()); safeBind('loginGateBtn','click',signInGoogle); safeBind('closeDeleteBtn','click',closeDeleteModal); safeBind('cancelDeleteBtn','click',closeDeleteModal); safeBind('confirmDeleteBtn','click',deleteKeyNow); safeBind('toggleEyeBtn','click',toggleGeminiKeyVisibility); safeBind('toggleOpenAIEyeBtn','click',toggleOpenAIKeyVisibility); safeBind('connectOpenAIKeyBtn','click',connectOpenAIKey); safeBind('testOpenAIKeyBtn','click',testOpenAIKey); safeBind('deleteOpenAIKeyBtn','click',promptDeleteOpenAIKey); safeBind('connectKeyBtn','click',connectGeminiKey); safeBind('testKeyBtn','click',testGeminiKey); safeBind('deleteKeyBtn','click',promptDeleteGeminiKey); safeBind('loginBtn','click',signInGoogle); safeBind('logoutBtn','click',()=>signOut(auth)); safeBind('pendingBackToLoginBtn','click', async ()=>{ try{ await signOut(auth); }catch(e){ showToast('ออกจากระบบไม่สำเร็จ'); } }); safeBind('generateBtn','click',generatePrompts); safeBind('copyImageBtn','click',()=>copyBlock('imagePrompt',$('copyImageBtn'))); safeBind('copyVideoBtn','click',()=>copyBlock('videoPrompt',$('copyVideoBtn'))); safeBind('copyCaptionBtn','click',()=>copyBlock('captionPrompt',$('copyCaptionBtn'))); safeBind('editImageBtn','click',()=>togglePromptEdit('image')); safeBind('saveImageBtn','click',()=>savePromptEdit('image')); safeBind('editVideoBtn','click',()=>togglePromptEdit('video')); safeBind('saveVideoBtn','click',()=>savePromptEdit('video')); safeBind('editCaptionBtn','click',()=>togglePromptEdit('caption')); safeBind('saveCaptionBtn','click',()=>savePromptEdit('caption')); safeBind('refreshHistoryBtn','click',renderHistory); safeBind('clearHistoryBtn','click',clearHistoryItems); safeBind('clearBtn','click',clearForm); safeBind('exampleTissueBtn','click',()=>loadExample(0)); safeBind('exampleBatteryBtn','click',()=>loadExample(1)); safeBind('exampleChairBtn','click',()=>loadExample(2)); safeBind('gemMode','change',()=>applyGemMode($('gemMode')?.value || 'signboard', { toast: false })); safeBind('product','blur',maybeAutoDetectGemMode); safeBind('product','change',maybeAutoDetectGemMode); ['product','location','view','gemMode','providerMode','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
 
 function rebindOpenAIButtons(){
-  const connectBtn=$('connectOpenAIKeyBtn'); if(connectBtn) connectBtn.onclick=connectOpenAIKey;
-  const testBtn=$('testOpenAIKeyBtn'); if(testBtn) testBtn.onclick=testOpenAIKey;
-  const deleteBtn=$('deleteOpenAIKeyBtn'); if(deleteBtn) deleteBtn.onclick=promptDeleteOpenAIKey;
-  const eyeBtn=$('toggleOpenAIEyeBtn'); if(eyeBtn) eyeBtn.onclick=toggleOpenAIKeyVisibility;
+  const connectBtn = $('connectOpenAIKeyBtn');
+  if (connectBtn) connectBtn.onclick = connectOpenAIKey;
+
+  const testBtn = $('testOpenAIKeyBtn');
+  if (testBtn) testBtn.onclick = testOpenAIKey;
+
+  const deleteBtn = $('deleteOpenAIKeyBtn');
+  if (deleteBtn) deleteBtn.onclick = promptDeleteOpenAIKey;
+
+  const eyeBtn = $('toggleOpenAIEyeBtn');
+  if (eyeBtn) {
+    eyeBtn.onclick = null;
+    eyeBtn.addEventListener('click', toggleOpenAIKeyVisibility);
+  }
 }
 
 async function init(){ populateGemModeOptions('signboard'); bindEvents(); rebindOpenAIButtons(); loadForm(); applyGemMode(($('gemMode')?.value || 'signboard'), { keepTone: true, skipSave: true }); updateSummary(); resetPromptEditors(); togglePrivateKeysPanel(false); setAppAccessLock(true); showLoginGate(true); showPendingGate(false); const savedKey=getUserApiKey(); if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } const savedOpenAIKey=getOpenAIKey(); if(savedOpenAIKey&&$('userOpenAIKey')){ $('userOpenAIKey').value=savedOpenAIKey; updateOpenAIKeyStatus('พบ OpenAI API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateOpenAIKeyStatus('ยังไม่ได้เชื่อมต่อ OpenAI API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } onAuthStateChanged(auth, async (user)=>{ currentUser=user; userDocCache=null; currentHistoryId=null; showError(''); try{ if(user) await upsertCurrentUser(user); }catch(e){ showError(`Sync user ไม่สำเร็จ: ${e.message}`); } await renderAuthState(); }); setInterval(async ()=>{ if(currentUser && !isApproved()){ try{ await refreshCurrentUserDoc(); if(isApproved()){ await renderAuthState(); showToast('บัญชีได้รับอนุมัติแล้ว'); } }catch(e){} } }, 5000); }
