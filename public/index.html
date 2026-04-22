@@ -156,7 +156,10 @@ select option:checked{
                 </div>
               </div>
               <div id="apiPanelBody">
-                <div class="api-wrap"><input id="userApiKey" type="password" placeholder="วาง Gemini API Key ของคุณ" /><button class="eye" id="toggleEyeBtn" type="button" title="แสดง/ซ่อน Gemini Key">👁️</button></div>
+                <div class="api-wrap"><input id="userApiKey" type="password" placeholder="วาง Gemini API Key ของคุณ" />
+				<input id="geminiKey" type="password">
+<button id="toggleGeminiKeyBtn">👁️</button>
+				</div>
                 <div class="api-actions"><button class="btn btn-green" id="connectKeyBtn" type="button">เชื่อมต่อ Key</button><button class="btn btn-dark" id="testKeyBtn" type="button">ทดสอบ Key</button><button class="btn btn-red" id="deleteKeyBtn" type="button">ลบ</button></div>
                 <div class="statusline" id="geminiKeyStatus"></div>
                 <div class="native" id="geminiNativeStatus">⚡ Gemini Native Full-Engine Mode พร้อมใช้งาน</div>
@@ -174,7 +177,10 @@ select option:checked{
                 </div>
               </div>
               <div id="openAIPanelBody">
-                <div class="api-wrap"><input id="userOpenAIKey" type="password" placeholder="วาง OpenAI API Key ของคุณ" /><button class="eye" id="toggleOpenAIEyeBtn" type="button" title="แสดง/ซ่อน OpenAI Key">👁️</button></div>
+                <div class="api-wrap"><input id="userOpenAIKey" type="password" placeholder="วาง OpenAI API Key ของคุณ" />
+				<input id="openaiKey" type="password">
+<button id="toggleOpenAIKeyBtn">👁️</button>
+				</div>
                 <div class="api-actions"><button class="btn btn-green" id="connectOpenAIKeyBtn" type="button">เชื่อมต่อ Key</button><button class="btn btn-dark" id="testOpenAIKeyBtn" type="button">ทดสอบ Key</button><button class="btn btn-red" id="deleteOpenAIKeyBtn" type="button">ลบ</button></div>
                 <div class="statusline" id="openAIKeyStatus"></div>
                 <div class="native" id="openAINativeStatus">⚡ OpenAI Private Mode พร้อมใช้งาน</div>
