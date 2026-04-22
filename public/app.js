@@ -22,6 +22,7 @@ const provider = new GoogleAuthProvider();
 let currentUser = null;
 let userDocCache = null;
 let currentHistoryId = null;
+let deleteKeyTarget = "gemini";
 
 function hasAdminEmail(email=''){ return ADMIN_EMAILS.includes(String(email).toLowerCase()); }
 function safeBind(id, ev, fn){ const el=$(id); if(el) el.addEventListener(ev, fn); }
@@ -43,7 +44,15 @@ function toggleOpenAIPanel(forceOpen){ const body=$('openAIPanelBody'); const bt
 function toggleOpenAIKeyVisibility(){ const input=$('userOpenAIKey'); if(input) input.type=input.type==='password'?'text':'password'; }
 function connectOpenAIKey(){ const key=($('userOpenAIKey')?.value||'').trim(); if(!key){ updateOpenAIKeyStatus('กรุณาวาง OpenAI API Key ก่อนเชื่อมต่อ'); return showToast('กรุณาวาง OpenAI API Key ก่อน'); } saveOpenAIKey(key); updateOpenAINativeModeStatus('⚡ OpenAI Private Mode • ใช้ Key ส่วนตัวแล้ว'); updateOpenAIKeyStatus('เชื่อมต่อ OpenAI Key เรียบร้อย • พร้อมใช้งาน', true); showToast('เชื่อมต่อ OpenAI API Key แล้ว'); }
 async function testOpenAIKey(){ const key=($('userOpenAIKey')?.value||'').trim(); if(!key){ updateOpenAIKeyStatus('กรุณาวาง OpenAI API Key ก่อนทดสอบ'); return showToast('ยังไม่มี OpenAI API Key'); } updateOpenAIKeyStatus('กำลังทดสอบ OpenAI API Key...'); try{ const payload={ model:'gpt-4.1-mini', input:'Reply with the single word OK.', max_output_tokens:20, store:false}; const r=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},body:JSON.stringify(payload)}); const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d?.error?.message||`OpenAI API Error ${r.status}`); saveOpenAIKey(key); updateOpenAINativeModeStatus('⚡ OpenAI Private Mode • ทดสอบ Key ผ่านแล้ว'); updateOpenAIKeyStatus('ทดสอบ OpenAI Key สำเร็จ • พร้อมใช้งาน', true); showToast('ทดสอบ OpenAI API Key สำเร็จ'); }catch(e){ updateOpenAIKeyStatus(`ทดสอบ OpenAI Key ไม่ผ่าน • ${e.message}`); showToast('ทดสอบ OpenAI Key ไม่ผ่าน'); } }
-function promptDeleteOpenAIKey(){ if(!getOpenAIKey()) return showToast('ยังไม่มี OpenAI Key ให้ลบ'); const ok=window.confirm('ยืนยันการลบ OpenAI API Key ที่เก็บในเครื่องนี้?'); if(!ok) return; saveOpenAIKey(''); if($('userOpenAIKey')) $('userOpenAIKey').value=''; updateOpenAINativeModeStatus('⚡ OpenAI Private Mode พร้อมใช้งาน'); updateOpenAIKeyStatus('ลบ OpenAI API Key แล้ว'); showToast('ลบ OpenAI Key แล้ว'); }
+function promptDeleteOpenAIKey(){
+ if(!getOpenAIKey()) return showToast('ยังไม่มี OpenAI Key ให้ลบ');
+ deleteKeyTarget='openai';
+ const msg=$('deleteModalMessage');
+ if(msg) msg.textContent='ต้องการลบ OpenAI API Key ที่เก็บไว้ในเครื่องนี้หรือไม่?';
+ const confirm=$('confirmDeleteBtn');
+ if(confirm) confirm.textContent='ลบ OpenAI Key';
+ $('deleteModal')?.classList.add('show');
+}
 function updateGeminiKeyStatus(message,isConnected=false){ const el=$('geminiKeyStatus'); if(!el) return; el.textContent=message; el.style.color=isConnected?'#9ed2ff':'#97a2c4'; }
 function updateGeminiNativeModeStatus(message){ const el=$('geminiNativeStatus'); if(el) el.textContent=message; }
 function toggleGeminiApiPanel(forceOpen){ const body=$('apiPanelBody'); const btn=$('toggleApiBtn'); if(!body||!btn) return; const open=typeof forceOpen==='boolean'?forceOpen:body.style.display==='none'; body.style.display=open?'block':'none'; btn.textContent=open?'▲':'▼'; }
@@ -52,19 +61,33 @@ function connectGeminiKey(){ const key=($('userApiKey')?.value||'').trim(); if(!
 async function testGeminiKey(){ const key=($('userApiKey')?.value||'').trim(); if(!key){ updateGeminiKeyStatus('กรุณาวาง Gemini API Key ก่อนทดสอบ'); return showToast('ยังไม่มี Gemini API Key'); } updateGeminiKeyStatus('กำลังทดสอบ Gemini API Key...'); try{ const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`); const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d?.error?.message||`Gemini API Error ${r.status}`); saveUserApiKey(key); updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode • ทดสอบ Key ผ่านแล้ว'); updateGeminiKeyStatus('ทดสอบ Key สำเร็จ • พร้อมใช้งาน', true); showToast('ทดสอบ Gemini API Key สำเร็จ'); }catch(e){ updateGeminiKeyStatus(`ทดสอบ Key ไม่ผ่าน • ${e.message}`); showToast('ทดสอบ Key ไม่ผ่าน'); } }
 function promptDeleteGeminiKey(){
  if(!getUserApiKey()) return showToast('ยังไม่มี Key ให้ลบ');
- $('deleteModal').classList.add('show');
+ deleteKeyTarget='gemini';
+ const msg=$('deleteModalMessage');
+ if(msg) msg.textContent='ต้องการลบ Gemini API Key ที่เก็บไว้ในเครื่องนี้หรือไม่?';
+ const confirm=$('confirmDeleteBtn');
+ if(confirm) confirm.textContent='ลบ Gemini Key';
+ $('deleteModal')?.classList.add('show');
 }
 
 function closeDeleteModal(){
- $('deleteModal').classList.remove('show');
+ $('deleteModal')?.classList.remove('show');
 }
 
 function deleteKeyNow(){
+ if(deleteKeyTarget==='openai'){
+   saveOpenAIKey('');
+   if($('userOpenAIKey')) $('userOpenAIKey').value='';
+   updateOpenAIKeyStatus('ลบ OpenAI API Key แล้ว');
+   updateOpenAINativeModeStatus('⚡ OpenAI Private Mode พร้อมใช้งาน');
+   closeDeleteModal();
+   return showToast('ลบ OpenAI Key แล้ว');
+ }
  saveUserApiKey('');
  if($('userApiKey')) $('userApiKey').value='';
  updateGeminiKeyStatus('ลบ Gemini API Key แล้ว');
+ updateGeminiNativeModeStatus('⚡ Gemini Native Full-Engine Mode พร้อมใช้งาน');
  closeDeleteModal();
- showToast('ลบ Key แล้ว');
+ showToast('ลบ Gemini Key แล้ว');
 }
 function getFormData(){ return { product:$('product')?.value.trim()||'', location:$('location')?.value.trim()||'', view:$('view')?.value.trim()||'', gemMode:$('gemMode')?.value||'signboard', providerMode:$('providerMode')?.value||'gemini', voiceType:$('voiceType')?.value||'หญิง', viralTone:$('viralTone')?.value||'ล้างสต๊อก', sceneCount:Number($('sceneCount')?.value||1), duration:Number($('duration')?.value||10) }; }
 function saveForm(){ localStorage.setItem(LS_FORM, JSON.stringify(getFormData())); }
@@ -389,4 +412,4 @@ function bindEvents(){ safeBind('deleteModal','click',(e)=>{
   if(e.target?.id === 'deleteModal') closeDeleteModal();
 }); safeBind('toggleApiBtn','click',()=>toggleGeminiApiPanel()); safeBind('loginGateBtn','click',signInGoogle); safeBind('closeDeleteBtn','click',closeDeleteModal); safeBind('cancelDeleteBtn','click',closeDeleteModal); safeBind('confirmDeleteBtn','click',deleteKeyNow); safeBind('toggleEyeBtn','click',toggleGeminiKeyVisibility); safeBind('toggleOpenAIBtn','click',()=>toggleOpenAIPanel()); safeBind('toggleOpenAIEyeBtn','click',toggleOpenAIKeyVisibility); safeBind('connectOpenAIKeyBtn','click',connectOpenAIKey); safeBind('testOpenAIKeyBtn','click',testOpenAIKey); safeBind('deleteOpenAIKeyBtn','click',promptDeleteOpenAIKey); safeBind('connectKeyBtn','click',connectGeminiKey); safeBind('testKeyBtn','click',testGeminiKey); safeBind('deleteKeyBtn','click',promptDeleteGeminiKey); safeBind('loginBtn','click',signInGoogle); safeBind('logoutBtn','click',()=>signOut(auth)); safeBind('pendingBackToLoginBtn','click', async ()=>{ try{ await signOut(auth); }catch(e){ showToast('ออกจากระบบไม่สำเร็จ'); } }); safeBind('generateBtn','click',generatePrompts); safeBind('copyImageBtn','click',()=>copyBlock('imagePrompt',$('copyImageBtn'))); safeBind('copyVideoBtn','click',()=>copyBlock('videoPrompt',$('copyVideoBtn'))); safeBind('copyCaptionBtn','click',()=>copyBlock('captionPrompt',$('copyCaptionBtn'))); safeBind('editImageBtn','click',()=>togglePromptEdit('image')); safeBind('saveImageBtn','click',()=>savePromptEdit('image')); safeBind('editVideoBtn','click',()=>togglePromptEdit('video')); safeBind('saveVideoBtn','click',()=>savePromptEdit('video')); safeBind('editCaptionBtn','click',()=>togglePromptEdit('caption')); safeBind('saveCaptionBtn','click',()=>savePromptEdit('caption')); safeBind('refreshHistoryBtn','click',renderHistory); safeBind('clearHistoryBtn','click',clearHistoryItems); safeBind('clearBtn','click',clearForm); safeBind('exampleTissueBtn','click',()=>loadExample(0)); safeBind('exampleBatteryBtn','click',()=>loadExample(1)); safeBind('exampleChairBtn','click',()=>loadExample(2)); safeBind('gemMode','change',()=>applyGemMode($('gemMode')?.value || 'signboard', { toast: false })); safeBind('product','blur',maybeAutoDetectGemMode); safeBind('product','change',maybeAutoDetectGemMode); ['product','location','view','gemMode','providerMode','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
 async function init(){ populateGemModeOptions('signboard'); bindEvents(); loadForm(); applyGemMode(($('gemMode')?.value || 'signboard'), { keepTone: true, skipSave: true }); updateSummary(); resetPromptEditors(); toggleGeminiApiPanel(true); toggleOpenAIPanel(true); setAppAccessLock(true); showLoginGate(true); showPendingGate(false); const savedKey=getUserApiKey(); if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } const savedOpenAIKey=getOpenAIKey(); if(savedOpenAIKey&&$('userOpenAIKey')){ $('userOpenAIKey').value=savedOpenAIKey; updateOpenAIKeyStatus('พบ OpenAI API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateOpenAIKeyStatus('ยังไม่ได้เชื่อมต่อ OpenAI API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } onAuthStateChanged(auth, async (user)=>{ currentUser=user; userDocCache=null; currentHistoryId=null; showError(''); try{ if(user) await upsertCurrentUser(user); }catch(e){ showError(`Sync user ไม่สำเร็จ: ${e.message}`); } await renderAuthState(); }); setInterval(async ()=>{ if(currentUser && !isApproved()){ try{ await refreshCurrentUserDoc(); if(isApproved()){ await renderAuthState(); showToast('บัญชีได้รับอนุมัติแล้ว'); } }catch(e){} } }, 5000); }
-init();
+document.addEventListener('DOMContentLoaded', init);
