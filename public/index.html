@@ -10,7 +10,17 @@
   <style>
     :root{--bg:#07161a;--card:rgba(10,33,39,.84);--card2:rgba(8,24,29,.95);--line:rgba(111,211,198,.22);--text:#ecfbfb;--muted:#9fc3c7;--accent:#5fd3c6;--accent2:#7fdff2;--green:#20b89a;--red:#ef6b6b;--yellow:#ffd166;--shadow:0 18px 50px rgba(0,0,0,.32);--radius:22px}
     *{box-sizing:border-box} body{margin:0;font-family:Inter,Prompt,sans-serif;color:var(--text);background:radial-gradient(circle at 10% 10%, rgba(95,211,198,.18), transparent 30%),radial-gradient(circle at 90% 10%, rgba(127,223,242,.16), transparent 28%),linear-gradient(180deg,#08181d,#07161a 40%,#061116);min-height:100vh}
-    .shell{max-width:1440px;margin:0 auto;padding:22px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(24px);border-radius:20px;box-shadow:var(--shadow)}.brand .logo{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));font-size:22px}.brand h1{font-size:18px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.userbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pill{padding:10px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+    .shell{max-width:1440px;margin:0 auto;padding:22px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(24px);border-radius:20px;box-shadow:var(--shadow)}
+	.brand .logo{
+  width:48px;
+  height:48px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  background:transparent;
+  overflow:hidden;
+}
+	.brand h1{font-size:18px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.userbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pill{padding:10px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:12px;color:var(--muted)}
     .btn{border:none;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer;color:#fff;transition:.2s transform}.btn:hover{transform:translateY(-1px)}.btn-primary{background:linear-gradient(135deg,#5fd3c6,#2e9fb3)}.btn-dark{background:rgba(255,255,255,.045);border:1px solid rgba(127,223,242,.14)}.btn-green{background:linear-gradient(135deg,#16c47f,#0f9c66)}.btn-red{background:linear-gradient(135deg,#ef5350,#cc3c39)}.btn-outline{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
     .layout{display:grid;grid-template-columns:380px 1fr;gap:18px}.panel,.maincard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);backdrop-filter:blur(24px);box-shadow:var(--shadow)}.panel{padding:18px;position:sticky;top:18px;height:fit-content}.maincard{padding:18px}.section{margin-bottom:16px}.section h3{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#c9f5f2}.field{margin-bottom:12px}.label{display:block;font-size:13px;margin-bottom:8px;color:#d9f5f3}input,textarea,select{width:100%;background:rgba(255,255,255,.05);color:var(--text);border:1px solid rgba(127,223,242,.14);border-radius:14px;padding:13px 14px;font:inherit;outline:none}textarea{min-height:108px;resize:vertical}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}
     .api-card{background:linear-gradient(180deg, rgba(9,40,49,.72), rgba(11,31,39,.5));border:1px solid rgba(127,223,242,.2);border-radius:18px;padding:14px}.api-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.api-title{font-size:14px;font-weight:800}.api-sub{font-size:12px;color:var(--muted)}.api-wrap{position:relative}.api-wrap input{padding-right:48px}.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#d7ddff;cursor:pointer;font-size:18px}.api-actions{display:flex;gap:8px;margin-top:10px}.api-actions .btn{padding:10px 12px;font-size:13px}.statusline,.muted{font-size:12px;color:var(--muted);line-height:1.5}.native{margin-top:10px;padding:10px 12px;border-radius:14px;background:rgba(95,211,198,.09);border:1px solid rgba(95,211,198,.2);font-size:12px;color:#d8fbf6}
@@ -45,14 +55,26 @@ select option:checked{
 <div class="overlay show" id="loginGate">
   <div class="loader" style="max-width:520px;width:calc(100% - 30px);padding:34px;border-radius:28px;background:#0b2026;">
     
-    <div style="font-size:70px;margin-bottom:18px">✨</div>
+    <img
+  src="./logo.png"
+  alt="GEN PROMPT"
+  style="
+    width:130px;
+    height:130px;
+    object-fit:contain;
+    margin-bottom:20px;
+    filter:
+      drop-shadow(0 0 10px rgba(95,211,198,.35))
+      drop-shadow(0 0 24px rgba(180,80,255,.22));
+  "
+/>
 
     <div style="font-size:42px;font-weight:900;margin-bottom:10px">
-      สินค้าติดป้าย
+      GEN PROMPT
     </div>
 
     <div style="color:#a5cfd2;font-size:18px;line-height:1.6;margin-bottom:26px">
-      สร้างคลิป ติดป้าย<br>
+      สร้างคลิป ติดใจ<br>
       + Prompt Generator
     </div>
 
@@ -80,7 +102,7 @@ select option:checked{
   <div class="loader" style="max-width:520px;width:calc(100% - 30px);padding:34px;border-radius:28px;background:#0b2026;text-align:center;">
     <div style="font-size:70px;margin-bottom:18px">⏳</div>
 
-    <div style="font-size:42px;font-weight:900;margin-bottom:10px;color:#6fe0d4">
+    <div style="font-size:42px;font-weight:900;margin-bottom:10px;color:#ff6600">
       รอแอดมินอนุมัติ
     </div>
 
@@ -112,7 +134,18 @@ select option:checked{
 
   <div class="shell">
     <div class="topbar">
-      <div class="brand"><div class="logo">✨</div><div><h1>Gemini Final Prompt Pro</h1><p>Firebase Edition • Google Login • Admin Approval • Prompt History</p></div></div>
+      <div class="brand">
+  <div class="logo">
+    <img
+      src="./logo.png"
+      alt="Gemini Final Prompt Pro"
+      style="
+        width:42px;
+        height:42px;
+        object-fit:contain;
+      "
+    />
+  </div><div><h1>Gemini Final Prompt Pro</h1><p>Firebase Edition • Google Login • Admin Approval • Prompt History</p></div></div>
       <div class="userbar">
   <div class="pill" id="authPill">ยังไม่ได้เข้าสู่ระบบ</div>
 
