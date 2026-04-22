@@ -48,7 +48,16 @@ select option:checked{
   background:#1f6f78;
   color:#ffffff;
 }
-	@media (max-width:1100px){.layout{grid-template-columns:1fr}.panel{position:relative;top:0}.results{grid-template-columns:1fr}}
+
+    .scene-workspace-wrap{display:none;margin-top:18px}
+    .scene-workspace{display:grid;gap:18px}
+    .scene-card{background:rgba(255,255,255,.03);border:1px solid rgba(127,223,242,.14);border-radius:20px;padding:16px}
+    .scene-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+    .scene-title{font-size:18px;font-weight:800}
+    .scene-badge{font-size:11px;padding:6px 10px;border-radius:999px;background:rgba(127,223,242,.12);color:#d8f8ff;font-weight:800}
+    .scene-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .scene-subcard .prompt-box{min-height:260px}
+	@media (max-width:1100px){.layout{grid-template-columns:1fr}.panel{position:relative;top:0}.results{grid-template-columns:1fr}.scene-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -226,10 +235,11 @@ select option:checked{
         <div class="banner error" id="errorBanner"></div>
         <div class="empty" id="emptyState"><div><div style="font-size:52px;margin-bottom:12px">🧠</div><div style="font-size:22px;font-weight:800;color:#ecfbfb;margin-bottom:8px">พร้อมสร้าง Final Prompt</div><div>ล็อกอินด้วย Google, รอแอดมินอนุมัติ, ใส่ข้อมูลสินค้า แล้วกดสร้าง Prompt</div></div></div>
         <div class="results" id="resultsWrap">
-          <section class="prompt-card"><div class="prompt-top"><h3>IMAGE PROMPT</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag image">Image</span><div class="edit-actions"><button class="btn btn-outline" id="editImageBtn" style="padding:10px 12px">แก้ไข IMAGE</button><button class="btn btn-green" id="saveImageBtn" style="padding:10px 12px;display:none">บันทึก IMAGE</button><button class="btn btn-dark" id="copyImageBtn" style="padding:10px 12px">คัดลอก</button></div></div></div><textarea class="prompt-box" id="imagePrompt" readonly></textarea></section>
-          <section class="prompt-card"><div class="prompt-top"><h3>VDO PROMPT</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag video">Video</span><div class="edit-actions"><button class="btn btn-outline" id="editVideoBtn" style="padding:10px 12px">แก้ไข VDO</button><button class="btn btn-green" id="saveVideoBtn" style="padding:10px 12px;display:none">บันทึก VDO</button><button class="btn btn-dark" id="copyVideoBtn" style="padding:10px 12px">คัดลอก</button></div></div></div><textarea class="prompt-box" id="videoPrompt" readonly></textarea></section>
-          <section class="prompt-card"><div class="prompt-top"><h3>CAPTION + HASHTAGS</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag image">Caption</span><div class="edit-actions"><button class="btn btn-outline" id="editCaptionBtn" style="padding:10px 12px">แก้ไข CAPTION</button><button class="btn btn-green" id="saveCaptionBtn" style="padding:10px 12px;display:none">บันทึก CAPTION</button><button class="btn btn-dark" id="copyCaptionBtn" style="padding:10px 12px">คัดลอก</button></div></div></div><textarea class="prompt-box" id="captionPrompt" readonly></textarea></section>
+          <section class="prompt-card" id="singleImageCard"><div class="prompt-top"><h3>IMAGE PROMPT</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag image">Image</span><div class="edit-actions"><button class="btn btn-outline" id="editImageBtn" style="padding:10px 12px">แก้ไข IMAGE</button><button class="btn btn-green" id="saveImageBtn" style="padding:10px 12px;display:none">บันทึก IMAGE</button><button class="btn btn-dark" id="copyImageBtn" style="padding:10px 12px">คัดลอก</button></div></div></div><textarea class="prompt-box" id="imagePrompt" readonly></textarea></section>
+          <section class="prompt-card" id="singleVideoCard"><div class="prompt-top"><h3>VDO PROMPT</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag video">Video</span><div class="edit-actions"><button class="btn btn-outline" id="editVideoBtn" style="padding:10px 12px">แก้ไข VDO</button><button class="btn btn-green" id="saveVideoBtn" style="padding:10px 12px;display:none">บันทึก VDO</button><button class="btn btn-dark" id="copyVideoBtn" style="padding:10px 12px">คัดลอก</button></div></div></div><textarea class="prompt-box" id="videoPrompt" readonly></textarea></section>
+          <section class="prompt-card" id="captionCard"><div class="prompt-top"><h3>CAPTION + HASHTAGS</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag image">Caption</span><div class="edit-actions"><button class="btn btn-outline" id="editCaptionBtn" style="padding:10px 12px">แก้ไข CAPTION</button><button class="btn btn-green" id="saveCaptionBtn" style="padding:10px 12px;display:none">บันทึก CAPTION</button><button class="btn btn-dark" id="copyCaptionBtn" style="padding:10px 12px">คัดลอก</button></div></div></div><textarea class="prompt-box" id="captionPrompt" readonly></textarea></section>
         </div>
+        <div class="scene-workspace-wrap" id="sceneWorkspaceWrap"><div class="scene-workspace" id="sceneWorkspace"></div></div>
         <section class="history-wrap"><div class="history-head"><h3 style="margin:0">Prompt History</h3><div class="row" style="flex:0 0 auto"><button class="btn btn-dark" id="refreshHistoryBtn" style="padding:10px 12px">รีเฟรช</button><button class="btn btn-red" id="clearHistoryBtn" style="padding:10px 12px">ล้าง Prompt History</button></div></div><div class="history-grid" id="historyList"></div></section>
       </main>
     </div>
