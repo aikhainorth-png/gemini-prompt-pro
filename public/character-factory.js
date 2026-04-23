@@ -1,59 +1,62 @@
 
 const TYPE_BY_MODE = {
-  signboard: ['friendly store mascot', 'chibi seller', 'cute promo mascot'],
-  supplement_stop_scroll: ['healthy helper mascot', 'vitamin guardian', 'wellness friend'],
-  food: ['cute foodie mascot', 'mini chef character', 'happy food mascot'],
-  snacks: ['playful snack mascot', 'crispy buddy', 'bite-size mascot'],
-  mom_baby: ['gentle caregiver mascot', 'cute baby helper', 'soft family mascot'],
-  fashion: ['stylish mini model', 'fashion mascot', 'street-style chibi'],
-  shoes: ['sporty runner mascot', 'shoe spirit', 'speedy footwear mascot'],
-  underwear: ['soft comfort mascot', 'confidence helper', 'cozy lifestyle mascot'],
-  skincare: ['glow fairy mascot', 'skin angel', 'beauty helper'],
-  cosmetics: ['glam beauty mascot', 'makeup muse chibi', 'sparkle cosmetic mascot'],
-  home: ['home helper mascot', 'clean house spirit', 'cozy room mascot'],
-  bedding: ['sleepy dream mascot', 'cloudy pillow friend', 'bedtime helper'],
-  kitchen: ['little kitchen chef', 'cook buddy mascot', 'smart kitchen helper'],
-  bathroom: ['fresh clean mascot', 'bathroom helper', 'bubble spirit'],
-  laundry: ['cleaning buddy mascot', 'foam helper', 'fresh scent spirit'],
-  appliances: ['smart appliance mascot', 'tech helper', 'home gadget spirit'],
-  garden: ['garden sprite', 'plant buddy mascot', 'nature helper'],
-  produce: ['farm friend mascot', 'fruit spirit', 'veggie buddy'],
-  tools: ['tiny tool mechanic', 'builder mascot', 'fix-it helper'],
-  stationery: ['study buddy mascot', 'note fairy', 'desk helper'],
-  books: ['book spirit mascot', 'reading buddy', 'knowledge helper']
+  signboard: ['store presenter', 'retail sales demonstrator', 'product presenter'],
+  supplement_stop_scroll: ['wellness presenter', 'health routine demonstrator', 'trusted lifestyle presenter'],
+  food: ['food presenter', 'kitchen demonstrator', 'lifestyle presenter'],
+  snack: ['snack presenter', 'casual product demonstrator', 'lifestyle presenter'],
+  snacks: ['snack presenter', 'casual product demonstrator', 'lifestyle presenter'],
+  mom_baby: ['caregiver presenter', 'family lifestyle presenter', 'gentle product demonstrator'],
+  fashion: ['fashion presenter', 'style model', 'lifestyle presenter'],
+  shoes: ['footwear presenter', 'style model', 'lifestyle presenter'],
+  lingerie: ['comfortwear presenter', 'lifestyle presenter', 'product demonstrator'],
+  underwear: ['comfortwear presenter', 'lifestyle presenter', 'product demonstrator'],
+  skincare: ['skincare presenter', 'beauty demonstrator', 'lifestyle presenter'],
+  cosmetics: ['beauty presenter', 'makeup demonstrator', 'beauty advisor'],
+  home: ['home product presenter', 'lifestyle demonstrator', 'household presenter'],
+  bedding: ['sleep lifestyle presenter', 'home presenter', 'product demonstrator'],
+  kitchen: ['kitchen presenter', 'cooking demonstrator', 'home presenter'],
+  bathroom: ['bathroom product presenter', 'clean lifestyle presenter', 'home demonstrator'],
+  laundry: ['laundry product presenter', 'household demonstrator', 'clean lifestyle presenter'],
+  appliances: ['appliance presenter', 'tech lifestyle presenter', 'home demonstrator'],
+  garden: ['garden lifestyle presenter', 'outdoor demonstrator', 'product presenter'],
+  produce: ['fresh produce presenter', 'market demonstrator', 'lifestyle presenter'],
+  tools: ['tool presenter', 'workshop demonstrator', 'practical product presenter'],
+  stationery: ['study presenter', 'desk lifestyle presenter', 'product demonstrator'],
+  books: ['reading lifestyle presenter', 'study presenter', 'product demonstrator']
 };
 
-const BODY_TYPES = ['small rounded body', 'soft pear-shaped body', 'compact chibi proportions', 'mini stylized body', 'slightly oversized head with tiny body'];
-const SKIN_TONES = ['warm cream skin', 'soft pastel skin', 'golden tan skin', 'light rosy skin', 'gentle neutral skin'];
-const MATERIALS = ['soft semi-gloss finish', 'subtle velvet-like shading', 'clean polished 3D material', 'gentle bioluminescent glow accents', 'soft cinematic rim glow'];
-const HAIR_STYLES = ['short fluffy hair', 'single playful curl', 'round bob haircut', 'side-parted soft hair', 'wavy short hairstyle'];
-const HAIR_COLORS = ['deep brown', 'chestnut brown', 'dark black', 'warm caramel', 'soft ash brown', 'teal blue', 'honey blonde'];
-const EYE_STYLES = ['large expressive teal eyes', 'big warm brown eyes', 'sparkling dark eyes', 'friendly rounded eyes', 'bright lively eyes'];
+const BODY_TYPES = ['natural human proportions', 'slim natural proportions', 'balanced adult proportions', 'petite natural proportions', 'fit natural proportions'];
+const SKIN_TONES = ['warm cream skin', 'golden tan skin', 'light rosy skin', 'gentle neutral skin', 'medium warm skin'];
+const MATERIALS = ['natural skin texture', 'realistic skin texture', 'photoreal skin with subtle detail', 'live-action natural texture', 'real human skin finish'];
+const HAIR_STYLES = ['straight shoulder-length hair', 'soft side-parted hair', 'long smooth hair', 'neat tied-back hair', 'soft wavy hairstyle'];
+const HAIR_COLORS = ['deep brown', 'chestnut brown', 'dark black', 'warm caramel', 'soft ash brown'];
+const EYE_STYLES = ['warm brown eyes', 'friendly rounded eyes', 'bright lively eyes', 'soft expressive eyes', 'natural dark eyes'];
 const OUTFIT_BASE = {
-  signboard: ['yellow promo vest with red price tag patch', 'shop apron with sale badge', 'bright seller jacket with promo pin'],
-  supplement_stop_scroll: ['clean wellness hoodie with capsule icon', 'health routine jacket with vitamin badge', 'minimal sporty cardigan with wellness symbol'],
-  food: ['tiny chef apron with spoon badge', 'foodie hoodie with bowl logo', 'cute cook outfit with utensil patch'],
-  snacks: ['playful snack hoodie with crunchy badge', 'street snack jacket with bite icon', 'casual hoodie with snack logo'],
-  mom_baby: ['soft pastel cardigan with baby cloud logo', 'gentle family apron with heart patch', 'cozy caretaker outfit with nursery icon'],
-  fashion: ['stylish street jacket with fashion pin', 'mini runway outfit with clean silhouette', 'trendy layered clothing with metallic charm'],
-  shoes: ['sport jacket with lace icon', 'runner hoodie with speed stripe', 'streetwear outfit with shoe emblem'],
-  underwear: ['soft cozy loungewear with comfort icon', 'minimal homewear set with cloud patch', 'clean relaxed outfit with soft fabric look'],
-  skincare: ['clean spa robe with droplet logo', 'skincare uniform with glow patch', 'minimal beauty cardigan with serum icon'],
-  cosmetics: ['glam mini jacket with lipstick logo', 'beauty outfit with sparkle emblem', 'makeup artist coat with blush icon'],
-  home: ['house helper overalls with home icon', 'cozy sweater with room badge', 'soft cleaning apron with tiny house patch'],
-  bedding: ['sleepy pajama outfit with moon logo', 'cloudy night robe with star patch', 'soft bedtime hoodie with pillow emblem'],
-  kitchen: ['chef apron with pan logo', 'kitchen helper uniform with utensil icon', 'cooking jacket with spoon emblem'],
-  bathroom: ['fresh robe with bubble logo', 'clean bath outfit with droplet patch', 'spa towel cape with fresh badge'],
-  laundry: ['cleaning overalls with foam logo', 'laundry helper outfit with fresh badge', 'work apron with sparkle-clean icon'],
-  appliances: ['tech jacket with power icon', 'smart home outfit with electric badge', 'gadget helper suit with tiny LED emblem'],
-  garden: ['garden overalls with leaf logo', 'nature helper hoodie with flower patch', 'outdoor apron with sprout emblem'],
-  produce: ['farm apron with fruit badge', 'fresh market outfit with leaf patch', 'garden vest with harvest logo'],
-  tools: ['mechanic vest with wrench icon', 'builder apron with hammer patch', 'fix-it jacket with tool logo'],
-  stationery: ['study cardigan with pen icon', 'desk helper hoodie with notebook patch', 'cute school outfit with stationery badge'],
-  books: ['reading cardigan with book emblem', 'scholar capelet with page logo', 'cozy study outfit with bookmark patch']
+  signboard: ['clean retail uniform with promo badge', 'casual store outfit with sale pin', 'real retail presenter clothing with product badge'],
+  supplement_stop_scroll: ['clean wellness outfit with minimal badge', 'natural lifestyle outfit in soft neutral tones', 'casual health presenter clothing'],
+  food: ['clean casual kitchen outfit', 'simple chef-inspired apron over everyday clothing', 'natural food presenter clothing'],
+  snacks: ['casual everyday outfit for snack presentation', 'clean lifestyle outfit in bright store setting', 'simple presenter clothing'],
+  mom_baby: ['soft pastel lifestyle outfit', 'clean caregiver clothing', 'comfortable family presenter outfit'],
+  fashion: ['modern stylish outfit matching the product category', 'clean fashion presenter clothing', 'minimal chic styling'],
+  shoes: ['clean fashion-casual outfit that complements footwear', 'modern lifestyle clothing', 'street-casual styling'],
+  underwear: ['modest lifestyle outfit suitable for product presentation', 'clean homewear styling', 'comfortable presenter clothing'],
+  lingerie: ['modest lifestyle outfit suitable for product presentation', 'clean homewear styling', 'comfortable presenter clothing'],
+  skincare: ['clean beauty presenter outfit', 'spa-inspired minimal clothing', 'soft neutral skincare styling'],
+  cosmetics: ['clean beauty counter outfit', 'makeup presenter styling', 'modern beauty advisor outfit'],
+  home: ['clean household lifestyle clothing', 'simple home presenter outfit', 'casual organized-home styling'],
+  bedding: ['soft homewear styling', 'clean sleep-lifestyle clothing', 'comfortable neutral outfit'],
+  kitchen: ['clean kitchen demonstrator outfit', 'casual apron over everyday clothes', 'simple cooking presenter styling'],
+  bathroom: ['clean spa-like outfit', 'simple fresh lifestyle clothing', 'neutral home presenter styling'],
+  laundry: ['clean everyday household outfit', 'simple utility presenter clothing', 'casual fresh-home styling'],
+  appliances: ['modern neutral tech-home outfit', 'clean demonstrator clothing', 'minimal lifestyle styling'],
+  garden: ['casual outdoor lifestyle outfit', 'simple garden demonstrator clothing', 'clean practical styling'],
+  produce: ['fresh market lifestyle outfit', 'clean casual clothing', 'simple natural presenter styling'],
+  tools: ['practical workshop outfit', 'clean utility clothing', 'casual demonstrator outfit'],
+  stationery: ['clean study-life outfit', 'simple desk presenter clothing', 'minimal casual styling'],
+  books: ['clean reading-life outfit', 'soft academic casual clothing', 'simple presenter styling']
 };
-const UNIQUE_TRAITS = ['wears oversized boots', 'leaves tiny glowing footprints when walking', 'has a floating charm accessory', 'always carries a small matching item', 'creates a subtle sparkle trail when moving'];
-const EXPRESSIONS = ['friendly and curious', 'confident and playful', 'soft and trustworthy', 'energetic and expressive'];
+const UNIQUE_TRAITS = ['wears a subtle product-themed accessory', 'keeps a neat signature hairstyle', 'has a consistent friendly smile', 'uses clean natural hand gestures', 'keeps a polished presenter look'];
+const EXPRESSIONS = ['friendly and curious', 'confident and persuasive', 'soft and trustworthy', 'energetic and expressive'];
 
 function hashString(input='') {
   let hash = 2166136261;
@@ -69,26 +72,26 @@ function pick(seed, list) {
   return list[seed % list.length];
 }
 
-function titleCaseName(productName='') {
-  const cleaned = String(productName).replace(/[^\p{L}\p{N}\s]/gu, ' ').trim();
-  const parts = cleaned.split(/\s+/).filter(Boolean).slice(0,2);
-  if (!parts.length) return 'Nova';
-  return parts.map(part => part.charAt(0).toUpperCase() + part.slice(1,4)).join('');
+function getCharacterId(input='') {
+  const raw = String(input || '').replace(/\D/g, '');
+  if (raw.length >= 6) return raw.slice(0, 6);
+  const hash = String(hashString(input)).padStart(6, '0');
+  return hash.slice(0, 6);
 }
 
-export function buildCharacterFactoryProfile({ productName='', gemMode='signboard', sceneCount=1 }) {
+export function buildCharacterFactoryProfile({ productName='', gemMode='signboard', sceneCount=1, characterSessionId='' }) {
   if (Number(sceneCount || 1) <= 1) {
     return { enabled: false, profileBlock: '', dnaBlock: '', lockBlock: '', summary: '', seed: '' };
   }
 
-  const seedSource = `${gemMode}::${String(productName).trim().toLowerCase()}`;
+  const sessionId = getCharacterId(characterSessionId || `${Date.now()}${Math.random()}`);
+  const seedSource = `${gemMode}::${String(productName).trim().toLowerCase()}::${sessionId}`;
   const seed = hashString(seedSource);
   const modeTypes = TYPE_BY_MODE[gemMode] || TYPE_BY_MODE.signboard;
   const outfitPool = OUTFIT_BASE[gemMode] || OUTFIT_BASE.signboard;
 
-  const name = titleCaseName(productName);
   const gender = pick(seed + 1, ['Male', 'Female']);
-  const age = pick(seed + 2, ['7 years old appearance', '10 years old appearance', 'young teen appearance', 'young adult chibi appearance']);
+  const age = pick(seed + 2, ['young adult appearance', 'adult appearance', 'late 20s appearance', 'early 30s appearance']);
   const archetype = pick(seed + 3, modeTypes);
   const bodyType = pick(seed + 4, BODY_TYPES);
   const skinTone = pick(seed + 5, SKIN_TONES);
@@ -101,7 +104,7 @@ export function buildCharacterFactoryProfile({ productName='', gemMode='signboar
   const expressionStyle = pick(seed + 12, EXPRESSIONS);
 
   const profileBlock = `🔒 Main Character Profile
-Name: ${name}
+Character ID: ${sessionId}
 Role Type: ${archetype}
 Gender Presentation: ${gender}
 Age (appearance): ${age}
@@ -114,25 +117,25 @@ Outfit: ${outfit}
 Unique traits: ${trait}
 Core expression style: ${expressionStyle}`;
 
-  const dnaSummary = `${name}, a ${archetype}, ${bodyType}, ${skinTone}, ${material}, ${hairStyle}, ${hairColor}, ${eyes}, wearing ${outfit}, with ${trait}.`;
+  const dnaSummary = `Character ID ${sessionId}, a ${archetype}, ${bodyType}, ${skinTone}, ${material}, ${hairStyle}, ${hairColor}, ${eyes}, wearing ${outfit}, with ${trait}.`;
 
   const dnaBlock = `🧬 CHARACTER DNA BLOCK (Used in every prompt)
 Character Profile: ${dnaSummary}
 
-Consistency Lock: same character, identical face structure, same hairstyle, same hair color, same outfit, same body proportions, same facial features, same material behavior, same color logic, no variation, fixed identity, character model sheet consistency, do not redesign, do not reinterpret, this is the exact same character across all scenes.
+Consistency Lock: same character, identical face structure, same hairstyle, same hair color, same outfit, same body proportions, same facial features, same natural material behavior, same color logic, no variation, fixed identity, do not redesign, do not reinterpret, this is the exact same character across all scenes.
 
 Face Rule: facial features remain identical, only expression changes.
 
 World Lock: same universe, same visual world, same art direction, same rendering quality, same color logic, same environmental storytelling style, same lighting family across all scenes unless story progression explicitly changes it.
 
-Style Lock: same 3D animated cinematic style across every scene, no redesign, no alternate costume, no age shift, no style drift.
+Style Lock: same photorealistic live-action cinematic style across every scene, no 3D, no cartoon, no chibi, no mascot styling, no CGI stylization, no age shift, no style drift.
 
 Scale Lock: character scale must remain consistent relative to surrounding environment and props across all scenes unless the story explicitly changes scale.
 
 Motion Continuity Rule: this is the exact same character continuing from scene to scene, with the same identity, body proportions, outfit, and face.`;
 
   const lockBlock = `MULTI-SCENE CHARACTER LOCK RULE:
-Because sceneCount is greater than 1, every scene must use the exact same locked main character. You must carry the same character identity, face, costume, colors, materials, and proportions through every scene. Only pose, expression, camera angle, environment progression, and action can change.`;
+Because sceneCount is greater than 1, every scene must use the exact same locked main character with Character ID ${sessionId}. You must carry the same character identity, face, costume, colors, materials, and proportions through every scene. Only pose, expression, camera angle, environment progression, and action can change. The character must remain photorealistic human live-action, never 3D or animated.`;
 
   return {
     enabled: true,
@@ -141,6 +144,7 @@ Because sceneCount is greater than 1, every scene must use the exact same locked
     dnaBlock,
     lockBlock,
     summary: dnaSummary,
-    shortName: name
+    shortName: sessionId,
+    characterId: sessionId
   };
 }
