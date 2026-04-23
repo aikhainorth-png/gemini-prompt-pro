@@ -1,60 +1,8 @@
-export const TEXT_STYLE_LIBRARY = {
-  'S-01': { id:'S-01', label:'Rainbow Bubble', prompt:'"[HOOK TEXT]" in large rounded bubble Thai font, each character different pastel color cycling pink, sky blue, soft yellow, mint green, lavender — thick white outline on every letter, soft grey drop shadow 2px. Sparkle 4-pointed stars scattered, purple and pink hearts floating beside text.' },
-  'S-02': { id:'S-02', label:'Neon Candy Glow', prompt:'"[HOOK TEXT]" in bold rounded Thai font, hot pink fill with cyan neon outer glow, subtle purple inner glow, glossy finish. Floating sparkles and candy stars around text.' },
-  'S-03': { id:'S-03', label:'Gold Luxury Shine', prompt:'"[HOOK TEXT]" in premium Thai serif font, metallic gold foil texture, soft bevel shine, elegant shadow beneath. Tiny golden sparkles around letters.' },
-  'S-04': { id:'S-04', label:'Soft Cream Pop', prompt:'"[HOOK TEXT]" in cute rounded Thai font, vanilla cream fill, caramel outline, soft drop shadow. Cookie crumbs and tiny hearts around text.' },
-  'S-05': { id:'S-05', label:'Fire Sale Red', prompt:'"[HOOK TEXT]" in extra bold Thai font, vivid red fill, bright yellow outline, black shadow impact style. Motion burst lines behind text.' },
-  'S-06': { id:'S-06', label:'Aqua Fresh Splash', prompt:'"[HOOK TEXT]" in rounded Thai font, turquoise water gradient fill, white glossy highlights, splash droplets around letters.' },
-  'S-07': { id:'S-07', label:'Cotton Candy Dream', prompt:'"[HOOK TEXT]" in fluffy rounded Thai font, pink to baby blue soft gradient, white outline, dreamy cloud sparkles.' },
-  'S-08': { id:'S-08', label:'Emerald Luxe Glow', prompt:'"[HOOK TEXT]" in bold Thai font, emerald green metallic fill, subtle gold edges, luxury shimmer effect.' },
-  'S-09': { id:'S-09', label:'Ice Crystal Shine', prompt:'"[HOOK TEXT]" in bold Thai font, frosted ice blue fill, crystal transparency highlights, snow sparkle particles.' },
-  'S-10': { id:'S-10', label:'Comic Boom Pop', prompt:'"[HOOK TEXT]" in comic style Thai font, yellow fill, red outline, black thick shadow, cartoon burst background.' },
-  'S-11': { id:'S-11', label:'Rose Gold Chic', prompt:'"[HOOK TEXT]" in modern Thai font, rose gold metallic fill, glossy reflection, subtle pink sparkle dust.' },
-  'S-12': { id:'S-12', label:'Midnight Neon', prompt:'"[HOOK TEXT]" in bold Thai font, electric purple fill with blue neon glow, dark nightclub energy.' },
-  'S-13': { id:'S-13', label:'Lemon Fresh Promo', prompt:'"[HOOK TEXT]" in rounded Thai font, lemon yellow fill, white outline, fresh citrus sparkle icons.' },
-  'S-14': { id:'S-14', label:'Tri-Color Gradient', prompt:'"[HOOK TEXT]" in bold rounded Thai font, horizontal gradient fill flowing pink (#FF6B9D) to purple (#A855F7) to sky blue (#60A5FA) across entire text. No outline. Sparkle stars in matching colors scattered around. High-end aesthetic gradient finish.' },
-  'S-15': { id:'S-15', label:'Matte Black Luxury', prompt:'"[HOOK TEXT]" in bold Thai font, matte black fill, subtle silver edge, elegant shadow, premium minimalist feel.' },
-  'S-16': { id:'S-16', label:'Orange Energy Blast', prompt:'"[HOOK TEXT]" in bold Thai font, orange gradient fill, yellow glow, motion streaks behind text.' },
-  'S-17': { id:'S-17', label:'Lavender Cute Pop', prompt:'"[HOOK TEXT]" in rounded Thai font, lavender fill, white outline, tiny stars and bows around text.' },
-  'S-18': { id:'S-18', label:'Ruby Premium Sale', prompt:'"[HOOK TEXT]" in elegant Thai font, ruby red gemstone texture, subtle shine, gold dust particles.' },
-  'S-19': { id:'S-19', label:'Mint Clean Modern', prompt:'"[HOOK TEXT]" in clean Thai sans font, mint green fill, no outline, soft shadow, modern skincare style.' },
-  'S-20': { id:'S-20', label:'Blue Tech Pulse', prompt:'"[HOOK TEXT]" in futuristic Thai font, blue gradient fill, glowing circuitry accents around letters.' },
-  'S-21': { id:'S-21', label:'Peach Soft Glow', prompt:'"[HOOK TEXT]" in rounded Thai font, peach gradient fill, white shine, subtle warm glow.' },
-  'S-22': { id:'S-22', label:'Platinum Premium', prompt:'"[HOOK TEXT]" in luxury Thai font, platinum metallic fill, reflective highlights, premium sparkle.' },
-  'S-23': { id:'S-23', label:'Hot Pink Viral', prompt:'"[HOOK TEXT]" in bold Thai font, hot pink fill, white outline, flashy sparkles, TikTok viral style.' },
-  'S-24': { id:'S-24', label:'Sky Clean Shine', prompt:'"[HOOK TEXT]" in bold Thai font, sky blue fill, glossy white highlight, fresh clean commercial vibe.' },
-  'S-25': { id:'S-25', label:'Jungle Fresh Bold', prompt:'"[HOOK TEXT]" in bold Thai font, leaf green fill, earthy glow, tiny leaf particles around text.' },
-  'S-26': { id:'S-26', label:'Sunset Gradient Glow', prompt:'"[HOOK TEXT]" in bold rounded Thai font, sunset gradient orange to pink to purple, warm cinematic glow.' },
-  'S-27': { id:'S-27', label:'Candy Chrome', prompt:'"[HOOK TEXT]" in bubble Thai font, reflective candy chrome texture, rainbow shine, playful highlights.' },
-  'S-28': { id:'S-28', label:'White Angel Glow', prompt:'"[HOOK TEXT]" in elegant Thai font, pure white fill, soft blue halo glow, dreamy sparkle particles.' },
-  'S-29': { id:'S-29', label:'Black Yellow Urgency', prompt:'"[HOOK TEXT]" in bold Thai font, yellow fill, black outline, emergency sale sign style.' },
-  'S-30': { id:'S-30', label:'Ultra Viral Premium Mix', prompt:'"[HOOK TEXT]" in bold rounded Thai font, premium pink-purple-blue gradient fill, glossy finish, white micro highlight lines, subtle sparkle stars, luxury viral aesthetic for stop-scroll thumbnails.' },
-  'S-31': { id:'S-31', label:'Kawaii Pastel Bubble Max', prompt:'"[HOOK TEXT]" in ultra cute rounded Thai bubble font, each character alternating pastel pink, baby blue, lavender, soft yellow. Thick white outline around every letter, second outer outline in soft purple. Puffy sticker style, subtle drop shadow, kawaii aesthetic. Floating pink hearts, sparkle stars, tiny cat paw icons around text.' },
-  'S-32': { id:'S-32', label:'Rounded Capsule Promo', prompt:'"[HOOK TEXT]" inside a soft rounded capsule banner, white to pastel pink gradient background, smooth glossy surface, thin soft purple border. Main Thai text in dark brown rounded font. Second line English text in bold hot pink rounded font. Cute Japanese promo sticker aesthetic.' },
-  'S-33': { id:'S-33', label:'Watsons Shelf Cute', prompt:'"[HOOK TEXT]" in soft rounded Thai font, pastel pink-blue-yellow letters, thick white outline, lilac outer glow, floating mini hearts and sparkles, cute retail shelf promo style.' },
-  'S-34': { id:'S-34', label:'Eveandboy Beauty Pop', prompt:'"[HOOK TEXT]" in beauty promo Thai font, bubble pink fill, white outline, glossy sticker finish, small star confetti and beauty icons around text.' },
-  'S-35': { id:'S-35', label:'Sephora Luxury Gradient', prompt:'"[HOOK TEXT]" in premium bold Thai font, deep pink to plum to gold gradient, smooth luxe finish, micro sparkle dust, editorial beauty banner feel.' },
-  'S-36': { id:'S-36', label:'Donki Kawaii Sale', prompt:'"[HOOK TEXT]" in playful Japanese-inspired rounded Thai font, multi pastel fill, white outline, purple outline outside, sticker sale sign aesthetic with hearts and mini stars.' },
-  'S-37': { id:'S-37', label:'Miniso Soft Sticker', prompt:'"[HOOK TEXT]" in rounded soft Thai font, pale coral and cream fill, white puffy outline, subtle shadow, minimal cute retail sticker feel.' },
-  'S-38': { id:'S-38', label:'Thai Market Price Blast', prompt:'"[HOOK TEXT]" in bold Thai market font, yellow fill, red outline, black shadow, urgent handwritten sale sign energy.' },
-  'S-39': { id:'S-39', label:'Pastel Pet Shop', prompt:'"[HOOK TEXT]" in adorable bubble Thai font, pastel pink, sky blue, butter yellow, thick white outline, paw prints, hearts and cloud sparkles around text.' },
-  'S-40': { id:'S-40', label:'Japanese Capsule Sweet', prompt:'"[HOOK TEXT]" inside a glossy rounded pastel capsule, white to blush gradient fill, brown rounded Thai lettering, second line in pink rounded English font, kawaii store promo feel.' },
-  'S-41': { id:'S-41', label:'Soft Perfume Boutique', prompt:'"[HOOK TEXT]" in elegant rounded Thai font, lilac to blush pastel gradient fill, white outline, tiny perfume sparkle dust, feminine boutique aesthetic.' },
-  'S-42': { id:'S-42', label:'Sport Fashion Pop', prompt:'"[HOOK TEXT]" in bold rounded Thai font, pink, purple and sky gradient letters, white outline, sporty cute sticker style with stars and motion lines.' }
-};
-
-const MODE_TEXT_STYLE_MAP = {
-  signboard: { h1:['S-05','S-29','S-10','S-38'], h2:['S-32','S-40'] },
-  supplement_stop_scroll: { h1:['S-14','S-19','S-30','S-24'], h2:['S-32','S-35'] }
-};
-
 export const GEM_MODES = {
   signboard: {
     id: 'signboard',
     label: 'สินค้าติดป้าย',
     description: 'คอนเทนต์ขายของหน้าร้านแนวป้ายเหลือง ราคาช็อก ล้างสต๊อก คนหยุดดู',
-    defaultTextStyle: 'S-05',
-    defaultH2Style: 'S-32',
     systemPrompt: `You are a specialist prompt engineer for Thai viral product content.
 Use a Thai retail viral style inspired by real smartphone UGC shopping clips.
 The output must feel like real Thai store content that stops scrolling immediately.
@@ -64,8 +12,6 @@ Prioritize price-shock psychology, scarcity, crowd energy, yellow price sign, ra
     id: 'supplement_stop_scroll',
     label: 'อาหารเสริม คนหยุดดู',
     description: 'ไวรัลคอนเทนต์อาหารเสริมแบบ stop-scroll เน้น hook แรง UGC trust และ compliant',
-    defaultTextStyle: 'S-14',
-    defaultH2Style: 'S-35',
     systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist specializing in Thai supplement content that makes viewers stop scrolling immediately.
 Create HIGH-CONVERSION viral supplement content for Thailand.
 Prioritize:
@@ -91,31 +37,126 @@ export function getGemModeOptions(){
   return Object.values(GEM_MODES).map(({id,label}) => ({id,label}));
 }
 
-export function getTextStyleOptions(modeId = 'signboard', kind = 'h1'){
-  const ids = MODE_TEXT_STYLE_MAP[modeId]?.[kind] || Object.keys(TEXT_STYLE_LIBRARY);
-  return ids.map(id => ({ id, label: `${id} — ${TEXT_STYLE_LIBRARY[id]?.label || id}` })).filter(Boolean);
+
+export const TEXT_STYLE_LIBRARY = {
+  's01_rainbow_bubble': { id:'s01_rainbow_bubble', code:'S-01', label:'Rainbow Bubble', prompt:'"[HOOK TEXT]" in large rounded bubble Thai font, each character different pastel color cycling pink, sky blue, soft yellow, mint green, lavender — thick white outline on every letter, soft grey drop shadow 2px. Sparkle 4-pointed stars scattered, purple and pink hearts floating beside text.' },
+  's02_neon_candy_glow': { id:'s02_neon_candy_glow', code:'S-02', label:'Neon Candy Glow', prompt:'"[HOOK TEXT]" in bold rounded Thai font, hot pink fill with cyan neon outer glow, subtle purple inner glow, glossy finish. Floating sparkles and candy stars around text.' },
+  's03_gold_luxury_shine': { id:'s03_gold_luxury_shine', code:'S-03', label:'Gold Luxury Shine', prompt:'"[HOOK TEXT]" in premium Thai serif font, metallic gold foil texture, soft bevel shine, elegant shadow beneath. Tiny golden sparkles around letters.' },
+  's04_soft_cream_pop': { id:'s04_soft_cream_pop', code:'S-04', label:'Soft Cream Pop', prompt:'"[HOOK TEXT]" in cute rounded Thai font, vanilla cream fill, caramel outline, soft drop shadow. Cookie crumbs and tiny hearts around text.' },
+  's05_fire_sale_red': { id:'s05_fire_sale_red', code:'S-05', label:'Fire Sale Red', prompt:'"[HOOK TEXT]" in extra bold Thai font, vivid red fill, bright yellow outline, black shadow impact style. Motion burst lines behind text.' },
+  's06_aqua_fresh_splash': { id:'s06_aqua_fresh_splash', code:'S-06', label:'Aqua Fresh Splash', prompt:'"[HOOK TEXT]" in rounded Thai font, turquoise water gradient fill, white glossy highlights, splash droplets around letters.' },
+  's07_cotton_candy_dream': { id:'s07_cotton_candy_dream', code:'S-07', label:'Cotton Candy Dream', prompt:'"[HOOK TEXT]" in fluffy rounded Thai font, pink to baby blue soft gradient, white outline, dreamy cloud sparkles.' },
+  's08_emerald_luxe_glow': { id:'s08_emerald_luxe_glow', code:'S-08', label:'Emerald Luxe Glow', prompt:'"[HOOK TEXT]" in bold Thai font, emerald green metallic fill, subtle gold edges, luxury shimmer effect.' },
+  's09_ice_crystal_shine': { id:'s09_ice_crystal_shine', code:'S-09', label:'Ice Crystal Shine', prompt:'"[HOOK TEXT]" in bold Thai font, frosted ice blue fill, crystal transparency highlights, snow sparkle particles.' },
+  's10_comic_boom_pop': { id:'s10_comic_boom_pop', code:'S-10', label:'Comic Boom Pop', prompt:'"[HOOK TEXT]" in comic style Thai font, yellow fill, red outline, black thick shadow, cartoon burst background.' },
+  's11_rose_gold_chic': { id:'s11_rose_gold_chic', code:'S-11', label:'Rose Gold Chic', prompt:'"[HOOK TEXT]" in modern Thai font, rose gold metallic fill, glossy reflection, subtle pink sparkle dust.' },
+  's12_midnight_neon': { id:'s12_midnight_neon', code:'S-12', label:'Midnight Neon', prompt:'"[HOOK TEXT]" in bold Thai font, electric purple fill with blue neon glow, dark nightclub energy.' },
+  's13_lemon_fresh_promo': { id:'s13_lemon_fresh_promo', code:'S-13', label:'Lemon Fresh Promo', prompt:'"[HOOK TEXT]" in rounded Thai font, lemon yellow fill, white outline, fresh citrus sparkle icons.' },
+  's14_tri_color_gradient': { id:'s14_tri_color_gradient', code:'S-14', label:'Tri-Color Gradient', prompt:'"[HOOK TEXT]" in bold rounded Thai font, horizontal gradient fill flowing pink (#FF6B9D) to purple (#A855F7) to sky blue (#60A5FA) across entire text. No outline. Sparkle stars in matching colors scattered around. High-end aesthetic gradient finish.' },
+  's15_matte_black_luxury': { id:'s15_matte_black_luxury', code:'S-15', label:'Matte Black Luxury', prompt:'"[HOOK TEXT]" in bold Thai font, matte black fill, subtle silver edge, elegant shadow, premium minimalist feel.' },
+  's16_orange_energy_blast': { id:'s16_orange_energy_blast', code:'S-16', label:'Orange Energy Blast', prompt:'"[HOOK TEXT]" in bold Thai font, orange gradient fill, yellow glow, motion streaks behind text.' },
+  's17_lavender_cute_pop': { id:'s17_lavender_cute_pop', code:'S-17', label:'Lavender Cute Pop', prompt:'"[HOOK TEXT]" in rounded Thai font, lavender fill, white outline, tiny stars and bows around text.' },
+  's18_ruby_premium_sale': { id:'s18_ruby_premium_sale', code:'S-18', label:'Ruby Premium Sale', prompt:'"[HOOK TEXT]" in elegant Thai font, ruby red gemstone texture, subtle shine, gold dust particles.' },
+  's19_mint_clean_modern': { id:'s19_mint_clean_modern', code:'S-19', label:'Mint Clean Modern', prompt:'"[HOOK TEXT]" in clean Thai sans font, mint green fill, no outline, soft shadow, modern skincare style.' },
+  's20_blue_tech_pulse': { id:'s20_blue_tech_pulse', code:'S-20', label:'Blue Tech Pulse', prompt:'"[HOOK TEXT]" in futuristic Thai font, blue gradient fill, glowing circuitry accents around letters.' },
+  's21_peach_soft_glow': { id:'s21_peach_soft_glow', code:'S-21', label:'Peach Soft Glow', prompt:'"[HOOK TEXT]" in rounded Thai font, peach gradient fill, white shine, subtle warm glow.' },
+  's22_platinum_premium': { id:'s22_platinum_premium', code:'S-22', label:'Platinum Premium', prompt:'"[HOOK TEXT]" in luxury Thai font, platinum metallic fill, reflective highlights, premium sparkle.' },
+  's23_hot_pink_viral': { id:'s23_hot_pink_viral', code:'S-23', label:'Hot Pink Viral', prompt:'"[HOOK TEXT]" in bold Thai font, hot pink fill, white outline, flashy sparkles, TikTok viral style.' },
+  's24_sky_clean_shine': { id:'s24_sky_clean_shine', code:'S-24', label:'Sky Clean Shine', prompt:'"[HOOK TEXT]" in bold Thai font, sky blue fill, glossy white highlight, fresh clean commercial vibe.' },
+  's25_jungle_fresh_bold': { id:'s25_jungle_fresh_bold', code:'S-25', label:'Jungle Fresh Bold', prompt:'"[HOOK TEXT]" in bold Thai font, leaf green fill, earthy glow, tiny leaf particles around text.' },
+  's26_sunset_gradient_glow': { id:'s26_sunset_gradient_glow', code:'S-26', label:'Sunset Gradient Glow', prompt:'"[HOOK TEXT]" in bold rounded Thai font, sunset gradient orange to pink to purple, warm cinematic glow.' },
+  's27_candy_chrome': { id:'s27_candy_chrome', code:'S-27', label:'Candy Chrome', prompt:'"[HOOK TEXT]" in bubble Thai font, reflective candy chrome texture, rainbow shine, playful highlights.' },
+  's28_white_angel_glow': { id:'s28_white_angel_glow', code:'S-28', label:'White Angel Glow', prompt:'"[HOOK TEXT]" in elegant Thai font, pure white fill, soft blue halo glow, dreamy sparkle particles.' },
+  's29_black_yellow_urgency': { id:'s29_black_yellow_urgency', code:'S-29', label:'Black Yellow Urgency', prompt:'"[HOOK TEXT]" in bold Thai font, yellow fill, black outline, emergency sale sign style.' },
+  's30_ultra_viral_premium_mix': { id:'s30_ultra_viral_premium_mix', code:'S-30', label:'Ultra Viral Premium Mix', prompt:'"[HOOK TEXT]" in bold rounded Thai font, premium pink-purple-blue gradient fill, glossy finish, white micro highlight lines, subtle sparkle stars, luxury viral aesthetic for stop-scroll thumbnails.' }
+};
+
+export function getTextStyleOptions(){
+  return Object.values(TEXT_STYLE_LIBRARY).map(({id, code, label}) => ({ id, label: `${code} — ${label}` }));
 }
 
-export function getTextStyleById(styleId){
-  return TEXT_STYLE_LIBRARY[styleId] || TEXT_STYLE_LIBRARY['S-01'];
+const MODE_TEXT_STYLE_MAP = {
+  signboard: ['s05_fire_sale_red','s29_black_yellow_urgency','s10_comic_boom_pop'],
+  supplement_stop_scroll: ['s14_tri_color_gradient','s19_mint_clean_modern','s20_blue_tech_pulse'],
+  food: ['s13_lemon_fresh_promo','s26_sunset_gradient_glow','s06_aqua_fresh_splash'],
+  snack: ['s10_comic_boom_pop','s27_candy_chrome','s16_orange_energy_blast'],
+  mom_baby: ['s17_lavender_cute_pop','s07_cotton_candy_dream','s21_peach_soft_glow'],
+  fashion: ['s11_rose_gold_chic','s22_platinum_premium','s30_ultra_viral_premium_mix'],
+  shoes: ['s22_platinum_premium','s15_matte_black_luxury','s11_rose_gold_chic'],
+  lingerie: ['s11_rose_gold_chic','s17_lavender_cute_pop','s28_white_angel_glow'],
+  skincare: ['s14_tri_color_gradient','s19_mint_clean_modern','s24_sky_clean_shine'],
+  home: ['s24_sky_clean_shine','s08_emerald_luxe_glow','s29_black_yellow_urgency'],
+  bedding: ['s07_cotton_candy_dream','s21_peach_soft_glow','s28_white_angel_glow'],
+  kitchen: ['s06_aqua_fresh_splash','s13_lemon_fresh_promo','s24_sky_clean_shine'],
+  bathroom: ['s24_sky_clean_shine','s06_aqua_fresh_splash','s19_mint_clean_modern'],
+  cleaning: ['s24_sky_clean_shine','s29_black_yellow_urgency','s16_orange_energy_blast'],
+  electronics: ['s20_blue_tech_pulse','s22_platinum_premium','s12_midnight_neon'],
+  gardening: ['s25_jungle_fresh_bold','s08_emerald_luxe_glow','s13_lemon_fresh_promo'],
+  produce: ['s25_jungle_fresh_bold','s13_lemon_fresh_promo','s26_sunset_gradient_glow'],
+  tools: ['s15_matte_black_luxury','s29_black_yellow_urgency','s20_blue_tech_pulse'],
+  stationery: ['s01_rainbow_bubble','s17_lavender_cute_pop','s27_candy_chrome'],
+  books: ['s03_gold_luxury_shine','s15_matte_black_luxury','s22_platinum_premium'],
+  cosmetics: ['s14_tri_color_gradient','s11_rose_gold_chic','s22_platinum_premium']
+};
+
+export function getRecommendedTextStyleIdsForMode(mode='signboard'){
+  return MODE_TEXT_STYLE_MAP[mode] || MODE_TEXT_STYLE_MAP.signboard;
 }
 
-export function getRecommendedTextStyle(modeId = 'signboard'){
-  return getGemModeConfig(modeId).defaultTextStyle || 'S-01';
+export function getDefaultTextStyleForMode(mode='signboard'){
+  const first = getRecommendedTextStyleIdsForMode(mode)[0];
+  return TEXT_STYLE_LIBRARY[first] || Object.values(TEXT_STYLE_LIBRARY)[0];
 }
 
-export function getRecommendedH2Style(modeId = 'signboard'){
-  return getGemModeConfig(modeId).defaultH2Style || 'S-32';
+export function getTextStylePrompt(styleId='s01_rainbow_bubble'){
+  return TEXT_STYLE_LIBRARY[styleId] || getDefaultTextStyleForMode('signboard');
 }
 
-export function buildAutoHookText(productName = '', modeId = 'signboard', viralTone = ''){
+
+export function pickRandomFrom(items = []) {
+  if (!Array.isArray(items) || !items.length) return '';
+  return items[Math.floor(Math.random() * items.length)] || '';
+}
+
+export function autoDetectGemMode(productName = '') {
+  const text = String(productName || '').toLowerCase();
+  if (!text) return 'signboard';
+  for (const mode of Object.values(GEM_MODES)) {
+    const keywords = Array.isArray(mode.keywords) ? mode.keywords : [];
+    if (keywords.some(keyword => text.includes(String(keyword).toLowerCase()))) {
+      return mode.id;
+    }
+  }
+  return 'signboard';
+}
+
+export function getTextStyleById(styleId = 's01_rainbow_bubble') {
+  return getTextStylePrompt(styleId);
+}
+
+export function getRecommendedTextStylesForMode(mode = 'signboard') {
+  return getRecommendedTextStyleIdsForMode(mode).map((id) => getTextStyleById(id)).filter(Boolean);
+}
+
+const MODE_HOOK_TEXT_MAP = {
+  signboard: ['ลดวันนี้วันเดียว!', 'โปรแรงห้ามเลื่อน', 'เหลือไม่กี่ชิ้นแล้ว'],
+  supplement_stop_scroll: ['ดูแลตัวเองตอนนี้', 'หลายคนกำลังใช้สิ่งนี้', 'หยุดดูแล้วยังต้องถามต่อ'],
+  food: ['หอมจนต้องหยุดดู', 'เห็นแล้วหิวทันที', 'เมนูนี้ต้องลอง'],
+  snack: ['กรอบจนต้องเปิดเสียง', 'ถุงเดียวไม่เคยพอ', 'กินเพลินมาก'],
+  mom_baby: ['แม่ ๆ ต้องดู', 'บ้านไหนมีลูกต้องมี', 'ลูกสบายแม่แฮปปี้'],
+  fashion: ['ลุคนี้คนทักแน่', 'ใส่แล้วดูแพง', 'แมตช์ง่ายมาก'],
+  shoes: ['คู่นี้ต้องมี', 'ใส่แล้วเดินสบาย', 'ลดแล้วคุ้มมาก'],
+  lingerie: ['ใส่แล้วมั่นใจ', 'เนียนสวยมาก', 'ใส่สบายทั้งวัน'],
+  skincare: ['ผิวโทรมต้องดู', 'เนื้อครีมสวยมาก', 'รูทีนนี้คนถามเยอะ'],
+  cosmetics: ['สีนี้กำลังไวรัล', 'ทาแล้วดูแพง', 'สาว ๆ ต้องดู']
+};
+
+export function generateTextOverlayHook({ modeId = 'signboard', viralTone = '', productName = '' } = {}) {
+  const pool = MODE_HOOK_TEXT_MAP[modeId] || MODE_HOOK_TEXT_MAP.signboard;
   const product = String(productName || '').trim();
-  if (modeId === 'supplement_stop_scroll') return `${product || 'ตัวนี้'} หลายคนถามหา!`;
-  return product ? `${product} โปรแรง!` : (viralTone || 'ลดวันนี้วันเดียว!');
-}
-
-export function buildAutoH2Text(productName = '', modeId = 'signboard'){
-  const product = String(productName || '').trim();
-  if (modeId === 'supplement_stop_scroll') return product ? `${product} รูทีนดูแลง่าย ใช้ทุกวัน` : 'ดูแลง่าย ใช้ทุกวัน';
-  return product ? `${product} โปรพิเศษวันนี้เท่านั้น` : 'โปรพิเศษวันนี้เท่านั้น';
+  const tone = String(viralTone || '').trim();
+  if (tone && product) return `${tone} ${product}`.slice(0, 42);
+  if (tone) return tone.slice(0, 42);
+  if (product) return `${pickRandomFrom(pool)} ${product}`.slice(0, 42);
+  return pickRandomFrom(pool) || 'โปรแรงห้ามเลื่อน';
 }

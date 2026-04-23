@@ -1,4 +1,4 @@
-import { GEM_MODES as BASE_GEM_MODES, pickRandomFrom, getGemModeOptions as baseGetGemModeOptions, autoDetectGemMode as baseAutoDetectGemMode, getTextStyleOptions as baseGetTextStyleOptions, getTextStyleById as baseGetTextStyleById, getRecommendedTextStyle as baseGetRecommendedTextStyle, getRecommendedH2Style as baseGetRecommendedH2Style, buildAutoHookText as baseBuildAutoHookText, buildAutoH2Text as baseBuildAutoH2Text } from './gem-modes.js';
+import { GEM_MODES as BASE_GEM_MODES, pickRandomFrom, getGemModeOptions as baseGetGemModeOptions, autoDetectGemMode as baseAutoDetectGemMode, getTextStyleOptions as baseGetTextStyleOptions, getDefaultTextStyleForMode as baseGetDefaultTextStyleForMode, getTextStyleById as baseGetTextStyleById, getRecommendedTextStyleIdsForMode as baseGetRecommendedTextStyleIdsForMode, generateTextOverlayHook as baseGenerateTextOverlayHook } from './gem-modes.js';
 
 export const GEM_MODES = BASE_GEM_MODES;
 
@@ -54,12 +54,11 @@ export function autoDetectGemMode(productName = ''){
   return baseAutoDetectGemMode(productName);
 }
 
-export { pickRandomFrom };
+export { pickRandomFrom, getTextStyleOptions, getRecommendedTextStyleIdsForMode, getDefaultTextStyleForMode, getTextStylePrompt } from './gem-modes.js';
 
 
-export function getTextStyleOptions(modeId='signboard', kind='h1'){ return baseGetTextStyleOptions(modeId, kind); }
-export function getTextStyleById(styleId){ return baseGetTextStyleById(styleId); }
-export function getRecommendedTextStyle(modeId='signboard'){ return baseGetRecommendedTextStyle(modeId); }
-export function getRecommendedH2Style(modeId='signboard'){ return baseGetRecommendedH2Style(modeId); }
-export function buildAutoHookText(productName='', modeId='signboard', viralTone=''){ return baseBuildAutoHookText(productName, modeId, viralTone); }
-export function buildAutoH2Text(productName='', modeId='signboard'){ return baseBuildAutoH2Text(productName, modeId); }
+export function getTextStyleOptions(){ return baseGetTextStyleOptions(); }
+export function getDefaultTextStyleForMode(mode='signboard'){ return baseGetDefaultTextStyleForMode(mode); }
+export function getTextStyleById(styleId='s01_rainbow_bubble'){ return baseGetTextStyleById(styleId); }
+export function getRecommendedTextStyleIdsForMode(mode='signboard'){ return baseGetRecommendedTextStyleIdsForMode(mode); }
+export function generateTextOverlayHook(opts={}){ return baseGenerateTextOverlayHook(opts); }
