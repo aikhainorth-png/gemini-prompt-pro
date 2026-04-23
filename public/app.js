@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, addDoc, query, where, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
 import * as ViralModes from './gem-modes.js';
@@ -37,6 +37,11 @@ function getModeSource(){
 }
 function getCurrentStrategy(){
   return $('promptStrategy')?.value || localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral';
+}
+
+function isMobileLike(){
+  const ua = navigator.userAgent || '';
+  return /Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(ua) || window.innerWidth <= 1024;
 }
 
 function safeBind(id, ev, fn){ const el=$(id); if(el) el.addEventListener(ev, fn); }
@@ -261,62 +266,95 @@ function resetSceneWorkspace(){
 
 function normalizeTextBlock(v=''){ return String(v||'').replace(/^```[\w-]*\n?/,'').replace(/```$/,'').trim(); }
 
-function extractSceneSection(text, sceneNo, type){
+function splitBySceneMarkers(text=''){
   const src = normalizeTextBlock(text);
-  const label = type === 'image' ? `SCENE_${sceneNo}_IMAGE_PROMPT:` : `SCENE_${sceneNo}_VIDEO_PROMPT:`;
-  const nextLabel = type === 'image' ? `SCENE_${sceneNo+1}_IMAGE_PROMPT:` : `SCENE_${sceneNo+1}_VIDEO_PROMPT:`;
-  const otherCurrent = type === 'image' ? `SCENE_${sceneNo}_VIDEO_PROMPT:` : `SCENE_${sceneNo}_IMAGE_PROMPT:`;
-  const otherNext = type === 'image' ? `SCENE_${sceneNo+1}_VIDEO_PROMPT:` : `SCENE_${sceneNo+1}_IMAGE_PROMPT:`;
-  const start = src.indexOf(label);
-  if(start === -1) return '';
-  const bodyStart = start + label.length;
-  const candidates = [src.indexOf(nextLabel, bodyStart), src.indexOf(otherCurrent, bodyStart), src.indexOf(otherNext, bodyStart)].filter(x => x !== -1);
-  const end = candidates.length ? Math.min(...candidates) : src.length;
-  return src.slice(bodyStart, end).trim();
+  const matches = [...src.matchAll(/(?:^|\n)\s*(?:SCENE[_\s]*(\d+)(?:[_\s]*(?:IMAGE|VIDEO|VDO)(?:[_\s]*(?:\+\s*AUDIO|AUDIO))?[_\s]*PROMPT)?|Scene\s*(\d+)(?:\s*\([^\n]*?\))?\s*:)/gim)];
+  if(!matches.length) return [];
+  const blocks = [];
+  for(let i=0;i<matches.length;i++){
+    const m = matches[i];
+    const start = m.index;
+    const end = i+1 < matches.length ? matches[i+1].index : src.length;
+    const sceneNo = Number(m[1] || m[2] || i+1);
+    blocks.push({ sceneNo, raw: src.slice(start, end).trim() });
+  }
+  return blocks;
+}
+
+function cleanSceneBlock(raw='', type='image', sceneNo=1){
+  let out = normalizeTextBlock(raw);
+  const patterns = type === 'image'
+    ? [new RegExp(`^\\s*SCENE[_\\s]*${sceneNo}[_\\s]*IMAGE[_\\s]*PROMPT\\s*:\\s*`, 'i'), new RegExp(`^\\s*Scene\\s*${sceneNo}\\s*(?:\\([^)]*\\))?\\s*:\\s*`, 'i')]
+    : [new RegExp(`^\\s*SCENE[_\\s]*${sceneNo}[_\\s]*(?:VIDEO|VDO)(?:[_\\s]*(?:\\+\\s*AUDIO|AUDIO))?[_\\s]*PROMPT\\s*:\\s*`, 'i'), new RegExp(`^\\s*Scene\\s*${sceneNo}\\s*(?:\\([^)]*\\))?\\s*:\\s*`, 'i')];
+  patterns.forEach(p => { out = out.replace(p, ''); });
+  return out.trim();
 }
 
 function parseScenePrompts(imagePrompt='', videoPrompt='', sceneCount=1){
+  const count = Number(sceneCount || 1);
+  const imageBlocks = splitBySceneMarkers(imagePrompt);
+  const videoBlocks = splitBySceneMarkers(videoPrompt);
   const scenes = [];
-  for(let i=1;i<=Number(sceneCount||1);i++){
+  for(let i=1;i<=count;i++){
+    const imgMatch = imageBlocks.find(b => b.sceneNo === i);
+    const vidMatch = videoBlocks.find(b => b.sceneNo === i);
     scenes.push({
-      sceneNo:i,
-      imagePrompt: extractSceneSection(imagePrompt, i, 'image'),
-      videoPrompt: extractSceneSection(videoPrompt, i, 'video')
+      sceneNo: i,
+      imagePrompt: imgMatch ? cleanSceneBlock(imgMatch.raw, 'image', i) : '',
+      videoPrompt: vidMatch ? cleanSceneBlock(vidMatch.raw, 'video', i) : ''
     });
   }
-  return scenes.filter(s => s.imagePrompt || s.videoPrompt);
+  const hasStructured = scenes.some(s => s.imagePrompt || s.videoPrompt);
+  if(hasStructured) return scenes.filter(s => s.imagePrompt || s.videoPrompt);
+  if(count > 1){
+    return Array.from({length: count}, (_, idx) => ({
+      sceneNo: idx + 1,
+      imagePrompt: idx === 0 ? normalizeTextBlock(imagePrompt) : '',
+      videoPrompt: idx === 0 ? normalizeTextBlock(videoPrompt) : ''
+    }));
+  }
+  return [];
 }
 
 function buildCombinedScenePrompt(type='image'){
   const wrap = getSceneWorkspace();
   if(!wrap) return '';
-  return [...wrap.querySelectorAll('.scene-card')].map(card => {
+  const blocks = [...wrap.querySelectorAll('.scene-card')].map(card => {
     const no = Number(card.dataset.sceneNo || 0);
     const textarea = card.querySelector(type === 'image' ? '.scene-image-textarea' : '.scene-video-textarea');
     const value = (textarea?.value || '').trim();
-    return value ? `SCENE_${no}_${type.toUpperCase()}_PROMPT:
-${value}` : '';
-  }).filter(Boolean).join('
-
-');
+    if(!value) return '';
+    const header = type === 'image' ? `SCENE_${no}_IMAGE_PROMPT:` : `SCENE_${no}_VIDEO_PROMPT:`;
+    return `${header}\n${value}`;
+  }).filter(Boolean);
+  return blocks.join('\n\n');
 }
 
-function setCopiedState(btn, copiedText='✔ คัดลอกแล้ว'){
-  if(!btn) return;
-  btn.dataset.copied = '1';
-  btn.classList.add('btn-copied');
-  btn.textContent = copiedText;
-}
-
-async function copyScenePrompt(sceneNo, type, btn){
+async function saveScenePromptEdit(sceneNo, type){
   const card = document.querySelector(`.scene-card[data-scene-no="${sceneNo}"]`);
   if(!card) return;
   const textarea = card.querySelector(type === 'image' ? '.scene-image-textarea' : '.scene-video-textarea');
-  const text = textarea?.value || '';
-  if(!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก');
-  await navigator.clipboard.writeText(text);
-  setCopiedState(btn);
-  showToast('คัดลอกแล้ว');
+  if(!textarea) return;
+  const value = (textarea.value || '').trim();
+  if(!value) return showToast('ข้อความว่างไม่ได้');
+  textarea.readOnly = true;
+  textarea.classList.remove('editing');
+  const saveBtn = card.querySelector(type === 'image' ? '.save-scene-image-btn' : '.save-scene-video-btn');
+  const editBtn = card.querySelector(type === 'image' ? '.edit-scene-image-btn' : '.edit-scene-video-btn');
+  if(saveBtn) saveBtn.style.display='none';
+  if(editBtn) editBtn.textContent = 'แก้ไข';
+  if(type === 'image' && $('imagePrompt')) $('imagePrompt').value = buildCombinedScenePrompt('image');
+  if(type === 'video' && $('videoPrompt')) $('videoPrompt').value = buildCombinedScenePrompt('video');
+  try{
+    if(currentUser && currentHistoryId){
+      const payload = { updatedAt: serverTimestamp() };
+      if(type === 'image') payload.imagePrompt = buildCombinedScenePrompt('image');
+      else payload.videoPrompt = buildCombinedScenePrompt('video');
+      await updateDoc(doc(db,'promptHistory',currentHistoryId), payload);
+      await renderHistory();
+    }
+    showToast(`บันทึก ${type === 'image' ? 'IMAGE' : 'VIDEO'} ของ Scene ${sceneNo} แล้ว`);
+  }catch(e){ showToast(`บันทึกไม่สำเร็จ: ${e.message}`); }
 }
 
 function toggleScenePromptEdit(sceneNo, type){
@@ -334,31 +372,18 @@ function toggleScenePromptEdit(sceneNo, type){
   if(editing) textarea.focus();
 }
 
-async function saveScenePromptEdit(sceneNo, type){
+async function copyScenePrompt(sceneNo, type, btn){
   const card = document.querySelector(`.scene-card[data-scene-no="${sceneNo}"]`);
   if(!card) return;
   const textarea = card.querySelector(type === 'image' ? '.scene-image-textarea' : '.scene-video-textarea');
-  if(!textarea) return;
-  const value = (textarea.value || '').trim();
-  if(!value) return showToast('ข้อความว่างไม่ได้');
-  textarea.readOnly = true;
-  textarea.classList.remove('editing');
-  const saveBtn = card.querySelector(type === 'image' ? '.save-scene-image-btn' : '.save-scene-video-btn');
-  const editBtn = card.querySelector(type === 'image' ? '.edit-scene-image-btn' : '.edit-scene-video-btn');
-  if(saveBtn) saveBtn.style.display='none';
-  if(editBtn) editBtn.textContent='แก้ไข';
-  if(type === 'image' && $('imagePrompt')) $('imagePrompt').value = buildCombinedScenePrompt('image');
-  if(type === 'video' && $('videoPrompt')) $('videoPrompt').value = buildCombinedScenePrompt('video');
-  try{
-    if(currentUser && currentHistoryId){
-      const payload = { updatedAt: serverTimestamp() };
-      if(type === 'image') payload.imagePrompt = buildCombinedScenePrompt('image');
-      else payload.videoPrompt = buildCombinedScenePrompt('video');
-      await updateDoc(doc(db,'promptHistory',currentHistoryId), payload);
-      await renderHistory();
-    }
-    showToast(`บันทึก ${type === 'image' ? 'IMAGE' : 'VIDEO'} ของ Scene ${sceneNo} แล้ว`);
-  }catch(e){ showToast(`บันทึกไม่สำเร็จ: ${e.message}`); }
+  const text = textarea?.value || '';
+  if(!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก');
+  await navigator.clipboard.writeText(text);
+  const old = btn.textContent;
+  btn.textContent='คัดลอกแล้ว';
+  btn.classList.remove('btn-dark');
+  btn.classList.add('btn-green');
+  setTimeout(()=>{ btn.textContent=old; btn.classList.remove('btn-green'); btn.classList.add('btn-dark'); }, 1200);
 }
 
 function renderSceneWorkspace(sceneCount, imagePrompt='', videoPrompt=''){
@@ -370,14 +395,14 @@ function renderSceneWorkspace(sceneCount, imagePrompt='', videoPrompt=''){
     if($('sceneWorkspaceWrap')) $('sceneWorkspaceWrap').style.display='none';
     if($('singleImageCard')) $('singleImageCard').style.display='';
     if($('singleVideoCard')) $('singleVideoCard').style.display='';
-    if($('captionCard')) $('captionCard').style.display = $('captionPrompt')?.value ? '' : 'none';
+    if($('captionCard')) $('captionCard').style.display='';
     return false;
   }
 
   if($('sceneWorkspaceWrap')) $('sceneWorkspaceWrap').style.display='block';
   if($('singleImageCard')) $('singleImageCard').style.display='none';
   if($('singleVideoCard')) $('singleVideoCard').style.display='none';
-  if($('captionCard')) $('captionCard').style.display = $('captionPrompt')?.value ? '' : 'none';
+  if($('captionCard')) $('captionCard').style.display='';
 
   wrap.innerHTML = scenes.map(scene => `
     <section class="scene-card" data-scene-no="${scene.sceneNo}">
@@ -406,7 +431,8 @@ function renderSceneWorkspace(sceneCount, imagePrompt='', videoPrompt=''){
   return true;
 }
 
-function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('promptStrategy')) $('promptStrategy').value='viral'; localStorage.setItem(LS_PROMPT_STRATEGY,'viral'); populateGemModeOptions('signboard'); if($('gemMode')) $('gemMode').value='signboard'; if($('providerMode')) $('providerMode').value='gemini'; if($('voiceType')) $('voiceType').value='หญิง'; populateViralToneOptions('signboard','ล้างสต๊อก'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; resetSceneWorkspace(); if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('captionCard')) $('captionCard').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
+
+function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('promptStrategy')) $('promptStrategy').value='viral'; localStorage.setItem(LS_PROMPT_STRATEGY,'viral'); populateGemModeOptions('signboard'); if($('gemMode')) $('gemMode').value='signboard'; if($('providerMode')) $('providerMode').value='gemini'; if($('voiceType')) $('voiceType').value='หญิง'; populateViralToneOptions('signboard','ล้างสต๊อก'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; resetSceneWorkspace(); if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
 function buildSystemInstruction(d = getPreparedFormData(getFormData())){
   const gem = getModeSource().getGemModeConfig(d.gemMode);
   const character = buildCharacterFactoryProfile(d);
@@ -535,8 +561,8 @@ async function renderAuthState(){
 }
 
 async function savePromptHistoryRecord(d,result){ const character = buildCharacterFactoryProfile(d); const ref=await addDoc(collection(db,'promptHistory'),{ uid:currentUser.uid,email:currentUser.email||'',product:d.product,location:d.location,view:d.view,gemMode:d.gemMode,providerMode:d.providerMode,voiceType:d.voiceType,viralTone:d.viralTone,sceneCount:d.sceneCount,duration:d.duration,characterFactorySummary: character.enabled ? character.summary : '',imagePrompt:result.image_prompt,videoPrompt:result.video_prompt,captionHashtags:result.caption_hashtags,createdAt:serverTimestamp() }); return ref.id; }
-async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); const result=await callSelectedProvider(d); if($('imagePrompt')) $('imagePrompt').value=result.image_prompt; if($('videoPrompt')) $('videoPrompt').value=result.video_prompt; if($('captionPrompt')) $('captionPrompt').value=result.caption_hashtags; renderSceneWorkspace(d.sceneCount, result.image_prompt, result.video_prompt); if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('captionCard')) $('captionCard').style.display = result.caption_hashtags ? '' : 'none'; if($('emptyState')) $('emptyState').style.display='none'; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,result); resetPromptEditors(); await renderHistory(); showToast(character.enabled ? `สร้าง Final Prompt สำเร็จ • ล็อคตัวละคร ${character.shortName}` : 'สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
-async function copyBlock(id,btn){ const text=$(id)?.value||''; if(!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก'); await navigator.clipboard.writeText(text); setCopiedState(btn); showToast('คัดลอกแล้ว'); }
+async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); const result=await callSelectedProvider(d); if($('imagePrompt')) $('imagePrompt').value=result.image_prompt; if($('videoPrompt')) $('videoPrompt').value=result.video_prompt; if($('captionPrompt')) $('captionPrompt').value=result.caption_hashtags; renderSceneWorkspace(d.sceneCount, result.image_prompt, result.video_prompt); if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('emptyState')) $('emptyState').style.display='none'; if($('captionCard')) $('captionCard').style.display=''; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,result); resetPromptEditors(); await renderHistory(); showToast(character.enabled ? `สร้าง Final Prompt สำเร็จ • ล็อคตัวละคร ${character.shortName}` : 'สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
+async function copyBlock(id,btn){ const text=$(id)?.value||''; if(!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก'); await navigator.clipboard.writeText(text); const old=btn.textContent; btn.textContent='✔ คัดลอกแล้ว'; btn.classList.remove('btn-dark'); btn.classList.add('btn-green'); setTimeout(()=>{btn.textContent=old; btn.classList.remove('btn-green'); btn.classList.add('btn-dark');},1200); }
 function escapeHtml(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
 function renderHistoryList(items){
   const wrap=$('historyList');
@@ -583,8 +609,8 @@ async function useHistoryItem(id){
     if($('captionPrompt')) $('captionPrompt').value=item.captionHashtags||'';
     renderSceneWorkspace(item.sceneCount||1, item.imagePrompt||'', item.videoPrompt||'');
     if($('resultsWrap')) $('resultsWrap').style.display='grid';
-    if($('captionCard')) $('captionCard').style.display = item.captionHashtags ? '' : 'none';
     if($('emptyState')) $('emptyState').style.display='none';
+    if($('captionCard')) $('captionCard').style.display='';
     currentHistoryId = id;
     saveAndRefresh();
     resetPromptEditors();
