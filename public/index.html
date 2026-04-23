@@ -10,26 +10,13 @@
   <style>
     :root{--bg:#07161a;--card:rgba(10,33,39,.84);--card2:rgba(8,24,29,.95);--line:rgba(111,211,198,.22);--text:#ecfbfb;--muted:#9fc3c7;--accent:#5fd3c6;--accent2:#7fdff2;--green:#20b89a;--red:#ef6b6b;--yellow:#ffd166;--shadow:0 18px 50px rgba(0,0,0,.32);--radius:22px}
     *{box-sizing:border-box} body{margin:0;font-family:Inter,Prompt,sans-serif;color:var(--text);background:radial-gradient(circle at 10% 10%, rgba(95,211,198,.18), transparent 30%),radial-gradient(circle at 90% 10%, rgba(127,223,242,.16), transparent 28%),linear-gradient(180deg,#08181d,#07161a 40%,#061116);min-height:100vh}
-    .shell{max-width:1440px;margin:0 auto;padding:22px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(24px);border-radius:20px;box-shadow:var(--shadow)}
-	.brand .logo{
-  width:48px;
-  height:48px;
-  border-radius:16px;
-  display:grid;
-  place-items:center;
-  background:transparent;
-  overflow:hidden;
-}
-	.brand h1{font-size:18px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.userbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pill{padding:10px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+    .shell{max-width:1440px;margin:0 auto;padding:22px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(24px);border-radius:20px;box-shadow:var(--shadow)}.brand .logo{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));font-size:22px}.brand h1{font-size:18px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.userbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pill{padding:10px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:12px;color:var(--muted)}
     .btn{border:none;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer;color:#fff;transition:.2s transform}.btn:hover{transform:translateY(-1px)}.btn-primary{background:linear-gradient(135deg,#5fd3c6,#2e9fb3)}.btn-dark{background:rgba(255,255,255,.045);border:1px solid rgba(127,223,242,.14)}.btn-green{background:linear-gradient(135deg,#16c47f,#0f9c66)}.btn-red{background:linear-gradient(135deg,#ef5350,#cc3c39)}.btn-outline{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
     .layout{display:grid;grid-template-columns:380px 1fr;gap:18px}.panel,.maincard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);backdrop-filter:blur(24px);box-shadow:var(--shadow)}.panel{padding:18px;position:sticky;top:18px;height:fit-content}.maincard{padding:18px}.section{margin-bottom:16px}.section h3{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#c9f5f2}.field{margin-bottom:12px}.label{display:block;font-size:13px;margin-bottom:8px;color:#d9f5f3}input,textarea,select{width:100%;background:rgba(255,255,255,.05);color:var(--text);border:1px solid rgba(127,223,242,.14);border-radius:14px;padding:13px 14px;font:inherit;outline:none}textarea{min-height:108px;resize:vertical}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}
     .api-card{background:linear-gradient(180deg, rgba(9,40,49,.72), rgba(11,31,39,.5));border:1px solid rgba(127,223,242,.2);border-radius:18px;padding:14px}.api-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.api-title{font-size:14px;font-weight:800}.api-sub{font-size:12px;color:var(--muted)}.api-wrap{position:relative}.api-wrap input{padding-right:48px}.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#d7ddff;cursor:pointer;font-size:18px}.api-actions{display:flex;gap:8px;margin-top:10px}.api-actions .btn{padding:10px 12px;font-size:13px}.statusline,.muted{font-size:12px;color:var(--muted);line-height:1.5}.native{margin-top:10px;padding:10px 12px;border-radius:14px;background:rgba(95,211,198,.09);border:1px solid rgba(95,211,198,.2);font-size:12px;color:#d8fbf6}
     .summary{background:rgba(255,255,255,.04);border:1px solid rgba(127,223,242,.12);border-radius:16px;padding:14px;white-space:pre-wrap;font-size:13px;line-height:1.6;color:#e4fbfb}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:rgba(255,255,255,.04);border:1px solid rgba(127,223,242,.12);padding:12px;border-radius:16px}.stat .k{font-size:11px;color:var(--muted)}.stat .v{font-size:18px;font-weight:800;margin-top:4px}
     .hero{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px}.hero h2{margin:0;font-size:24px}.hero p{margin:6px 0 0;color:var(--muted)}.banner{display:none;padding:16px 18px;border-radius:18px;margin-bottom:14px;font-weight:700}.banner.show{display:block}.banner.pending{background:rgba(95,211,198,.12);border:1px solid rgba(95,211,198,.28);color:#ccfaf2}.banner.error{background:rgba(239,83,80,.12);border:1px solid rgba(239,83,80,.3);color:#ffc3c2}.empty{display:flex;align-items:center;justify-content:center;min-height:360px;border:1px dashed rgba(127,223,242,.16);border-radius:20px;color:var(--muted);text-align:center;padding:20px}
     .results{display:none;gap:16px;grid-template-columns:1fr 1fr}.prompt-card{background:var(--card2);border:1px solid rgba(127,223,242,.12);border-radius:20px;padding:16px}.prompt-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.prompt-top h3{margin:0;font-size:15px}.tag{font-size:11px;padding:6px 10px;border-radius:999px;font-weight:800;text-transform:uppercase}.tag.image{background:rgba(95,211,198,.14);color:#c9faf4}.tag.video{background:rgba(127,223,242,.14);color:#d8f8ff}.prompt-box{width:100%;min-height:340px;background:rgba(255,255,255,.04);color:#edfdfd;border:1px solid rgba(127,223,242,.12);border-radius:16px;padding:14px;font:500 13px/1.75 Inter,Prompt,sans-serif;white-space:pre-wrap}.edit-actions{display:flex;gap:8px;flex-wrap:wrap}.prompt-box.editing{border-color:rgba(95,211,198,.5);box-shadow:0 0 0 3px rgba(95,211,198,.14)}
-    .btn.btn-copied,.copy-btn.btn-copied{background:linear-gradient(135deg,#16c47f,#0f9c66)!important;border:1px solid rgba(32,184,154,.45)!important;color:#fff!important;box-shadow:0 10px 24px rgba(15,156,102,.22)!important}
-    .btn.btn-copied:hover,.copy-btn.btn-copied:hover{transform:none}
-
     .history-wrap{margin-top:18px}.history-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.history-grid{display:grid;gap:12px}.history-item{background:rgba(255,255,255,.04);border:1px solid rgba(127,223,242,.12);border-radius:18px;padding:14px}.history-item h4{margin:0 0 8px;font-size:14px}.history-item .meta{font-size:12px;color:var(--muted);margin-bottom:8px}.history-item .preview{font-size:13px;color:#dff9f7;line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
     .top-actions{display:flex;gap:10px;flex-wrap:wrap}.overlay{position:fixed;inset:0;background:rgba(3,12,16,.74);backdrop-filter:blur(10px);display:none;place-items:center;z-index:40}.overlay.show{display:grid}.loader{background:var(--card2);border:1px solid var(--line);padding:22px 26px;border-radius:24px;text-align:center;box-shadow:var(--shadow)}.spin{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:#5fd3c6;margin:0 auto 12px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;transition:.25s;background:#10242a;border:1px solid rgba(127,223,242,.16);color:#fff;padding:12px 16px;border-radius:14px;z-index:50}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
     /* FIX DROPDOWN TEXT COLOR */
@@ -51,42 +38,21 @@ select option:checked{
   background:#1f6f78;
   color:#ffffff;
 }
-
-    .scene-workspace-wrap{display:none;margin-top:18px}
-    .scene-workspace{display:grid;gap:18px}
-    .scene-card{background:rgba(255,255,255,.03);border:1px solid rgba(127,223,242,.14);border-radius:20px;padding:16px}
-    .scene-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
-    .scene-title{font-size:18px;font-weight:800}
-    .scene-badge{font-size:11px;padding:6px 10px;border-radius:999px;background:rgba(127,223,242,.12);color:#d8f8ff;font-weight:800}
-    .scene-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .scene-subcard .prompt-box{min-height:260px}
-	@media (max-width:1100px){.layout{grid-template-columns:1fr}.panel{position:relative;top:0}.results{grid-template-columns:1fr}.scene-grid{grid-template-columns:1fr}}
+	@media (max-width:1100px){.layout{grid-template-columns:1fr}.panel{position:relative;top:0}.results{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
 <div class="overlay show" id="loginGate">
   <div class="loader" style="max-width:520px;width:calc(100% - 30px);padding:34px;border-radius:28px;background:#0b2026;">
     
-    <img
-  src="./logo.png"
-  alt="GEN PROMPT"
-  style="
-    width:130px;
-    height:130px;
-    object-fit:contain;
-    margin-bottom:20px;
-    filter:
-      drop-shadow(0 0 10px rgba(95,211,198,.35))
-      drop-shadow(0 0 24px rgba(180,80,255,.22));
-  "
-/>
+    <div style="font-size:70px;margin-bottom:18px">✨</div>
 
     <div style="font-size:42px;font-weight:900;margin-bottom:10px">
-      GEN PROMPT
+      สินค้าติดป้าย
     </div>
 
     <div style="color:#a5cfd2;font-size:18px;line-height:1.6;margin-bottom:26px">
-      สร้างคลิป ติดใจ<br>
+      สร้างคลิป ติดป้าย<br>
       + Prompt Generator
     </div>
 
@@ -112,9 +78,9 @@ select option:checked{
 
 <div class="overlay" id="pendingGate">
   <div class="loader" style="max-width:520px;width:calc(100% - 30px);padding:34px;border-radius:28px;background:#0b2026;text-align:center;">
-    <div style="font-size:70px;margin-bottom:18px">⏳</div>
+    <div style="font-size:70px;margin-bottom:18px">🎨</div>
 
-    <div style="font-size:42px;font-weight:900;margin-bottom:10px;color:#ff6600">
+    <div style="font-size:42px;font-weight:900;margin-bottom:10px;color:#6fe0d4">
       รอแอดมินอนุมัติ
     </div>
 
@@ -146,18 +112,7 @@ select option:checked{
 
   <div class="shell">
     <div class="topbar">
-      <div class="brand">
-  <div class="logo">
-    <img
-      src="./logo.png"
-      alt="Gemini Final Prompt Pro"
-      style="
-        width:42px;
-        height:42px;
-        object-fit:contain;
-      "
-    />
-  </div><div><h1>Gemini Final Prompt Pro</h1><p>Firebase Edition • Google Login • Admin Approval • Prompt History</p></div></div>
+      <div class="brand"><div class="logo">✨</div><div><h1>Gemini Final Prompt Pro</h1><p>Firebase Edition • Google Login • Admin Approval • Prompt History</p></div></div>
       <div class="userbar">
   <div class="pill" id="authPill">ยังไม่ได้เข้าสู่ระบบ</div>
 
@@ -183,17 +138,17 @@ select option:checked{
         <div class="section"><h3>API Keys</h3><div class="api-card">
           <div class="api-head">
             <div>
-              <div class="api-title">🔐 API คีย์ส่วนตัว</div>
-              <div class="api-sub">Gemini และ OpenAI Key จะถูกเก็บไว้เฉพาะในเครื่องของคุณเท่านั้น</div>
+              <div class="api-title">🔐 Private Key Mode PRO MAX</div>
+              <div class="api-sub">Gemini และ OpenAI Key จะถูกเก็บไว้เฉพาะในเครื่องนี้เท่านั้น</div>
             </div>
-            <button class="btn btn-dark" id="togglePrivateKeysBtn" type="button" style="padding:8px 12px">▼</button>
+            <button class="btn btn-dark" id="togglePrivateKeysBtn" type="button" style="padding:8px 12px">▲</button>
           </div>
 
-          <div id="privateKeysBody" style="display:none;gap:14px;">
+          <div id="privateKeysBody" style="display:grid;gap:14px;">
             <div style="background:linear-gradient(180deg, rgba(9,40,49,.72), rgba(11,31,39,.5));border:1px solid rgba(127,223,242,.2);border-radius:18px;padding:14px;">
               <div class="api-head">
                 <div>
-                  <div class="api-title">💎 Gemini API Key (Opt)</div>
+                  <div class="api-title">🔑 Gemini API Key (Opt)</div>
                   <div class="api-sub">Key จะถูกเก็บในเครื่องนี้เท่านั้น</div>
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
@@ -201,7 +156,7 @@ select option:checked{
                 </div>
               </div>
               <div id="apiPanelBody">
-                <div class="api-wrap"><input id="userApiKey" type="password" placeholder="วาง Gemini API Key ของคุณ" /><button class="eye" id="toggleEyeBtn" type="button" title="แสดง/ซ่อน Gemini Key">👁️</button></div>
+                <div class="api-wrap"><input id="userApiKey" type="password" placeholder="วาง Gemini API Key ของคุณ" /><button class="eye" id="toggleEyeBtn" type="button">👁️</button></div>
                 <div class="api-actions"><button class="btn btn-green" id="connectKeyBtn" type="button">เชื่อมต่อ Key</button><button class="btn btn-dark" id="testKeyBtn" type="button">ทดสอบ Key</button><button class="btn btn-red" id="deleteKeyBtn" type="button">ลบ</button></div>
                 <div class="statusline" id="geminiKeyStatus"></div>
                 <div class="native" id="geminiNativeStatus">⚡ Gemini Native Full-Engine Mode พร้อมใช้งาน</div>
@@ -211,7 +166,7 @@ select option:checked{
             <div style="background:linear-gradient(180deg, rgba(9,40,49,.72), rgba(11,31,39,.5));border:1px solid rgba(127,223,242,.2);border-radius:18px;padding:14px;">
               <div class="api-head">
                 <div>
-                  <div class="api-title">🧠 OpenAI API Key (Opt)</div>
+                  <div class="api-title">🤖 OpenAI API Key (Opt)</div>
                   <div class="api-sub">Key จะถูกเก็บในเครื่องนี้เท่านั้น</div>
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
@@ -219,7 +174,7 @@ select option:checked{
                 </div>
               </div>
               <div id="openAIPanelBody">
-                <div class="api-wrap"><input id="userOpenAIKey" type="password" placeholder="วาง OpenAI API Key ของคุณ" /><button class="eye" id="toggleOpenAIEyeBtn" type="button" title="แสดง/ซ่อน OpenAI Key">👁️</button></div>
+                <div class="api-wrap"><input id="userOpenAIKey" type="password" placeholder="วาง OpenAI API Key ของคุณ" /><button class="eye" id="toggleOpenAIEyeBtn" type="button">👁️</button></div>
                 <div class="api-actions"><button class="btn btn-green" id="connectOpenAIKeyBtn" type="button">เชื่อมต่อ Key</button><button class="btn btn-dark" id="testOpenAIKeyBtn" type="button">ทดสอบ Key</button><button class="btn btn-red" id="deleteOpenAIKeyBtn" type="button">ลบ</button></div>
                 <div class="statusline" id="openAIKeyStatus"></div>
                 <div class="native" id="openAINativeStatus">⚡ OpenAI Private Mode พร้อมใช้งาน</div>
@@ -227,8 +182,7 @@ select option:checked{
             </div>
           </div>
         </div>
-		<br>
-        <div class="section"><h3>Prompt Builder</h3><div class="field"><label class="label" for="product">1. สินค้า</label><input id="product" placeholder="เช่น แบตเตอรี่ GS Tough / เก้าอี้สำนักงาน / ทิชชู่ Scott Extra" /></div><div class="field"><label class="label" for="location">2. สถานที่</label><input id="location" placeholder="เช่น ร้านแบตเตอรี่ / ห้าง / ร้านเฟอร์นิเจอร์ / โกดัง" /></div><div class="field"><label class="label" for="view">3. มุมมองสินค้า</label><textarea id="view" placeholder="เช่น ช่างยกสินค้าโชว์หน้ากล้อง ซูมป้ายเหลืองลดราคา กล้องมือถือแบบเร่งด่วน"></textarea></div><div class="row"><div class="field"><label class="label" for="promptStrategy">4. แนวทางคลิป</label><select id="promptStrategy"><option value="viral">Viral</option><option value="conversion">Conversion</option><option value="hybrid">Hybrid</option></select></div></div><div class="row"><div class="field"><label class="label" for="gemMode">5. หมวดหมู่</label><select id="gemMode"><option value="signboard" selected>สินค้าติดป้าย</option><option value="supplement_stop_scroll">อาหารเสริม คนหยุดดู</option></select></div><div class="field"><label class="label" for="providerMode">6. ผู้ให้บริการ AI</label><select id="providerMode"><option value="gemini" selected>Gemini</option><option value="openai">OpenAI</option></select></div></div><div class="row"><div class="field"><label class="label" for="voiceType">7. ประเภทเสียงพากย์</label><select id="voiceType"><option value="หญิง" selected>หญิง</option><option value="ชาย">ชาย</option></select></div><div class="field"><label class="label" for="viralTone">8. โทนไวรัล</label><select id="viralTone"><option value="ล้างสต๊อก" selected>ล้างสต๊อก</option><option value="ของใกล้หมด">ของใกล้หมด</option><option value="คนรุมซื้อ">คนรุมซื้อ</option></select></div></div><div class="row"><div class="field"><label class="label" for="sceneCount">9. จำนวน Scene</label><select id="sceneCount"><option value="1">1 Scene</option><option value="2">2 Scene</option><option value="3">3 Scene</option></select></div><div class="field"><label class="label" for="duration">10. เวลาทั้งหมด</label><select id="duration"><option value="8">8 วินาที</option><option value="10" selected>10 วินาที</option><option value="16">16 วินาที</option><option value="20">20 วินาที</option><option value="24">24 วินาที</option><option value="30">30 วินาที</option></select></div></div><div class="row"><button class="btn btn-dark" id="exampleTissueBtn">ตัวอย่างทิชชู่</button><button class="btn btn-dark" id="exampleBatteryBtn">ตัวอย่างแบต</button><button class="btn btn-dark" id="exampleChairBtn">ตัวอย่างเก้าอี้</button></div><div class="row" style="margin-top:10px"><button class="btn btn-dark" id="clearBtn">ล้างข้อมูล</button><button class="btn btn-primary" id="generateBtn">🚀 สร้าง Prompt</button></div><p class="muted" style="margin-top:10px">การพากย์เสียง • ทุก Scene มีเสียงพากย์ไทยพร้อมบทพูด • เลือก หมวดหมู่ / ผู้ให้บริการ AI / เพศเสียง / โทนไวรัลได้ • มากกว่า 1 Scene ระบบจะใช้ CHARACTER FACTORY PRO MAX ล็อคตัวละครอัตโนมัติ</p></div>
+        <div class="section"><h3>Prompt Builder</h3><div class="field"><label class="label" for="product">1. สินค้า</label><input id="product" placeholder="เช่น แบตเตอรี่ GS Tough / เก้าอี้สำนักงาน / ทิชชู่ Scott Extra" /></div><div class="field"><label class="label" for="location">2. สถานที่</label><input id="location" placeholder="เช่น ร้านแบตเตอรี่ / ห้าง / ร้านเฟอร์นิเจอร์ / โกดัง" /></div><div class="field"><label class="label" for="view">3. มุมมองสินค้า</label><textarea id="view" placeholder="เช่น ช่างยกสินค้าโชว์หน้ากล้อง ซูมป้ายเหลืองลดราคา กล้องมือถือแบบเร่งด่วน"></textarea></div><div class="row"><div class="field"><label class="label" for="gemMode">4. GEM MODE</label><select id="gemMode"><option value="signboard" selected>สินค้าติดป้าย</option><option value="supplement_stop_scroll">อาหารเสริม คนหยุดดู</option></select></div><div class="field"><label class="label" for="providerMode">5. AI Provider</label><select id="providerMode"><option value="gemini" selected>Gemini</option><option value="openai">OpenAI</option></select></div></div><div class="row"><div class="field"><label class="label" for="voiceType">6. ประเภทเสียงพากย์</label><select id="voiceType"><option value="หญิง" selected>หญิง</option><option value="ชาย">ชาย</option></select></div><div class="field"><label class="label" for="viralTone">7. โทนไวรัล</label><select id="viralTone"><option value="ล้างสต๊อก" selected>ล้างสต๊อก</option><option value="ของใกล้หมด">ของใกล้หมด</option><option value="คนรุมซื้อ">คนรุมซื้อ</option></select></div></div><div class="row"><div class="field"><label class="label" for="sceneCount">8. จำนวน Scene</label><select id="sceneCount"><option value="1">1 Scene</option><option value="2">2 Scene</option><option value="3">3 Scene</option></select></div><div class="field"><label class="label" for="duration">9. เวลาทั้งหมด</label><select id="duration"><option value="8">8 วินาที</option><option value="10" selected>10 วินาที</option><option value="16">16 วินาที</option><option value="20">20 วินาที</option><option value="24">24 วินาที</option><option value="30">30 วินาที</option></select></div></div><div class="row"><button class="btn btn-dark" id="exampleTissueBtn">ตัวอย่างทิชชู่</button><button class="btn btn-dark" id="exampleBatteryBtn">ตัวอย่างแบต</button><button class="btn btn-dark" id="exampleChairBtn">ตัวอย่างเก้าอี้</button></div><div class="row" style="margin-top:10px"><button class="btn btn-dark" id="clearBtn">ล้างข้อมูล</button><button class="btn btn-primary" id="generateBtn">🚀 สร้าง Prompt</button></div><p class="muted" style="margin-top:10px">Voiceover PRO MAX • ทุก Scene มีเสียงพากย์ไทยพร้อมบทพูด • เลือก GEM MODE / Provider / เพศเสียง / โทนไวรัลได้ • มากกว่า 1 Scene ระบบจะใช้ CHARACTER FACTORY PRO MAX ล็อคตัวละครอัตโนมัติ</p></div>
         <div class="section"><h3>Summary</h3><div class="summary" id="summaryPreview"></div></div>
         <div class="section"><h3>Stats</h3><div class="stats"><div class="stat"><div class="k">Scene</div><div class="v" id="statScene">1</div></div><div class="stat"><div class="k">Duration</div><div class="v" id="statDuration">10s</div></div><div class="stat"><div class="k">Per Scene</div><div class="v" id="statPerScene">10s</div></div></div></div>
       </aside>
@@ -240,14 +194,14 @@ select option:checked{
         <div class="results" id="resultsWrap">
           <section class="prompt-card" id="singleImageCard"><div class="prompt-top"><h3>IMAGE PROMPT</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag image">Image</span><div class="edit-actions"><button class="btn btn-outline" id="editImageBtn" style="padding:10px 12px">แก้ไข IMAGE</button><button class="btn btn-green" id="saveImageBtn" style="padding:10px 12px;display:none">บันทึก IMAGE</button><button class="btn btn-dark" id="copyImageBtn" style="padding:10px 12px">คัดลอก</button></div></div></div><textarea class="prompt-box" id="imagePrompt" readonly></textarea></section>
           <section class="prompt-card" id="singleVideoCard"><div class="prompt-top"><h3>VDO PROMPT</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag video">Video</span><div class="edit-actions"><button class="btn btn-outline" id="editVideoBtn" style="padding:10px 12px">แก้ไข VDO</button><button class="btn btn-green" id="saveVideoBtn" style="padding:10px 12px;display:none">บันทึก VDO</button><button class="btn btn-dark" id="copyVideoBtn" style="padding:10px 12px">คัดลอก</button></div></div></div><textarea class="prompt-box" id="videoPrompt" readonly></textarea></section>
-          <section class="prompt-card" id="captionCard"><div class="prompt-top"><h3>CAPTION + HASHTAGS</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag image">Caption</span><div class="edit-actions"><button class="btn btn-outline" id="editCaptionBtn" style="padding:10px 12px">แก้ไข CAPTION</button><button class="btn btn-green" id="saveCaptionBtn" style="padding:10px 12px;display:none">บันทึก CAPTION</button><button class="btn btn-dark" id="copyCaptionBtn" style="padding:10px 12px">คัดลอก</button></div></div></div><textarea class="prompt-box" id="captionPrompt" readonly></textarea></section>
         </div>
         <div class="scene-workspace-wrap" id="sceneWorkspaceWrap"><div class="scene-workspace" id="sceneWorkspace"></div></div>
+        <section class="prompt-card" id="captionCard" style="display:none;margin-top:16px"><div class="prompt-top"><h3>CAPTION + HASHTAGS</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag image">Caption</span><div class="edit-actions"><button class="btn btn-outline" id="editCaptionBtn" style="padding:10px 12px">แก้ไข CAPTION</button><button class="btn btn-green" id="saveCaptionBtn" style="padding:10px 12px;display:none">บันทึก CAPTION</button><button class="btn btn-dark" id="copyCaptionBtn" style="padding:10px 12px">คัดลอก</button></div></div></div><textarea class="prompt-box" id="captionPrompt" readonly></textarea></section>
         <section class="history-wrap"><div class="history-head"><h3 style="margin:0">Prompt History</h3><div class="row" style="flex:0 0 auto"><button class="btn btn-dark" id="refreshHistoryBtn" style="padding:10px 12px">รีเฟรช</button><button class="btn btn-red" id="clearHistoryBtn" style="padding:10px 12px">ล้าง Prompt History</button></div></div><div class="history-grid" id="historyList"></div></section>
       </main>
     </div>
   </div>
-  <div class="overlay" id="loadingOverlay"><div class="loader"><div class="spin"></div><div style="font-weight:800;font-size:18px">กำลังประมวลผล</div><div class="muted" style="margin-top:6px">⏳ โปรดรอสักครู่...</div></div></div>
+  <div class="overlay" id="loadingOverlay"><div class="loader"><div class="spin"></div><div style="font-weight:800;font-size:18px">กำลังประมวลผล</div><div class="muted" style="margin-top:6px">Please wait...</div></div></div>
   <div class="overlay" id="deleteModal">
   <div class="loader" style="max-width:500px;width:calc(100% - 30px);position:relative">
 
