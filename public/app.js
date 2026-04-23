@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, addDoc, query, where, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
 import * as ViralModes from './gem-modes.js';
@@ -15,7 +15,6 @@ const LS_KEY = 'userGeminiApiKey';
 const LS_OPENAI_KEY = 'userOpenAIApiKey';
 const DEFAULT_MODEL = 'gemini-2.5-flash';
 const LS_PROMPT_STRATEGY = 'GEMINI_FINAL_PROMPT_PRO_PROMPT_STRATEGY_V1';
-const LS_TEXT_OVERLAY = 'GEMINI_FINAL_PROMPT_PRO_TEXT_OVERLAY_V1';
 const $ = (id) => document.getElementById(id);
 const app = initializeApp(firebaseConfig);
 try { getAnalytics(app); } catch {}
@@ -40,10 +39,10 @@ function getCurrentStrategy(){
   return $('promptStrategy')?.value || localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral';
 }
 
-function isMobileLike(){
-  const ua = navigator.userAgent || '';
-  return /Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(ua) || window.innerWidth <= 1024;
-}
+function getTextStyleOptions(){ return (getModeSource().getTextStyleOptions?.() || ViralModes.getTextStyleOptions?.() || []); }
+function getRecommendedTextStyleIdsForMode(mode='signboard'){ return (getModeSource().getRecommendedTextStyleIdsForMode?.(mode) || ViralModes.getRecommendedTextStyleIdsForMode?.(mode) || []); }
+function getDefaultTextStyleForMode(mode='signboard'){ return (getModeSource().getDefaultTextStyleForMode?.(mode) || ViralModes.getDefaultTextStyleForMode?.(mode)); }
+function getTextStylePrompt(styleId=''){ return (getModeSource().getTextStylePrompt?.(styleId) || ViralModes.getTextStylePrompt?.(styleId)); }
 
 function safeBind(id, ev, fn){ const el=$(id); if(el) el.addEventListener(ev, fn); }
 function showToast(message){ const t=$('toast'); if(!t) return; t.textContent=message; t.classList.add('show'); clearTimeout(showToast._timer); showToast._timer=setTimeout(()=>t.classList.remove('show'),2200); }
@@ -131,9 +130,9 @@ function deleteKeyNow(){
  closeDeleteModal();
  showToast('ลบ Gemini Key แล้ว');
 }
-function getFormData(){ return { product:$('product')?.value.trim()||'', location:$('location')?.value.trim()||'', view:$('view')?.value.trim()||'', promptStrategy:$('promptStrategy')?.value||localStorage.getItem(LS_PROMPT_STRATEGY)||'viral', gemMode:$('gemMode')?.value||'signboard', providerMode:$('providerMode')?.value||'gemini', voiceType:$('voiceType')?.value||'หญิง', viralTone:$('viralTone')?.value||'ล้างสต๊อก', sceneCount:Number($('sceneCount')?.value||1), duration:Number($('duration')?.value||10), textOverlayEnabled: !!$('textOverlayEnabled')?.checked, textStyleId: $('textStyleId')?.value||'auto', overlayHookText: ($('overlayHookText')?.value||'').trim(), overlaySceneTarget: $('overlaySceneTarget')?.value||'all', overlayPosition: $('overlayPosition')?.value||'top', overlaySize: $('overlaySize')?.value||'large' }; }
+function getFormData(){ return { product:$('product')?.value.trim()||'', location:$('location')?.value.trim()||'', view:$('view')?.value.trim()||'', promptStrategy:$('promptStrategy')?.value||localStorage.getItem(LS_PROMPT_STRATEGY)||'viral', gemMode:$('gemMode')?.value||'signboard', providerMode:$('providerMode')?.value||'gemini', voiceType:$('voiceType')?.value||'หญิง', viralTone:$('viralTone')?.value||'ล้างสต๊อก', sceneCount:Number($('sceneCount')?.value||1), duration:Number($('duration')?.value||10), textOverlayEnabled: !!($('enableTextOverlay')?.checked), textOverlayStyle: $('textOverlayStyle')?.value || '', textOverlayScene: $('textOverlayScene')?.value || 'scene_1', textOverlayHook: $('textOverlayHook')?.value.trim() || '' }; }
 function saveForm(){ const data = getFormData(); localStorage.setItem(LS_FORM, JSON.stringify(data)); localStorage.setItem(LS_PROMPT_STRATEGY, data.promptStrategy || 'viral'); }
-function loadForm(){ const raw=localStorage.getItem(LS_FORM); if(!raw) return; try{ const d=JSON.parse(raw); if($('product')) $('product').value=d.product||''; if($('location')) $('location').value=d.location||''; if($('view')) $('view').value=d.view||''; if($('promptStrategy')) $('promptStrategy').value=d.promptStrategy || localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral'; if($('gemMode')) $('gemMode').value=d.gemMode||'signboard'; if($('providerMode')) $('providerMode').value=d.providerMode||'gemini'; if($('voiceType')) $('voiceType').value=d.voiceType||'หญิง'; if($('viralTone')) $('viralTone').value=d.viralTone||'ล้างสต๊อก'; if($('sceneCount')) $('sceneCount').value=String(d.sceneCount||1); if($('duration')) $('duration').value=String(d.duration||10); if($('textOverlayEnabled')) $('textOverlayEnabled').checked=!!d.textOverlayEnabled; if($('textStyleId')) $('textStyleId').value=d.textStyleId||'auto'; if($('overlayHookText')) $('overlayHookText').value=d.overlayHookText||''; if($('overlaySceneTarget')) $('overlaySceneTarget').value=d.overlaySceneTarget||'all'; if($('overlayPosition')) $('overlayPosition').value=d.overlayPosition||'top'; if($('overlaySize')) $('overlaySize').value=d.overlaySize||'large'; }catch{} }
+function loadForm(){ const raw=localStorage.getItem(LS_FORM); if(!raw) return; try{ const d=JSON.parse(raw); if($('product')) $('product').value=d.product||''; if($('location')) $('location').value=d.location||''; if($('view')) $('view').value=d.view||''; if($('promptStrategy')) $('promptStrategy').value=d.promptStrategy || localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral'; if($('gemMode')) $('gemMode').value=d.gemMode||'signboard'; if($('providerMode')) $('providerMode').value=d.providerMode||'gemini'; if($('voiceType')) $('voiceType').value=d.voiceType||'หญิง'; if($('viralTone')) $('viralTone').value=d.viralTone||'ล้างสต๊อก'; if($('sceneCount')) $('sceneCount').value=String(d.sceneCount||1); if($('duration')) $('duration').value=String(d.duration||10); if($('enableTextOverlay')) $('enableTextOverlay').checked=!!d.textOverlayEnabled; if($('textOverlayStyle')) $('textOverlayStyle').value=d.textOverlayStyle||''; if($('textOverlayScene')) $('textOverlayScene').value=d.textOverlayScene||'scene_1'; if($('textOverlayHook')) $('textOverlayHook').value=d.textOverlayHook||''; }catch{} }
 
 function populateGemModeOptions(selectedMode){
   const select = $('gemMode');
@@ -206,103 +205,8 @@ function getPreparedFormData(raw){
   return d;
 }
 
-
-function populateTextStyleOptions(modeId, selected='auto'){
-  const select = $('textStyleId');
-  if(!select) return;
-  const source = getModeSource();
-  const options = source.getTextStyleOptions ? source.getTextStyleOptions() : [];
-  const recommendedIds = source.getRecommendedTextStyleIdsForMode ? source.getRecommendedTextStyleIdsForMode(modeId) : [];
-  const recommendedSet = new Set(recommendedIds);
-  select.innerHTML = [`<option value="auto">Auto (แนะนำตามหมวด)</option>`].concat(options.map(opt => `<option value="${opt.id}">${recommendedSet.has(opt.id)?'⭐ ':''}${opt.label}</option>`)).join('');
-  select.value = options.some(o=>o.id===selected) || selected==='auto' ? selected : 'auto';
-}
-
-function populateOverlaySceneOptions(){
-  const select = $('overlaySceneTarget');
-  if(!select) return;
-  const count = Number($('sceneCount')?.value || 1);
-  const current = select.value || 'all';
-  const opts = [{value:'all',label:'All Scene'}];
-  for(let i=1;i<=count;i++) opts.push({value:`scene_${i}`,label:`Scene ${i}`});
-  select.innerHTML = opts.map(opt => `<option value="${opt.value}">${opt.label}</option>`).join('');
-  select.value = opts.some(o=>o.value===current) ? current : (count > 1 ? 'scene_1' : 'all');
-}
-
-function toggleTextOverlayUI(){
-  const enabled = !!$('textOverlayEnabled')?.checked;
-  if($('textOverlayBody')) $('textOverlayBody').style.display = enabled ? 'block' : 'none';
-  updateTextOverlayPreview();
-}
-
-function getEffectiveTextStyleConfig(data = getFormData()){
-  const source = getModeSource();
-  if(data.textStyleId && data.textStyleId !== 'auto' && source.getTextStyleById){
-    return source.getTextStyleById(data.textStyleId);
-  }
-  if(source.getDefaultTextStyleForMode){
-    return source.getDefaultTextStyleForMode(data.gemMode);
-  }
-  return null;
-}
-
-function getEffectiveOverlayHookText(data = getFormData()){
-  if(data.overlayHookText) return data.overlayHookText;
-  const source = getModeSource();
-  if(source.generateTextOverlayHook){
-    return source.generateTextOverlayHook({ modeId:data.gemMode, viralTone:data.viralTone, productName:data.product });
-  }
-  return data.viralTone || data.product || 'โปรแรงห้ามเลื่อน';
-}
-
-function updateTextOverlayPreview(){
-  const preview = $('textOverlayPreview');
-  if(!preview) return;
-  const data = getFormData();
-  if(!data.textOverlayEnabled){ preview.innerHTML = '<div class="muted">ปิดอยู่</div>'; return; }
-  const style = getEffectiveTextStyleConfig(data);
-  const hook = getEffectiveOverlayHookText(data);
-  const label = style ? `${style.code} — ${style.label}` : 'Auto';
-  const position = data.overlayPosition || 'top';
-  const size = data.overlaySize || 'large';
-  preview.innerHTML = `<div style="font-weight:800;font-size:${size==='small'?'18px':size==='medium'?'22px':size==='xl'?'34px':'28px'};line-height:1.2;">${hook}</div><div class="muted" style="margin-top:8px">${label} • ${position} • ${data.overlaySceneTarget}</div>`;
-}
-
-function buildTextOverlayBlock(data = getFormData()){
-  if(!data.textOverlayEnabled) return '';
-  const style = getEffectiveTextStyleConfig(data);
-  if(!style) return '';
-  const hook = getEffectiveOverlayHookText(data);
-  const position = data.overlayPosition || 'top';
-  const sizeMap = { small:'small', medium:'medium', large:'large', xl:'extra large viral' };
-  return `\n\n[TEXT OVERLAY]\nUse Thai overlay text on the ${position} area of the image, size ${sizeMap[data.overlaySize] || 'large'}.\n${style.prompt.replace('[HOOK TEXT]', hook)}\n`;
-}
-
-function injectTextOverlayIntoImagePrompt(imagePrompt='', data = getFormData()){
-  const block = buildTextOverlayBlock(data);
-  if(!block) return imagePrompt;
-  const target = data.overlaySceneTarget || 'all';
-  const text = String(imagePrompt || '').trim();
-  if(!text) return text;
-  const count = Number(data.sceneCount || 1);
-  if(count <= 1 || target === 'all') return `${text}${block}`;
-  const m = target.match(/scene_(\d+)/);
-  const sceneNo = m ? Number(m[1]) : 1;
-  const marker = new RegExp(`(SCENE[_\s]*${sceneNo}[_\s]*(?:IMAGE[_\s]*PROMPT|IMAGE)\s*:\s*)([\s\S]*?)(?=(?:SCENE[_\s]*${sceneNo+1}[_\s]*(?:IMAGE[_\s]*PROMPT|IMAGE)\s*:)|$)`, 'i');
-  if(marker.test(text)){
-    return text.replace(marker, (full, head, body)=> `${head}${body.trim()}${block}\n`);
-  }
-  return `${text}\n\nApply the following text overlay to Scene ${sceneNo} only:${block}`;
-}
-
-function updateTextOverlayDefaultsFromMode(modeId, forceAuto=false){
-  populateTextStyleOptions(modeId, $('textStyleId')?.value || 'auto');
-  if(forceAuto && $('textStyleId')) $('textStyleId').value = 'auto';
-  updateTextOverlayPreview();
-}
-
 function formatPerScene(duration,sceneCount){ const v=duration/Math.max(sceneCount,1); return Number.isInteger(v)?`${v}s`:`${v.toFixed(1)}s`; }
-function updateSummary(){ const d=getFormData(); if($('summaryPreview')) $('summaryPreview').textContent=[`สินค้า: ${d.product||'-'}`,`สถานที่: ${d.location||'-'}`,`มุมมองสินค้า: ${d.view||'-'}`,`GEM MODE: ${getModeSource().getGemModeConfig(d.gemMode).label}`,`AI Provider: ${d.providerMode||'gemini'}`,`ประเภทเสียงพากย์: ${d.voiceType||'-'}`,`โทนไวรัล: ${d.viralTone||'-'}`,`จำนวน Scene: ${d.sceneCount}`,`เวลาทั้งหมด: ${d.duration} วินาที`,`เวลาเฉลี่ยต่อ Scene: ${formatPerScene(d.duration,d.sceneCount)}`, `TEXT OVERLAY: ${d.textOverlayEnabled ? ('เปิดใช้งาน • ' + (getEffectiveTextStyleConfig(d)?.code || 'AUTO') + ' • ' + (d.overlaySceneTarget || 'all')) : 'ปิดอยู่'}`].join('\n'); if($('statScene')) $('statScene').textContent=String(d.sceneCount); if($('statDuration')) $('statDuration').textContent=`${d.duration}s`; if($('statPerScene')) $('statPerScene').textContent=formatPerScene(d.duration,d.sceneCount); }
+function updateSummary(){ const d=getFormData(); if($('summaryPreview')) $('summaryPreview').textContent=[`สินค้า: ${d.product||'-'}`,`สถานที่: ${d.location||'-'}`,`มุมมองสินค้า: ${d.view||'-'}`,`GEM MODE: ${getModeSource().getGemModeConfig(d.gemMode).label}`,`AI Provider: ${d.providerMode||'gemini'}`,`ประเภทเสียงพากย์: ${d.voiceType||'-'}`,`โทนไวรัล: ${d.viralTone||'-'}`,`จำนวน Scene: ${d.sceneCount}`,`เวลาทั้งหมด: ${d.duration} วินาที`,`เวลาเฉลี่ยต่อ Scene: ${formatPerScene(d.duration,d.sceneCount)}`].join('\n'); if($('statScene')) $('statScene').textContent=String(d.sceneCount); if($('statDuration')) $('statDuration').textContent=`${d.duration}s`; if($('statPerScene')) $('statPerScene').textContent=formatPerScene(d.duration,d.sceneCount); }
 function saveAndRefresh(){ saveForm(); updateSummary(); }
 function validateForm(d){ if(!d.product) return 'กรุณากรอกสินค้า'; return ''; }
 function setPromptEditing(type, editing){
@@ -349,7 +253,68 @@ function loadExample(slot){
   showToast(`โหลดตัวอย่าง ${mode.label} แล้ว`);
 }
 
-function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('promptStrategy')) $('promptStrategy').value='viral'; localStorage.setItem(LS_PROMPT_STRATEGY,'viral'); populateGemModeOptions('signboard'); if($('gemMode')) $('gemMode').value='signboard'; if($('providerMode')) $('providerMode').value='gemini'; if($('voiceType')) $('voiceType').value='หญิง'; populateViralToneOptions('signboard','ล้างสต๊อก'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('textOverlayEnabled')) $('textOverlayEnabled').checked=false; if($('textStyleId')) $('textStyleId').value='auto'; if($('overlayHookText')) $('overlayHookText').value=''; if($('overlayPosition')) $('overlayPosition').value='top'; if($('overlaySize')) $('overlaySize').value='large'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
+
+function populateTextOverlayStyleOptions(forceId=''){
+  const select = $('textOverlayStyle');
+  if(!select) return;
+  const mode = $('gemMode')?.value || 'signboard';
+  const recommended = new Set(getRecommendedTextStyleIdsForMode(mode));
+  const opts = getTextStyleOptions();
+  select.innerHTML = opts.map(opt => `<option value="${opt.id}">${recommended.has(opt.id) ? '⭐ ' : ''}${opt.label}</option>`).join('');
+  const fallback = forceId || select.value || getDefaultTextStyleForMode(mode)?.id || opts[0]?.id || '';
+  if(fallback) select.value = fallback;
+}
+function populateTextOverlaySceneOptions(){
+  const select = $('textOverlayScene');
+  if(!select) return;
+  const count = Number($('sceneCount')?.value || 1);
+  const current = select.value || 'scene_1';
+  const opts = Array.from({length: count}, (_,i)=>({value:`scene_${i+1}`, label:`Scene ${i+1}`}));
+  if(count > 1) opts.push({value:'all_scenes', label:'All Scene'});
+  select.innerHTML = opts.map(opt => `<option value="${opt.value}">${opt.label}</option>`).join('');
+  select.value = opts.some(o=>o.value===current) ? current : (opts[0]?.value || 'scene_1');
+}
+function updateTextOverlayVisibility(){
+  const panel = $('textOverlayPanel');
+  if(panel) panel.style.display = $('enableTextOverlay')?.checked ? 'block' : 'none';
+}
+function getTextOverlayHookText(data){
+  const raw = (data.textOverlayHook || '').trim();
+  if(raw) return raw;
+  const mode = getGemModeConfig(data.gemMode || 'signboard');
+  return mode?.viralTones?.[0] || 'หยุดดูด่วน';
+}
+function injectTextOverlayIntoImagePrompt(imagePrompt, data){
+  if(!data?.textOverlayEnabled || !String(imagePrompt||'').trim()) return imagePrompt;
+  const style = getTextStylePrompt(data.textOverlayStyle || getDefaultTextStyleForMode(data.gemMode || 'signboard')?.id);
+  const hook = getTextOverlayHookText(data);
+  const block = `[TEXT OVERLAY]
+${style.prompt.replace('[HOOK TEXT]', hook)}`;
+  const src = String(imagePrompt || '').trim();
+  if(/\[TEXT OVERLAY\]/i.test(src)) return src;
+  if(Number(data.sceneCount||1) <= 1) return `${src}
+
+${block}`;
+  const target = data.textOverlayScene || 'scene_1';
+  if(target === 'all_scenes'){
+    return src.replace(/(SCENE[_\s]*\d+_IMAGE_PROMPT\s*:[\s\S]*?)(?=(?:SCENE[_\s]*\d+_IMAGE_PROMPT\s*:)|$)/gi, (m)=> `${m.trim()}
+
+${block}
+
+`).trim();
+  }
+  const sceneNo = Number(target.replace(/\D/g,'')) || 1;
+  const re = new RegExp(`(SCENE[_\s]*${sceneNo}_IMAGE_PROMPT\s*:[\s\S]*?)(?=(?:SCENE[_\s]*\d+_IMAGE_PROMPT\s*:)|$)`, 'i');
+  if(re.test(src)) return src.replace(re, (m)=> `${m.trim()}
+
+${block}
+`);
+  return `${src}
+
+${block}`;
+}
+
+function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('promptStrategy')) $('promptStrategy').value='viral'; localStorage.setItem(LS_PROMPT_STRATEGY,'viral'); populateGemModeOptions('signboard'); if($('gemMode')) $('gemMode').value='signboard'; if($('providerMode')) $('providerMode').value='gemini'; if($('voiceType')) $('voiceType').value='หญิง'; populateViralToneOptions('signboard','ล้างสต๊อก'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('enableTextOverlay')) $('enableTextOverlay').checked=false; if($('textOverlayHook')) $('textOverlayHook').value=''; populateTextOverlayStyleOptions(getDefaultTextStyleForMode('signboard')?.id || ''); populateTextOverlaySceneOptions(); updateTextOverlayVisibility(); if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
 function buildSystemInstruction(d = getPreparedFormData(getFormData())){
   const gem = getModeSource().getGemModeConfig(d.gemMode);
   const character = buildCharacterFactoryProfile(d);
@@ -394,7 +359,9 @@ Voiceover type: ${d.voiceType}
 Viral tone: ${d.viralTone}
 Scene count: ${d.sceneCount}
 Total duration: ${d.duration} seconds
-Average duration per scene: ${formatPerScene(d.duration,d.sceneCount)}${d.textOverlayEnabled ? `\nTEXT OVERLAY ENABLED: yes\nPreferred text hook: ${getEffectiveOverlayHookText(d)}\nPreferred text style: ${(getEffectiveTextStyleConfig(d)?.code || 'AUTO')} ${(getEffectiveTextStyleConfig(d)?.label || '')}\nOverlay target: ${d.overlaySceneTarget}\nOverlay position: ${d.overlayPosition}\nOverlay size: ${d.overlaySize}` : ''}\n\nRequirements:
+Average duration per scene: ${formatPerScene(d.duration,d.sceneCount)}
+
+Requirements:
 - Return one final image prompt and one final video prompt.
 - The image prompt must clearly instruct the model to use the attached/uploaded image as the product reference only.
 - The video prompt must include Scene 1 to Scene ${d.sceneCount} in sequence.
@@ -406,14 +373,15 @@ Average duration per scene: ${formatPerScene(d.duration,d.sceneCount)}${d.textOv
 - If scene count is greater than 1 and CHARACTER FACTORY PRO MAX is active, embed the locked character profile and continuity lock into the resulting prompts so the same character appears in every scene.
 - For multi-scene outputs, keep the same main character identity across all scenes with no redesign or reinterpretation.
 - Also return caption_hashtags: one Thai caption line plus exactly 5 hashtags, where 3 hashtags are product-related and 2 hashtags are trending Thai commerce/social hashtags.
-- Final only.\n- If text overlay is enabled, keep space in the composition for overlay text on the requested target scene without blocking the product.`;
+- If TEXT OVERLAY is enabled, place a [TEXT OVERLAY] block only in the chosen image prompt scene(s), using the selected style and hook text.
+- Final only.`;
 }
 function buildResponseSchema(){ return {type:'OBJECT',properties:{image_prompt:{type:'STRING'},video_prompt:{type:'STRING'},caption_hashtags:{type:'STRING'}},required:['image_prompt','video_prompt','caption_hashtags'],propertyOrdering:['image_prompt','video_prompt','caption_hashtags']}; }
 async function callSelectedProvider(d){ return await callAI(d.providerMode, { systemPrompt: buildSystemInstruction(d), userPrompt: buildUserPrompt(d) }); }
 async function upsertCurrentUser(user){ const email=String(user.email||'').toLowerCase(); const ref=doc(db,'users',user.uid); const snap=await getDoc(ref); const now=serverTimestamp(); const base={uid:user.uid,email,displayName:user.displayName||'',photoURL:user.photoURL||'',lastLoginAt:now,updatedAt:now}; if(hasAdminEmail(email)){ await setDoc(ref,{...base,createdAt:snap.exists()?snap.data().createdAt||now:now,approved:true,role:'admin',approvedAt:now},{merge:true}); } else if(!snap.exists()){ await setDoc(ref,{...base,createdAt:now,approved:false,role:'user'},{merge:true}); } else { await setDoc(ref,base,{merge:true}); } const updated=await getDoc(ref); userDocCache=updated.exists()?updated.data():null; }
 function isApproved(){ return !!(userDocCache?.approved || hasAdminEmail(currentUser?.email)); }
 function isAdmin(){ return !!(userDocCache?.role==='admin' || hasAdminEmail(currentUser?.email)); }
-async function signInGoogle(){ try{ if(isMobileLike()){ await signInWithRedirect(auth, provider); return; } await signInWithPopup(auth, provider);}catch(e){ showError(`เข้าสู่ระบบไม่สำเร็จ: ${e.message}`); showToast('เข้าสู่ระบบไม่สำเร็จ'); } }
+async function signInGoogle(){ try{ await signInWithPopup(auth, provider);}catch(e){ showError(`เข้าสู่ระบบไม่สำเร็จ: ${e.message}`); showToast('เข้าสู่ระบบไม่สำเร็จ'); } }
 async function refreshCurrentUserDoc(){ if(!currentUser) return; const snap=await getDoc(doc(db,'users',currentUser.uid)); userDocCache=snap.exists()?snap.data():null; }
 
 async function renderAuthState(){
@@ -464,7 +432,7 @@ async function renderAuthState(){
 }
 
 async function savePromptHistoryRecord(d,result){ const character = buildCharacterFactoryProfile(d); const ref=await addDoc(collection(db,'promptHistory'),{ uid:currentUser.uid,email:currentUser.email||'',product:d.product,location:d.location,view:d.view,gemMode:d.gemMode,providerMode:d.providerMode,voiceType:d.voiceType,viralTone:d.viralTone,sceneCount:d.sceneCount,duration:d.duration,characterFactorySummary: character.enabled ? character.summary : '',imagePrompt:result.image_prompt,videoPrompt:result.video_prompt,captionHashtags:result.caption_hashtags,createdAt:serverTimestamp() }); return ref.id; }
-async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); const result=await callSelectedProvider(d); const finalResult = { ...result, image_prompt: injectTextOverlayIntoImagePrompt(result.image_prompt, d) }; if($('imagePrompt')) $('imagePrompt').value=finalResult.image_prompt; if($('videoPrompt')) $('videoPrompt').value=finalResult.video_prompt; if($('captionPrompt')) $('captionPrompt').value=finalResult.caption_hashtags; updateTextOverlayPreview(); if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('emptyState')) $('emptyState').style.display='none'; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,finalResult); resetPromptEditors(); await renderHistory(); showToast(character.enabled ? `สร้าง Final Prompt สำเร็จ • ล็อคตัวละคร ${character.shortName}` : 'สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
+async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); const result=await callSelectedProvider(d); result.image_prompt = injectTextOverlayIntoImagePrompt(result.image_prompt, d); if($('imagePrompt')) $('imagePrompt').value=result.image_prompt; if($('videoPrompt')) $('videoPrompt').value=result.video_prompt; if($('captionPrompt')) $('captionPrompt').value=result.caption_hashtags; if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('emptyState')) $('emptyState').style.display='none'; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,result); resetPromptEditors(); await renderHistory(); showToast(character.enabled ? `สร้าง Final Prompt สำเร็จ • ล็อคตัวละคร ${character.shortName}` : 'สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
 async function copyBlock(id,btn){ const text=$(id)?.value||''; if(!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก'); await navigator.clipboard.writeText(text); const old=btn.textContent; btn.textContent='คัดลอกแล้ว'; setTimeout(()=>{btn.textContent=old;},1200); }
 function escapeHtml(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
 function renderHistoryList(items){
@@ -513,11 +481,8 @@ async function useHistoryItem(id){
     if($('resultsWrap')) $('resultsWrap').style.display='grid';
     if($('emptyState')) $('emptyState').style.display='none';
     currentHistoryId = id;
-    populateOverlaySceneOptions();
-    updateTextOverlayDefaultsFromMode($('gemMode')?.value || 'signboard');
     saveAndRefresh();
     resetPromptEditors();
-    updateTextOverlayPreview();
     showToast('ดึง Prompt History มาใช้ต่อแล้ว');
   }catch(e){ showToast(`ดึงประวัติไม่สำเร็จ: ${e.message}`); }
 }
@@ -567,17 +532,17 @@ safeBind('promptStrategy','change',()=>{
   const nextMode = $('gemMode')?.value || currentMode;
   populateViralToneOptions(nextMode, $('viralTone')?.value || '');
   updateExampleButtons(nextMode);
-  updateTextOverlayDefaultsFromMode(nextMode, true);
-  populateOverlaySceneOptions();
+  populateTextOverlayStyleOptions($('textOverlayStyle')?.value || getDefaultTextStyleForMode(nextMode)?.id || '');
+
   saveAndRefresh();
 });
 
 safeBind('gemMode','change',()=>{
   const modeId = $('gemMode')?.value || 'signboard';
   applyGemMode(modeId, { toast: true });
-  updateTextOverlayDefaultsFromMode(modeId, true);
+  populateTextOverlayStyleOptions($('textOverlayStyle')?.value || getDefaultTextStyleForMode(modeId)?.id || '');
 });
-safeBind('textOverlayEnabled','change',()=>{ toggleTextOverlayUI(); saveAndRefresh(); }); safeBind('textStyleId','change',()=>{ updateTextOverlayPreview(); saveAndRefresh(); }); safeBind('overlayHookText','input',()=>{ updateTextOverlayPreview(); saveAndRefresh(); }); safeBind('overlaySceneTarget','change',()=>{ updateTextOverlayPreview(); saveAndRefresh(); }); safeBind('overlayPosition','change',()=>{ updateTextOverlayPreview(); saveAndRefresh(); }); safeBind('overlaySize','change',()=>{ updateTextOverlayPreview(); saveAndRefresh(); }); safeBind('sceneCount','change',()=>{ populateOverlaySceneOptions(); updateTextOverlayPreview(); saveAndRefresh(); }); safeBind('product','blur',maybeAutoDetectGemMode); safeBind('product','change',maybeAutoDetectGemMode); ['product','location','view','promptStrategy','gemMode','providerMode','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
+safeBind('product','blur',maybeAutoDetectGemMode); safeBind('product','change',maybeAutoDetectGemMode); safeBind('enableTextOverlay','change',()=>{ updateTextOverlayVisibility(); saveAndRefresh(); }); safeBind('textOverlayStyle','change',saveAndRefresh); safeBind('textOverlayScene','change',saveAndRefresh); safeBind('textOverlayHook','input',saveAndRefresh); safeBind('sceneCount','change',()=>{ populateTextOverlaySceneOptions(); saveAndRefresh(); }); ['product','location','view','promptStrategy','gemMode','providerMode','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
 
 function rebindOpenAIButtons(){
   const connectBtn = $('connectOpenAIKeyBtn');
@@ -596,5 +561,5 @@ function rebindOpenAIButtons(){
   }
 }
 
-async function init(){ try{ await getRedirectResult(auth); }catch(e){} if($('promptStrategy')) $('promptStrategy').value = localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral'; populateGemModeOptions('signboard'); bindEvents(); rebindOpenAIButtons(); loadForm(); populateGemModeOptions($('gemMode')?.value || 'signboard'); applyGemMode(($('gemMode')?.value || 'signboard'), { keepTone: true, skipSave: true }); populateTextStyleOptions($('gemMode')?.value || 'signboard', $('textStyleId')?.value || 'auto'); populateOverlaySceneOptions(); toggleTextOverlayUI(); updateTextOverlayPreview(); updateSummary(); resetPromptEditors(); togglePrivateKeysPanel(false); setAppAccessLock(true); showLoginGate(true); showPendingGate(false); const savedKey=getUserApiKey(); if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } const savedOpenAIKey=getOpenAIKey(); if(savedOpenAIKey&&$('userOpenAIKey')){ $('userOpenAIKey').value=savedOpenAIKey; updateOpenAIKeyStatus('พบ OpenAI API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateOpenAIKeyStatus('ยังไม่ได้เชื่อมต่อ OpenAI API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } onAuthStateChanged(auth, async (user)=>{ currentUser=user; userDocCache=null; currentHistoryId=null; showError(''); try{ if(user) await upsertCurrentUser(user); }catch(e){ showError(`Sync user ไม่สำเร็จ: ${e.message}`); } await renderAuthState(); }); setInterval(async ()=>{ if(currentUser && !isApproved()){ try{ await refreshCurrentUserDoc(); if(isApproved()){ await renderAuthState(); showToast('บัญชีได้รับอนุมัติแล้ว'); } }catch(e){} } }, 5000); }
+async function init(){ if($('promptStrategy')) $('promptStrategy').value = localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral'; populateGemModeOptions('signboard'); bindEvents(); rebindOpenAIButtons(); loadForm(); populateGemModeOptions($('gemMode')?.value || 'signboard'); applyGemMode(($('gemMode')?.value || 'signboard'), { keepTone: true, skipSave: true }); populateTextOverlayStyleOptions($('textOverlayStyle')?.value || getDefaultTextStyleForMode($('gemMode')?.value || 'signboard')?.id || ''); populateTextOverlaySceneOptions(); updateTextOverlayVisibility(); updateSummary(); resetPromptEditors(); togglePrivateKeysPanel(false); setAppAccessLock(true); showLoginGate(true); showPendingGate(false); const savedKey=getUserApiKey(); if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } const savedOpenAIKey=getOpenAIKey(); if(savedOpenAIKey&&$('userOpenAIKey')){ $('userOpenAIKey').value=savedOpenAIKey; updateOpenAIKeyStatus('พบ OpenAI API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateOpenAIKeyStatus('ยังไม่ได้เชื่อมต่อ OpenAI API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } onAuthStateChanged(auth, async (user)=>{ currentUser=user; userDocCache=null; currentHistoryId=null; showError(''); try{ if(user) await upsertCurrentUser(user); }catch(e){ showError(`Sync user ไม่สำเร็จ: ${e.message}`); } await renderAuthState(); }); setInterval(async ()=>{ if(currentUser && !isApproved()){ try{ await refreshCurrentUserDoc(); if(isApproved()){ await renderAuthState(); showToast('บัญชีได้รับอนุมัติแล้ว'); } }catch(e){} } }, 5000); }
 document.addEventListener('DOMContentLoaded', init);

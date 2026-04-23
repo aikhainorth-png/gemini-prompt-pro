@@ -1,4 +1,4 @@
-import { GEM_MODES as BASE_GEM_MODES, pickRandomFrom, getGemModeOptions as baseGetGemModeOptions, autoDetectGemMode as baseAutoDetectGemMode, getTextStyleOptions as baseGetTextStyleOptions, getDefaultTextStyleForMode as baseGetDefaultTextStyleForMode, getTextStyleById as baseGetTextStyleById, getRecommendedTextStyleIdsForMode as baseGetRecommendedTextStyleIdsForMode, generateTextOverlayHook as baseGenerateTextOverlayHook } from './gem-modes.js';
+import { GEM_MODES as BASE_GEM_MODES, pickRandomFrom, getGemModeOptions as baseGetGemModeOptions, autoDetectGemMode as baseAutoDetectGemMode } from './gem-modes.js';
 
 export const GEM_MODES = BASE_GEM_MODES;
 
@@ -150,10 +150,3 @@ export function autoDetectGemMode(productName = ''){
 }
 
 export { pickRandomFrom, getTextStyleOptions, getRecommendedTextStyleIdsForMode, getDefaultTextStyleForMode, getTextStylePrompt } from './gem-modes.js';
-
-
-export function getTextStyleOptions(){ return baseGetTextStyleOptions(); }
-export function getDefaultTextStyleForMode(mode='signboard'){ return baseGetDefaultTextStyleForMode(mode); }
-export function getTextStyleById(styleId='s01_rainbow_bubble'){ return baseGetTextStyleById(styleId); }
-export function getRecommendedTextStyleIdsForMode(mode='signboard'){ return baseGetRecommendedTextStyleIdsForMode(mode); }
-export function generateTextOverlayHook(opts={}){ return baseGenerateTextOverlayHook(opts); }
