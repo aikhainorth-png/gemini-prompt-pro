@@ -1,4 +1,4 @@
-import { GEM_MODES as BASE_GEM_MODES, pickRandomFrom, getGemModeOptions as baseGetGemModeOptions, autoDetectGemMode as baseAutoDetectGemMode } from './gem-modes.js';
+import { GEM_MODES as BASE_GEM_MODES, pickRandomFrom, getGemModeOptions as baseGetGemModeOptions, autoDetectGemMode as baseAutoDetectGemMode, getTextStyleOptions as baseGetTextStyleOptions, getTextStyleById as baseGetTextStyleById, getRecommendedTextStyle as baseGetRecommendedTextStyle, getRecommendedH2Style as baseGetRecommendedH2Style, buildAutoHookText as baseBuildAutoHookText, buildAutoH2Text as baseBuildAutoH2Text } from './gem-modes.js';
 
 export const GEM_MODES = BASE_GEM_MODES;
 
@@ -55,3 +55,11 @@ export function autoDetectGemMode(productName = ''){
 }
 
 export { pickRandomFrom };
+
+
+export function getTextStyleOptions(modeId='signboard', kind='h1'){ return baseGetTextStyleOptions(modeId, kind); }
+export function getTextStyleById(styleId){ return baseGetTextStyleById(styleId); }
+export function getRecommendedTextStyle(modeId='signboard'){ return baseGetRecommendedTextStyle(modeId); }
+export function getRecommendedH2Style(modeId='signboard'){ return baseGetRecommendedH2Style(modeId); }
+export function buildAutoHookText(productName='', modeId='signboard', viralTone=''){ return baseBuildAutoHookText(productName, modeId, viralTone); }
+export function buildAutoH2Text(productName='', modeId='signboard'){ return baseBuildAutoH2Text(productName, modeId); }
