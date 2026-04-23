@@ -248,7 +248,165 @@ function loadExample(slot){
   showToast(`โหลดตัวอย่าง ${mode.label} แล้ว`);
 }
 
-function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('promptStrategy')) $('promptStrategy').value='viral'; localStorage.setItem(LS_PROMPT_STRATEGY,'viral'); populateGemModeOptions('signboard'); if($('gemMode')) $('gemMode').value='signboard'; if($('providerMode')) $('providerMode').value='gemini'; if($('voiceType')) $('voiceType').value='หญิง'; populateViralToneOptions('signboard','ล้างสต๊อก'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
+
+function getSceneWorkspace(){ return $('sceneWorkspace'); }
+function resetSceneWorkspace(){
+  const wrap = getSceneWorkspace();
+  if(wrap) wrap.innerHTML='';
+  if($('sceneWorkspaceWrap')) $('sceneWorkspaceWrap').style.display='none';
+  if($('singleImageCard')) $('singleImageCard').style.display='';
+  if($('singleVideoCard')) $('singleVideoCard').style.display='';
+  if($('captionCard')) $('captionCard').style.display='none';
+}
+
+function normalizeTextBlock(v=''){ return String(v||'').replace(/^```[\w-]*\n?/,'').replace(/```$/,'').trim(); }
+
+function extractSceneSection(text, sceneNo, type){
+  const src = normalizeTextBlock(text);
+  const label = type === 'image' ? `SCENE_${sceneNo}_IMAGE_PROMPT:` : `SCENE_${sceneNo}_VIDEO_PROMPT:`;
+  const nextLabel = type === 'image' ? `SCENE_${sceneNo+1}_IMAGE_PROMPT:` : `SCENE_${sceneNo+1}_VIDEO_PROMPT:`;
+  const otherCurrent = type === 'image' ? `SCENE_${sceneNo}_VIDEO_PROMPT:` : `SCENE_${sceneNo}_IMAGE_PROMPT:`;
+  const otherNext = type === 'image' ? `SCENE_${sceneNo+1}_VIDEO_PROMPT:` : `SCENE_${sceneNo+1}_IMAGE_PROMPT:`;
+  const start = src.indexOf(label);
+  if(start === -1) return '';
+  const bodyStart = start + label.length;
+  const candidates = [src.indexOf(nextLabel, bodyStart), src.indexOf(otherCurrent, bodyStart), src.indexOf(otherNext, bodyStart)].filter(x => x !== -1);
+  const end = candidates.length ? Math.min(...candidates) : src.length;
+  return src.slice(bodyStart, end).trim();
+}
+
+function parseScenePrompts(imagePrompt='', videoPrompt='', sceneCount=1){
+  const scenes = [];
+  for(let i=1;i<=Number(sceneCount||1);i++){
+    scenes.push({
+      sceneNo:i,
+      imagePrompt: extractSceneSection(imagePrompt, i, 'image'),
+      videoPrompt: extractSceneSection(videoPrompt, i, 'video')
+    });
+  }
+  return scenes.filter(s => s.imagePrompt || s.videoPrompt);
+}
+
+function buildCombinedScenePrompt(type='image'){
+  const wrap = getSceneWorkspace();
+  if(!wrap) return '';
+  return [...wrap.querySelectorAll('.scene-card')].map(card => {
+    const no = Number(card.dataset.sceneNo || 0);
+    const textarea = card.querySelector(type === 'image' ? '.scene-image-textarea' : '.scene-video-textarea');
+    const value = (textarea?.value || '').trim();
+    return value ? `SCENE_${no}_${type.toUpperCase()}_PROMPT:
+${value}` : '';
+  }).filter(Boolean).join('
+
+');
+}
+
+function setCopiedState(btn, copiedText='✔ คัดลอกแล้ว'){
+  if(!btn) return;
+  btn.dataset.copied = '1';
+  btn.classList.add('btn-copied');
+  btn.textContent = copiedText;
+}
+
+async function copyScenePrompt(sceneNo, type, btn){
+  const card = document.querySelector(`.scene-card[data-scene-no="${sceneNo}"]`);
+  if(!card) return;
+  const textarea = card.querySelector(type === 'image' ? '.scene-image-textarea' : '.scene-video-textarea');
+  const text = textarea?.value || '';
+  if(!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก');
+  await navigator.clipboard.writeText(text);
+  setCopiedState(btn);
+  showToast('คัดลอกแล้ว');
+}
+
+function toggleScenePromptEdit(sceneNo, type){
+  const card = document.querySelector(`.scene-card[data-scene-no="${sceneNo}"]`);
+  if(!card) return;
+  const textarea = card.querySelector(type === 'image' ? '.scene-image-textarea' : '.scene-video-textarea');
+  const saveBtn = card.querySelector(type === 'image' ? '.save-scene-image-btn' : '.save-scene-video-btn');
+  const editBtn = card.querySelector(type === 'image' ? '.edit-scene-image-btn' : '.edit-scene-video-btn');
+  if(!textarea || !textarea.value.trim()) return showToast('ยังไม่มี prompt ให้แก้ไข');
+  const editing = textarea.readOnly;
+  textarea.readOnly = !editing;
+  textarea.classList.toggle('editing', editing);
+  if(saveBtn) saveBtn.style.display = editing ? 'inline-flex' : 'none';
+  if(editBtn) editBtn.textContent = editing ? 'ยกเลิก' : 'แก้ไข';
+  if(editing) textarea.focus();
+}
+
+async function saveScenePromptEdit(sceneNo, type){
+  const card = document.querySelector(`.scene-card[data-scene-no="${sceneNo}"]`);
+  if(!card) return;
+  const textarea = card.querySelector(type === 'image' ? '.scene-image-textarea' : '.scene-video-textarea');
+  if(!textarea) return;
+  const value = (textarea.value || '').trim();
+  if(!value) return showToast('ข้อความว่างไม่ได้');
+  textarea.readOnly = true;
+  textarea.classList.remove('editing');
+  const saveBtn = card.querySelector(type === 'image' ? '.save-scene-image-btn' : '.save-scene-video-btn');
+  const editBtn = card.querySelector(type === 'image' ? '.edit-scene-image-btn' : '.edit-scene-video-btn');
+  if(saveBtn) saveBtn.style.display='none';
+  if(editBtn) editBtn.textContent='แก้ไข';
+  if(type === 'image' && $('imagePrompt')) $('imagePrompt').value = buildCombinedScenePrompt('image');
+  if(type === 'video' && $('videoPrompt')) $('videoPrompt').value = buildCombinedScenePrompt('video');
+  try{
+    if(currentUser && currentHistoryId){
+      const payload = { updatedAt: serverTimestamp() };
+      if(type === 'image') payload.imagePrompt = buildCombinedScenePrompt('image');
+      else payload.videoPrompt = buildCombinedScenePrompt('video');
+      await updateDoc(doc(db,'promptHistory',currentHistoryId), payload);
+      await renderHistory();
+    }
+    showToast(`บันทึก ${type === 'image' ? 'IMAGE' : 'VIDEO'} ของ Scene ${sceneNo} แล้ว`);
+  }catch(e){ showToast(`บันทึกไม่สำเร็จ: ${e.message}`); }
+}
+
+function renderSceneWorkspace(sceneCount, imagePrompt='', videoPrompt=''){
+  const wrap = getSceneWorkspace();
+  if(!wrap) return false;
+  const scenes = parseScenePrompts(imagePrompt, videoPrompt, sceneCount);
+  if(Number(sceneCount||1) <= 1 || !scenes.length){
+    wrap.innerHTML='';
+    if($('sceneWorkspaceWrap')) $('sceneWorkspaceWrap').style.display='none';
+    if($('singleImageCard')) $('singleImageCard').style.display='';
+    if($('singleVideoCard')) $('singleVideoCard').style.display='';
+    if($('captionCard')) $('captionCard').style.display = $('captionPrompt')?.value ? '' : 'none';
+    return false;
+  }
+
+  if($('sceneWorkspaceWrap')) $('sceneWorkspaceWrap').style.display='block';
+  if($('singleImageCard')) $('singleImageCard').style.display='none';
+  if($('singleVideoCard')) $('singleVideoCard').style.display='none';
+  if($('captionCard')) $('captionCard').style.display = $('captionPrompt')?.value ? '' : 'none';
+
+  wrap.innerHTML = scenes.map(scene => `
+    <section class="scene-card" data-scene-no="${scene.sceneNo}">
+      <div class="scene-head">
+        <div class="scene-title">SCENE ${scene.sceneNo}</div>
+        <div class="scene-badge">แยก Prompt ต่อฉาก</div>
+      </div>
+      <div class="scene-grid">
+        <section class="prompt-card scene-subcard">
+          <div class="prompt-top"><h3>IMAGE PROMPT</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag image">Image</span><div class="edit-actions"><button class="btn btn-outline edit-scene-image-btn" data-scene="${scene.sceneNo}" style="padding:10px 12px">แก้ไข</button><button class="btn btn-green save-scene-image-btn" data-scene="${scene.sceneNo}" style="padding:10px 12px;display:none">บันทึก</button><button class="btn btn-dark copy-scene-image-btn" data-scene="${scene.sceneNo}" style="padding:10px 12px">คัดลอก</button></div></div></div>
+          <textarea class="prompt-box scene-image-textarea" readonly>${scene.imagePrompt || ''}</textarea>
+        </section>
+        <section class="prompt-card scene-subcard">
+          <div class="prompt-top"><h3>VIDEO + AUDIO PROMPT</h3><div class="row" style="align-items:center;justify-content:flex-end;gap:8px;flex:0 0 auto"><span class="tag video">Video</span><div class="edit-actions"><button class="btn btn-outline edit-scene-video-btn" data-scene="${scene.sceneNo}" style="padding:10px 12px">แก้ไข</button><button class="btn btn-green save-scene-video-btn" data-scene="${scene.sceneNo}" style="padding:10px 12px;display:none">บันทึก</button><button class="btn btn-dark copy-scene-video-btn" data-scene="${scene.sceneNo}" style="padding:10px 12px">คัดลอก</button></div></div></div>
+          <textarea class="prompt-box scene-video-textarea" readonly>${scene.videoPrompt || ''}</textarea>
+        </section>
+      </div>
+    </section>`).join('');
+
+  wrap.querySelectorAll('.edit-scene-image-btn').forEach(btn => btn.addEventListener('click', ()=>toggleScenePromptEdit(btn.dataset.scene,'image')));
+  wrap.querySelectorAll('.save-scene-image-btn').forEach(btn => btn.addEventListener('click', ()=>saveScenePromptEdit(btn.dataset.scene,'image')));
+  wrap.querySelectorAll('.copy-scene-image-btn').forEach(btn => btn.addEventListener('click', ()=>copyScenePrompt(btn.dataset.scene,'image',btn)));
+  wrap.querySelectorAll('.edit-scene-video-btn').forEach(btn => btn.addEventListener('click', ()=>toggleScenePromptEdit(btn.dataset.scene,'video')));
+  wrap.querySelectorAll('.save-scene-video-btn').forEach(btn => btn.addEventListener('click', ()=>saveScenePromptEdit(btn.dataset.scene,'video')));
+  wrap.querySelectorAll('.copy-scene-video-btn').forEach(btn => btn.addEventListener('click', ()=>copyScenePrompt(btn.dataset.scene,'video',btn)));
+  return true;
+}
+
+function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('promptStrategy')) $('promptStrategy').value='viral'; localStorage.setItem(LS_PROMPT_STRATEGY,'viral'); populateGemModeOptions('signboard'); if($('gemMode')) $('gemMode').value='signboard'; if($('providerMode')) $('providerMode').value='gemini'; if($('voiceType')) $('voiceType').value='หญิง'; populateViralToneOptions('signboard','ล้างสต๊อก'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; resetSceneWorkspace(); if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('captionCard')) $('captionCard').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
 function buildSystemInstruction(d = getPreparedFormData(getFormData())){
   const gem = getModeSource().getGemModeConfig(d.gemMode);
   const character = buildCharacterFactoryProfile(d);
@@ -275,7 +433,18 @@ GLOBAL OUTPUT RULES:
 - The selected voice type controls narrator gender.
 - The selected viral tone controls urgency, emotion, and selling pressure.
 - No silent scenes.
-- Keep both prompts fully final and ready to use.`;
+- Keep both prompts fully final and ready to use.
+- If Scene count is greater than 1, format the image prompt and video prompt with clear blocks using these exact headers:
+SCENE_1_IMAGE_PROMPT:
+...
+SCENE_2_IMAGE_PROMPT:
+...
+and
+SCENE_1_VIDEO_PROMPT:
+...
+SCENE_2_VIDEO_PROMPT:
+...
+Continue the same pattern for all scenes.`;
 }
 function buildUserPrompt(d){
   const gem = getModeSource().getGemModeConfig(d.gemMode);
@@ -306,6 +475,7 @@ Requirements:
 - Follow the selected GEM MODE creative strategy closely.
 - If scene count is greater than 1 and CHARACTER FACTORY PRO MAX is active, embed the locked character profile and continuity lock into the resulting prompts so the same character appears in every scene.
 - For multi-scene outputs, keep the same main character identity across all scenes with no redesign or reinterpretation.
+- If scene count is greater than 1, split both image_prompt and video_prompt into clear scene blocks using these exact headers only: SCENE_1_IMAGE_PROMPT:, SCENE_2_IMAGE_PROMPT:, ... and SCENE_1_VIDEO_PROMPT:, SCENE_2_VIDEO_PROMPT:, ...
 - Also return caption_hashtags: one Thai caption line plus exactly 5 hashtags, where 3 hashtags are product-related and 2 hashtags are trending Thai commerce/social hashtags.
 - Final only.`;
 }
@@ -365,8 +535,8 @@ async function renderAuthState(){
 }
 
 async function savePromptHistoryRecord(d,result){ const character = buildCharacterFactoryProfile(d); const ref=await addDoc(collection(db,'promptHistory'),{ uid:currentUser.uid,email:currentUser.email||'',product:d.product,location:d.location,view:d.view,gemMode:d.gemMode,providerMode:d.providerMode,voiceType:d.voiceType,viralTone:d.viralTone,sceneCount:d.sceneCount,duration:d.duration,characterFactorySummary: character.enabled ? character.summary : '',imagePrompt:result.image_prompt,videoPrompt:result.video_prompt,captionHashtags:result.caption_hashtags,createdAt:serverTimestamp() }); return ref.id; }
-async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); const result=await callSelectedProvider(d); if($('imagePrompt')) $('imagePrompt').value=result.image_prompt; if($('videoPrompt')) $('videoPrompt').value=result.video_prompt; if($('captionPrompt')) $('captionPrompt').value=result.caption_hashtags; if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('emptyState')) $('emptyState').style.display='none'; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,result); resetPromptEditors(); await renderHistory(); showToast(character.enabled ? `สร้าง Final Prompt สำเร็จ • ล็อคตัวละคร ${character.shortName}` : 'สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
-async function copyBlock(id,btn){ const text=$(id)?.value||''; if(!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก'); await navigator.clipboard.writeText(text); const old=btn.textContent; btn.textContent='คัดลอกแล้ว'; setTimeout(()=>{btn.textContent=old;},1200); }
+async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); const result=await callSelectedProvider(d); if($('imagePrompt')) $('imagePrompt').value=result.image_prompt; if($('videoPrompt')) $('videoPrompt').value=result.video_prompt; if($('captionPrompt')) $('captionPrompt').value=result.caption_hashtags; renderSceneWorkspace(d.sceneCount, result.image_prompt, result.video_prompt); if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('captionCard')) $('captionCard').style.display = result.caption_hashtags ? '' : 'none'; if($('emptyState')) $('emptyState').style.display='none'; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,result); resetPromptEditors(); await renderHistory(); showToast(character.enabled ? `สร้าง Final Prompt สำเร็จ • ล็อคตัวละคร ${character.shortName}` : 'สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
+async function copyBlock(id,btn){ const text=$(id)?.value||''; if(!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก'); await navigator.clipboard.writeText(text); setCopiedState(btn); showToast('คัดลอกแล้ว'); }
 function escapeHtml(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
 function renderHistoryList(items){
   const wrap=$('historyList');
@@ -411,7 +581,9 @@ async function useHistoryItem(id){
     if($('imagePrompt')) $('imagePrompt').value=item.imagePrompt||'';
     if($('videoPrompt')) $('videoPrompt').value=item.videoPrompt||'';
     if($('captionPrompt')) $('captionPrompt').value=item.captionHashtags||'';
+    renderSceneWorkspace(item.sceneCount||1, item.imagePrompt||'', item.videoPrompt||'');
     if($('resultsWrap')) $('resultsWrap').style.display='grid';
+    if($('captionCard')) $('captionCard').style.display = item.captionHashtags ? '' : 'none';
     if($('emptyState')) $('emptyState').style.display='none';
     currentHistoryId = id;
     saveAndRefresh();
