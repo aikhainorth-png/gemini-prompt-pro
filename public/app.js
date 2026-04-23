@@ -224,7 +224,8 @@ function updateOverlayBodies(){
 }
 function getRecommendedOverlayConfig(){
   const mode = $('gemMode')?.value || 'signboard';
-  return getModeSource().getRecommendedTextStyles ? getModeSource().getRecommendedTextStyles(mode) : { text:'S-01', h2:'H2-01' };
+  const productName = $('product')?.value || '';
+  return getModeSource().getRecommendedTextStyles ? getModeSource().getRecommendedTextStyles(mode, productName) : { text:'S-01', h2:'H2-01' };
 }
 function populateTextStyleOptions(){
   const sel = $('textOverlayStyle');
@@ -314,7 +315,7 @@ function applyTextOverlayToImagePrompt(imagePrompt, d){
 }
 
 function formatPerScene(duration,sceneCount){ const v=duration/Math.max(sceneCount,1); return Number.isInteger(v)?`${v}s`:`${v.toFixed(1)}s`; }
-function updateSummary(){ const d=getFormData(); if($('summaryPreview')) $('summaryPreview').textContent=[`สินค้า: ${d.product||'-'}`,`สถานที่: ${d.location||'-'}`,`มุมมองสินค้า: ${d.view||'-'}`,`GEM MODE: ${getModeSource().getGemModeConfig(d.gemMode).label}`,`AI Provider: ${d.providerMode||'gemini'}`,`ประเภทเสียงพากย์: ${d.voiceType||'-'}`,`โทนไวรัล: ${d.viralTone||'-'}`,`จำนวน Scene: ${d.sceneCount}`,`เวลาทั้งหมด: ${d.duration} วินาที`,`เวลาเฉลี่ยต่อ Scene: ${formatPerScene(d.duration,d.sceneCount)}`,`TEXT OVERLAY: ${d.textOverlayEnabled ? (d.textOverlayStyle || 'auto') : 'ปิด'}`,`H2: ${d.h2OverlayEnabled ? (d.h2OverlayStyle || 'auto') : 'ปิด'}`].join('\n'); if($('statScene')) $('statScene').textContent=String(d.sceneCount); if($('statDuration')) $('statDuration').textContent=`${d.duration}s`; if($('statPerScene')) $('statPerScene').textContent=formatPerScene(d.duration,d.sceneCount); }
+function updateSummary(){ const d=getFormData(); if($('summaryPreview')) $('summaryPreview').textContent=[`สินค้า: ${d.product||'-'}`,`สถานที่: ${d.location||'-'}`,`มุมมองสินค้า: ${d.view||'-'}`,`GEM MODE: ${getModeSource().getGemModeConfig(d.gemMode).label}`,`AI Provider: ${d.providerMode||'gemini'}`,`ประเภทเสียงพากย์: ${d.voiceType||'-'}`,`โทนไวรัล: ${d.viralTone||'-'}`,`จำนวน Scene: ${d.sceneCount}`,`เวลาทั้งหมด: ${d.duration} วินาที`,`เวลาเฉลี่ยต่อ Scene: ${formatPerScene(d.duration,d.sceneCount)}`,`TEXT OVERLAY: ${d.textOverlayEnabled ? (d.textOverlayStyle || 'auto') : 'ปิด'}`,`H2: ${d.h2OverlayEnabled ? (d.h2OverlayStyle || 'auto') : 'ปิด'}`,`STORE VIRAL PACK V3: 200 TEXT / 40 H2`].join('\n'); if($('statScene')) $('statScene').textContent=String(d.sceneCount); if($('statDuration')) $('statDuration').textContent=`${d.duration}s`; if($('statPerScene')) $('statPerScene').textContent=formatPerScene(d.duration,d.sceneCount); }
 function saveAndRefresh(){ saveForm(); updateSummary(); }
 function validateForm(d){ if(!d.product) return 'กรุณากรอกสินค้า'; return ''; }
 function setPromptEditing(type, editing){
