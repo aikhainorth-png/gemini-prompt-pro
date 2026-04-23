@@ -45,7 +45,6 @@ function isMobileLike(){
 }
 
 function safeBind(id, ev, fn){ const el=$(id); if(el) el.addEventListener(ev, fn); }
-function generateCharacterSessionId(){ return String(Math.floor(100000 + Math.random() * 900000)); }
 function showToast(message){ const t=$('toast'); if(!t) return; t.textContent=message; t.classList.add('show'); clearTimeout(showToast._timer); showToast._timer=setTimeout(()=>t.classList.remove('show'),2200); }
 function setLoading(v){ $('loadingOverlay')?.classList.toggle('show', !!v); if($('generateBtn')) $('generateBtn').disabled=!!v; if($('statusPill')) $('statusPill').textContent=v?'Loading':'Ready'; }
 function showError(message=''){ const el=$('errorBanner'); if(!el) return; el.textContent=message; el.classList.toggle('show', !!message); }
@@ -224,8 +223,7 @@ function updateOverlayBodies(){
 }
 function getRecommendedOverlayConfig(){
   const mode = $('gemMode')?.value || 'signboard';
-  const productName = $('product')?.value || '';
-  return getModeSource().getRecommendedTextStyles ? getModeSource().getRecommendedTextStyles(mode, productName) : { text:'S-01', h2:'H2-01' };
+  return getModeSource().getRecommendedTextStyles ? getModeSource().getRecommendedTextStyles(mode) : { text:'S-01', h2:'H2-01' };
 }
 function populateTextStyleOptions(){
   const sel = $('textOverlayStyle');
@@ -315,7 +313,7 @@ function applyTextOverlayToImagePrompt(imagePrompt, d){
 }
 
 function formatPerScene(duration,sceneCount){ const v=duration/Math.max(sceneCount,1); return Number.isInteger(v)?`${v}s`:`${v.toFixed(1)}s`; }
-function updateSummary(){ const d=getFormData(); if($('summaryPreview')) $('summaryPreview').textContent=[`สินค้า: ${d.product||'-'}`,`สถานที่: ${d.location||'-'}`,`มุมมองสินค้า: ${d.view||'-'}`,`GEM MODE: ${getModeSource().getGemModeConfig(d.gemMode).label}`,`AI Provider: ${d.providerMode||'gemini'}`,`ประเภทเสียงพากย์: ${d.voiceType||'-'}`,`โทนไวรัล: ${d.viralTone||'-'}`,`จำนวน Scene: ${d.sceneCount}`,`เวลาทั้งหมด: ${d.duration} วินาที`,`เวลาเฉลี่ยต่อ Scene: ${formatPerScene(d.duration,d.sceneCount)}`,`TEXT OVERLAY: ${d.textOverlayEnabled ? (d.textOverlayStyle || 'auto') : 'ปิด'}`,`H2: ${d.h2OverlayEnabled ? (d.h2OverlayStyle || 'auto') : 'ปิด'}`,`STORE VIRAL PACK V3: 200 TEXT / 40 H2`].join('\n'); if($('statScene')) $('statScene').textContent=String(d.sceneCount); if($('statDuration')) $('statDuration').textContent=`${d.duration}s`; if($('statPerScene')) $('statPerScene').textContent=formatPerScene(d.duration,d.sceneCount); }
+function updateSummary(){ const d=getFormData(); if($('summaryPreview')) $('summaryPreview').textContent=[`สินค้า: ${d.product||'-'}`,`สถานที่: ${d.location||'-'}`,`มุมมองสินค้า: ${d.view||'-'}`,`GEM MODE: ${getModeSource().getGemModeConfig(d.gemMode).label}`,`AI Provider: ${d.providerMode||'gemini'}`,`ประเภทเสียงพากย์: ${d.voiceType||'-'}`,`โทนไวรัล: ${d.viralTone||'-'}`,`จำนวน Scene: ${d.sceneCount}`,`เวลาทั้งหมด: ${d.duration} วินาที`,`เวลาเฉลี่ยต่อ Scene: ${formatPerScene(d.duration,d.sceneCount)}`,`TEXT OVERLAY: ${d.textOverlayEnabled ? (d.textOverlayStyle || 'auto') : 'ปิด'}`,`H2: ${d.h2OverlayEnabled ? (d.h2OverlayStyle || 'auto') : 'ปิด'}`].join('\n'); if($('statScene')) $('statScene').textContent=String(d.sceneCount); if($('statDuration')) $('statDuration').textContent=`${d.duration}s`; if($('statPerScene')) $('statPerScene').textContent=formatPerScene(d.duration,d.sceneCount); }
 function saveAndRefresh(){ saveForm(); updateSummary(); }
 function validateForm(d){ if(!d.product) return 'กรุณากรอกสินค้า'; return ''; }
 function setPromptEditing(type, editing){
@@ -399,15 +397,6 @@ function cleanSceneBlock(raw='', type='image', sceneNo=1){
   return out.trim();
 }
 
-function synthesizeImagePromptFromVideo(videoText='', sceneNo=1){
-  const cleaned = normalizeTextBlock(videoText);
-  if(!cleaned) return '';
-  return `Photorealistic live-action vertical 9:16 key visual for Scene ${sceneNo}. Use the video scene direction below as the still-image source context. Keep the same locked human character identity, same outfit, same location family, same lighting family, and the strongest selling visual moment from the scene. No 3D, no animation, no cartoon, no chibi, no mascot style.
-
-Scene context:
-${cleaned}`;
-}
-
 function parseScenePrompts(imagePrompt='', videoPrompt='', sceneCount=1){
   const count = Number(sceneCount || 1);
   const imageBlocks = splitBySceneMarkers(imagePrompt);
@@ -416,17 +405,18 @@ function parseScenePrompts(imagePrompt='', videoPrompt='', sceneCount=1){
   for(let i=1;i<=count;i++){
     const imgMatch = imageBlocks.find(b => b.sceneNo === i);
     const vidMatch = videoBlocks.find(b => b.sceneNo === i);
-    let img = imgMatch ? cleanSceneBlock(imgMatch.raw, 'image', i) : '';
-    let vid = vidMatch ? cleanSceneBlock(vidMatch.raw, 'video', i) : '';
-    if(!img && vid) img = synthesizeImagePromptFromVideo(vid, i);
-    scenes.push({ sceneNo: i, imagePrompt: img, videoPrompt: vid });
+    scenes.push({
+      sceneNo: i,
+      imagePrompt: imgMatch ? cleanSceneBlock(imgMatch.raw, 'image', i) : '',
+      videoPrompt: vidMatch ? cleanSceneBlock(vidMatch.raw, 'video', i) : ''
+    });
   }
   const hasStructured = scenes.some(s => s.imagePrompt || s.videoPrompt);
   if(hasStructured) return scenes.filter(s => s.imagePrompt || s.videoPrompt);
   if(count > 1){
     return Array.from({length: count}, (_, idx) => ({
       sceneNo: idx + 1,
-      imagePrompt: idx === 0 ? normalizeTextBlock(imagePrompt) : synthesizeImagePromptFromVideo(videoPrompt, idx + 1),
+      imagePrompt: idx === 0 ? normalizeTextBlock(imagePrompt) : '',
       videoPrompt: idx === 0 ? normalizeTextBlock(videoPrompt) : ''
     }));
   }
@@ -569,8 +559,6 @@ GLOBAL OUTPUT RULES:
 1) image_prompt: a single final image generation prompt for a vertical 9:16 promotional image
 2) video_prompt: a single final video generation prompt containing all scenes in sequence
 - For the image prompt, explicitly state that any uploaded or attached image must be used as the product reference only.
-- The default visual style must be photorealistic live-action cinematic advertising.
-- Absolutely no 3D animated style, no cartoon style, no chibi style, no mascot style, and no CGI-stylized character unless the user explicitly asks for that.
 - No subtitles in video prompt.
 - If people appear, avoid clear faces; prefer hands, arms, backs, or blurred passersby.
 - VOICEOVER PRO MAX: every scene in the video prompt must contain Thai voiceover dialogue.
@@ -612,8 +600,6 @@ Average duration per scene: ${formatPerScene(d.duration,d.sceneCount)}
 Requirements:
 - Return one final image prompt and one final video prompt.
 - The image prompt must clearly instruct the model to use the attached/uploaded image as the product reference only.
-- The default visual style must be photorealistic live-action cinematic advertising.
-- Do not use 3D animated, cartoon, chibi, mascot, or CGI-stylized character language anywhere in the output unless the user explicitly asks for that style.
 - The video prompt must include Scene 1 to Scene ${d.sceneCount} in sequence.
 - Every scene must include Thai voiceover dialogue, not just visual direction.
 - Narration gender must follow the selected voice type: ${d.voiceType}.
@@ -683,7 +669,7 @@ async function renderAuthState(){
 }
 
 async function savePromptHistoryRecord(d,result){ const character = buildCharacterFactoryProfile(d); const ref=await addDoc(collection(db,'promptHistory'),{ uid:currentUser.uid,email:currentUser.email||'',product:d.product,location:d.location,view:d.view,gemMode:d.gemMode,providerMode:d.providerMode,voiceType:d.voiceType,viralTone:d.viralTone,sceneCount:d.sceneCount,duration:d.duration,characterFactorySummary: character.enabled ? character.summary : '',imagePrompt:result.image_prompt,videoPrompt:result.video_prompt,captionHashtags:result.caption_hashtags,createdAt:serverTimestamp() }); return ref.id; }
-async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); d.characterSessionId = generateCharacterSessionId(); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); const result=await callSelectedProvider(d); result.image_prompt = applyTextOverlayToImagePrompt(result.image_prompt, d); if($('imagePrompt')) $('imagePrompt').value=result.image_prompt; if($('videoPrompt')) $('videoPrompt').value=result.video_prompt; if($('captionPrompt')) $('captionPrompt').value=result.caption_hashtags; renderSceneWorkspace(d.sceneCount, result.image_prompt, result.video_prompt); if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('emptyState')) $('emptyState').style.display='none'; if($('captionCard')) $('captionCard').style.display=''; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,result); resetPromptEditors(); await renderHistory(); showToast(character.enabled ? `สร้าง Final Prompt สำเร็จ • ล็อคตัวละคร ${character.shortName}` : 'สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
+async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); const result=await callSelectedProvider(d); result.image_prompt = applyTextOverlayToImagePrompt(result.image_prompt, d); if($('imagePrompt')) $('imagePrompt').value=result.image_prompt; if($('videoPrompt')) $('videoPrompt').value=result.video_prompt; if($('captionPrompt')) $('captionPrompt').value=result.caption_hashtags; renderSceneWorkspace(d.sceneCount, result.image_prompt, result.video_prompt); if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('emptyState')) $('emptyState').style.display='none'; if($('captionCard')) $('captionCard').style.display=''; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,result); resetPromptEditors(); await renderHistory(); showToast(character.enabled ? `สร้าง Final Prompt สำเร็จ • ล็อคตัวละคร ${character.shortName}` : 'สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
 async function copyBlock(id,btn){ const text=$(id)?.value||''; if(!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก'); await navigator.clipboard.writeText(text); const old=btn.textContent; btn.textContent='✔ คัดลอกแล้ว'; btn.classList.remove('btn-dark'); btn.classList.add('btn-green'); setTimeout(()=>{btn.textContent=old; btn.classList.remove('btn-green'); btn.classList.add('btn-dark');},1200); }
 function escapeHtml(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
 function renderHistoryList(items){
