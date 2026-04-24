@@ -8,6 +8,7 @@ import * as ConversionModes from './gem-modes-conversion.js';
 import * as HybridModes from './gem-modes-hybrid.js';
 import { buildCharacterFactoryProfile } from './character-factory.js';
 import { callAI } from './providers.js';
+import { sanitizePolicyText } from './policy-engine.js';
 
 const ADMIN_EMAILS = ['aikhainorth@gmail.com'];
 const LS_FORM = 'GEMINI_FINAL_PROMPT_PRO_FORM_SPARK_V1';
@@ -694,9 +695,9 @@ function buildUserPrompt(d){
 GEM DESCRIPTION: ${gem.description}${randomNote}${characterNote}
 
 Create final production-ready prompts using these inputs.
-Product: ${d.product}
-Location: ${d.location}
-View / shot direction: ${d.view}
+Product: ${sanitizePolicyText(d.product)}
+Location: ${sanitizePolicyText(d.location)}
+View / shot direction: ${sanitizePolicyText(d.view)}
 Character + voice type: ${thaiCharacterProfile.label}
 Character visual profile: ${thaiCharacterProfile.image}
 Voice profile: ${thaiCharacterProfile.voice}
@@ -788,6 +789,9 @@ async function renderAuthState(){
 
 async function savePromptHistoryRecord(d,result){ const character = buildCharacterFactoryProfile(d); const ref=await addDoc(collection(db,'promptHistory'),{ uid:currentUser.uid,email:currentUser.email||'',product:d.product,location:d.location,view:d.view,gemMode:d.gemMode,providerMode:d.providerMode,voiceType:d.voiceType,viralTone:d.viralTone,sceneCount:d.sceneCount,duration:d.duration,characterFactorySummary: character.enabled ? character.summary : '',imagePrompt:result.image_prompt,videoPrompt:result.video_prompt,captionHashtags:result.caption_hashtags,createdAt:serverTimestamp() }); return ref.id; }
 async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); d.characterSessionId = generateCharacterSessionId(); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); const result=await callSelectedProvider(d);
+	  result.image_prompt = sanitizePolicyText(result.image_prompt);
+      result.video_prompt = sanitizePolicyText(result.video_prompt);
+      result.caption_hashtags = sanitizePolicyText(result.caption_hashtags);
       result.image_prompt = applyTextOverlayToImagePrompt(result.image_prompt, d);
       result.image_prompt = injectDNAIntoStructuredPrompt(result.image_prompt, 'image', d, character);
       result.video_prompt = injectDNAIntoStructuredPrompt(result.video_prompt, 'video', d, character);
