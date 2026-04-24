@@ -872,6 +872,19 @@ async function renderAuthState(){
 }
 
 async function savePromptHistoryRecord(d,result){ const character = buildCharacterFactoryProfile(d); const ref=await addDoc(collection(db,'promptHistory'),{ uid:currentUser.uid,email:currentUser.email||'',product:d.product,location:d.location,view:d.view,gemMode:d.gemMode,providerMode:d.providerMode,voiceType:d.voiceType,viralTone:d.viralTone,sceneCount:d.sceneCount,duration:d.duration,characterFactorySummary: character.enabled ? character.summary : '',imagePrompt:result.image_prompt,videoPrompt:result.video_prompt,captionHashtags:result.caption_hashtags,createdAt:serverTimestamp() }); return ref.id; }
+
+function sanitizePolicyStructuredPrompt(text = '') {
+  return String(text || '')
+    .split(/(\n?SCENE_\d+_(?:IMAGE|VIDEO)_PROMPT:\n?)/g)
+    .map(part => {
+      if (/SCENE_\d+_(?:IMAGE|VIDEO)_PROMPT:/i.test(part)) return part;
+      return sanitizePolicyText(part);
+    })
+    .join('')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 async function generatePrompts(){
   showError('');
   if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน');
@@ -889,15 +902,17 @@ async function generatePrompts(){
     updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt');
 
     const providerRawResult = await callSelectedProvider(d);
-    const result = normalizeAIResult(providerRawResult);
+const result = normalizeAIResult(providerRawResult);
 
-    result.image_prompt = sanitizePolicyText(result.image_prompt || '');
-    result.video_prompt = sanitizePolicyText(result.video_prompt || '');
-    result.caption_hashtags = sanitizePolicyText(result.caption_hashtags || '');
+// 1) ห้าม sanitize ก่อน parse scene
+result.image_prompt = applyTextOverlayToImagePrompt(result.image_prompt || '', d);
+result.image_prompt = injectDNAIntoStructuredPrompt(result.image_prompt, 'image', d, character);
+result.video_prompt = injectDNAIntoStructuredPrompt(result.video_prompt || '', 'video', d, character);
 
-    result.image_prompt = applyTextOverlayToImagePrompt(result.image_prompt, d);
-    result.image_prompt = injectDNAIntoStructuredPrompt(result.image_prompt, 'image', d, character);
-    result.video_prompt = injectDNAIntoStructuredPrompt(result.video_prompt, 'video', d, character);
+// 2) sanitize หลังสุด และรักษา SCENE header
+result.image_prompt = sanitizePolicyStructuredPrompt(result.image_prompt);
+result.video_prompt = sanitizePolicyStructuredPrompt(result.video_prompt);
+result.caption_hashtags = sanitizePolicyText(result.caption_hashtags || '');
 
     const imageEl = $('imagePrompt');
     const videoEl = $('videoPrompt');
