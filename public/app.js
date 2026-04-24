@@ -1,7 +1,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, addDoc, query, where, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, addDoc, query, where, orderBy, limit, getDocs, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
 import * as ViralModes from './gem-modes.js';
 import * as ConversionModes from './gem-modes-conversion.js';
@@ -27,6 +27,8 @@ let currentUser = null;
 let userDocCache = null;
 let currentHistoryId = null;
 let deleteKeyTarget = "gemini";
+let userDocUnsubscribe = null;
+let approvalPollTimer = null;
 
 function hasAdminEmail(email=''){ return ADMIN_EMAILS.includes(String(email).toLowerCase()); }
 
@@ -45,7 +47,32 @@ function isMobileLike(){
   return /Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(ua) || window.innerWidth <= 1024;
 }
 
-function safeBind(id, ev, fn){ const el=$(id); if(el) el.addEventListener(ev, fn); }
+function canUseSessionStorage(){
+  try{
+    const key = "__firebase_redirect_storage_test__";
+    window.sessionStorage.setItem(key, "1");
+    window.sessionStorage.removeItem(key);
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+function isEmbeddedWebView(){
+  const ua = navigator.userAgent || "";
+  return /FBAN|FBAV|Instagram|Line\/|TikTok|Bytedance|Twitter|wv\)|; wv|WebView/i.test(ua);
+}
+
+function showMobileLoginHelp(error){
+  const detail = error?.message || String(error || "");
+  const note = isEmbeddedWebView()
+    ? "ตรวจพบว่าเปิดผ่าน In-App Browser เช่น TikTok / LINE / Facebook กรุณากดเมนู ⋮ แล้วเลือก เปิดใน Chrome หรือ Safari ก่อนเข้าสู่ระบบ"
+    : "กรุณาเปิดผ่าน Chrome หรือ Safari โดยตรง แล้วกด Sign in with Google อีกครั้ง";
+  showError("เข้าสู่ระบบไม่สำเร็จบนมือถือ/แท็บเล็ต: " + note + (detail ? "\nรายละเอียด: " + detail : ""));
+  showToast("กรุณาเปิดผ่าน Chrome/Safari แล้วล็อกอินใหม่");
+}
+
+function safeBind(id, ev, fn){ const el = $(id); if(el) el.addEventListener(ev, fn); }
 function generateCharacterSessionId(){ return String(Math.floor(1000000000000000 + Math.random() * 9000000000000000)); }
 
 const THAI_CHARACTER_VOICE_PROFILES = {
@@ -727,54 +754,83 @@ Requirements:
 }
 function buildResponseSchema(){ return {type:'OBJECT',properties:{image_prompt:{type:'STRING'},video_prompt:{type:'STRING'},caption_hashtags:{type:'STRING'}},required:['image_prompt','video_prompt','caption_hashtags'],propertyOrdering:['image_prompt','video_prompt','caption_hashtags']}; }
 async function callSelectedProvider(d){ return await callAI(d.providerMode, { systemPrompt: buildSystemInstruction(d), userPrompt: buildUserPrompt(d) }); }
-async function upsertCurrentUser(user){
-  const email = String(user.email || '').toLowerCase();
-  const ref = doc(db, 'users', user.uid);
-  const snap = await getDoc(ref);
-  const now = serverTimestamp();
-
-  const base = {
-    uid: user.uid,
-    email,
-    displayName: user.displayName || '',
-    photoURL: user.photoURL || '',
-    lastLoginAt: now,
-    updatedAt: now
-  };
-
-  if (hasAdminEmail(email)) {
-    await setDoc(ref, {
-      ...base,
-      createdAt: snap.exists() ? (snap.data().createdAt || now) : now,
-      approved: true,
-      role: 'admin',
-      approvedAt: now
-    }, { merge: true });
-  } else if (!snap.exists()) {
-    await setDoc(ref, {
-      ...base,
-      createdAt: now,
-      approved: false,
-      role: 'user'
-    }, { merge: true });
-  } else {
-    await setDoc(ref, base, { merge: true });
-  }
-
-  const updated = await getDoc(ref);
-  userDocCache = updated.exists() ? updated.data() : null;
-}
+async function upsertCurrentUser(user){ const email=String(user.email||'').toLowerCase(); const ref=doc(db,'users',user.uid); const snap=await getDoc(ref); const now=serverTimestamp(); const base={uid:user.uid,email,displayName:user.displayName||'',photoURL:user.photoURL||'',lastLoginAt:now,updatedAt:now}; if(hasAdminEmail(email)){ await setDoc(ref,{...base,createdAt:snap.exists()?snap.data().createdAt||now:now,approved:true,role:'admin',approvedAt:now},{merge:true}); } else if(!snap.exists()){ await setDoc(ref,{...base,createdAt:now,approved:false,role:'user'},{merge:true}); } else { await setDoc(ref,base,{merge:true}); } const updated=await getDoc(ref); userDocCache=updated.exists()?updated.data():null; }
 function isApproved(){ return !!(userDocCache?.approved || hasAdminEmail(currentUser?.email)); }
 function isAdmin(){ return !!(userDocCache?.role==='admin' || hasAdminEmail(currentUser?.email)); }
 async function signInGoogle(){
+  showError('');
+  try { provider.setCustomParameters({ prompt: 'select_account' }); } catch(e) {}
+
   try{
-    if(isMobileLike()){ await signInWithRedirect(auth, provider); return; }
     await signInWithPopup(auth, provider);
+    return;
   }catch(e){
-    try{ await signInWithRedirect(auth, provider); }catch(err){ showError(`เข้าสู่ระบบไม่สำเร็จ: ${err.message}`); showToast('เข้าสู่ระบบไม่สำเร็จ'); }
+    const code = String(e?.code || '');
+    const message = String(e?.message || '');
+    const popupBlocked = /popup-blocked|popup-closed-by-user|cancelled-popup-request|operation-not-supported/i.test(code + ' ' + message);
+
+    if(isMobileLike() || isEmbeddedWebView() || !canUseSessionStorage()){
+      showMobileLoginHelp(e);
+      return;
+    }
+
+    if(popupBlocked){
+      try{
+        await signInWithRedirect(auth, provider);
+        return;
+      }catch(err){
+        showError('เข้าสู่ระบบไม่สำเร็จ: ' + (err?.message || err));
+        showToast('เข้าสู่ระบบไม่สำเร็จ');
+        return;
+      }
+    }
+
+    showError('เข้าสู่ระบบไม่สำเร็จ: ' + (e?.message || e));
+    showToast('เข้าสู่ระบบไม่สำเร็จ');
   }
 }
+
 async function refreshCurrentUserDoc(){ if(!currentUser) return; const snap=await getDoc(doc(db,'users',currentUser.uid)); userDocCache=snap.exists()?snap.data():null; }
+
+function stopApprovalWatcher(){
+  if(typeof userDocUnsubscribe === 'function'){
+    try{ userDocUnsubscribe(); }catch(e){}
+  }
+  userDocUnsubscribe = null;
+  if(approvalPollTimer){
+    clearInterval(approvalPollTimer);
+    approvalPollTimer = null;
+  }
+}
+
+function startApprovalWatcher(){
+  stopApprovalWatcher();
+  if(!currentUser) return;
+  const ref = doc(db, 'users', currentUser.uid);
+  userDocUnsubscribe = onSnapshot(ref, async (snap)=>{
+    userDocCache = snap.exists() ? snap.data() : null;
+    await renderAuthState();
+    if(isApproved()){
+      showToast('บัญชีได้รับอนุมัติแล้ว');
+      stopApprovalWatcher();
+    }
+  }, (e)=>{
+    console.warn('Approval watcher error', e);
+  });
+
+  approvalPollTimer = setInterval(async ()=>{
+    if(currentUser && !isApproved()){
+      try{
+        await refreshCurrentUserDoc();
+        await renderAuthState();
+        if(isApproved()){
+          showToast('บัญชีได้รับอนุมัติแล้ว');
+          stopApprovalWatcher();
+        }
+      }catch(e){}
+    }
+  }, 5000);
+}
 
 async function renderAuthState(){
   const approved = isApproved();
@@ -980,5 +1036,53 @@ function rebindOpenAIButtons(){
   }
 }
 
-async function init(){ if($('promptStrategy')) $('promptStrategy').value = localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral'; populateGemModeOptions('signboard'); bindEvents(); rebindOpenAIButtons(); loadForm(); populateGemModeOptions($('gemMode')?.value || 'signboard'); applyGemMode(($('gemMode')?.value || 'signboard'), { keepTone: true, skipSave: true }); populateTextStyleOptions(); populateH2StyleOptions(); populateOverlaySceneOptions(); updateOverlayBodies(); updateOverlayPreview(); updateSummary(); resetPromptEditors(); togglePrivateKeysPanel(false); setAppAccessLock(true); showLoginGate(true); showPendingGate(false); const savedKey=getUserApiKey(); if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } const savedOpenAIKey=getOpenAIKey(); if(savedOpenAIKey&&$('userOpenAIKey')){ $('userOpenAIKey').value=savedOpenAIKey; updateOpenAIKeyStatus('พบ OpenAI API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); } else { updateOpenAIKeyStatus('ยังไม่ได้เชื่อมต่อ OpenAI API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); } try{ await getRedirectResult(auth); }catch(e){ console.warn('Redirect result error', e); } onAuthStateChanged(auth, async (user)=>{ currentUser=user; userDocCache=null; currentHistoryId=null; showError(''); try{ if(user) await upsertCurrentUser(user); }catch(e){ showError(`Sync user ไม่สำเร็จ: ${e.message}`); } await renderAuthState(); }); setInterval(async ()=>{ if(currentUser && !isApproved()){ try{ await refreshCurrentUserDoc(); if(isApproved()){ await renderAuthState(); showToast('บัญชีได้รับอนุมัติแล้ว'); } }catch(e){} } }, 5000); }
+async function init(){
+  if($('promptStrategy')) $('promptStrategy').value = localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral';
+  populateGemModeOptions('signboard');
+  bindEvents();
+  rebindOpenAIButtons();
+  loadForm();
+  populateGemModeOptions($('gemMode')?.value || 'signboard');
+  applyGemMode(($('gemMode')?.value || 'signboard'), { keepTone: true, skipSave: true });
+  populateTextStyleOptions();
+  populateH2StyleOptions();
+  populateOverlaySceneOptions();
+  updateOverlayBodies();
+  updateOverlayPreview();
+  updateSummary();
+  resetPromptEditors();
+  togglePrivateKeysPanel(false);
+  setAppAccessLock(true);
+  showLoginGate(true);
+  showPendingGate(false);
+
+  const savedKey=getUserApiKey();
+  if(savedKey&&$('userApiKey')){ $('userApiKey').value=savedKey; updateGeminiKeyStatus('พบ API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); }
+  else { updateGeminiKeyStatus('ยังไม่ได้เชื่อมต่อ Gemini API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); }
+
+  const savedOpenAIKey=getOpenAIKey();
+  if(savedOpenAIKey&&$('userOpenAIKey')){ $('userOpenAIKey').value=savedOpenAIKey; updateOpenAIKeyStatus('พบ OpenAI API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); }
+  else { updateOpenAIKeyStatus('ยังไม่ได้เชื่อมต่อ OpenAI API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); }
+
+  if(!isMobileLike() && !isEmbeddedWebView() && canUseSessionStorage()){
+    try{ await getRedirectResult(auth); }catch(e){ console.warn('Redirect result error', e); }
+  }
+
+  onAuthStateChanged(auth, async (user)=>{
+    stopApprovalWatcher();
+    currentUser=user;
+    userDocCache=null;
+    currentHistoryId=null;
+    showError('');
+    try{
+      if(user){
+        await upsertCurrentUser(user);
+        if(!isApproved()) startApprovalWatcher();
+      }
+    }catch(e){
+      showError('Sync user ไม่สำเร็จ: ' + e.message);
+    }
+    await renderAuthState();
+  });
+}
 document.addEventListener('DOMContentLoaded', init);
