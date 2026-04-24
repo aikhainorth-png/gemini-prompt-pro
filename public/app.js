@@ -726,91 +726,7 @@ Requirements:
 - Final only.`;
 }
 function buildResponseSchema(){ return {type:'OBJECT',properties:{image_prompt:{type:'STRING'},video_prompt:{type:'STRING'},caption_hashtags:{type:'STRING'}},required:['image_prompt','video_prompt','caption_hashtags'],propertyOrdering:['image_prompt','video_prompt','caption_hashtags']}; }
-
-function stripJsonFence(text=''){
-  return String(text||'')
-    .replace(/^```(?:json|javascript|js)?\s*/i,'')
-    .replace(/```$/,'')
-    .trim();
-}
-
-function tryParseAIJson(value){
-  if(!value) return null;
-  if(typeof value === 'object') return value;
-  const src = stripJsonFence(value);
-  try{ return JSON.parse(src); }catch(e){}
-  const first = src.indexOf('{');
-  const last = src.lastIndexOf('}');
-  if(first >= 0 && last > first){
-    try{ return JSON.parse(src.slice(first, last + 1)); }catch(e){}
-  }
-  return null;
-}
-
-function collectAIText(value){
-  if(!value) return '';
-  if(typeof value === 'string') return value;
-  if(Array.isArray(value)) return value.map(collectAIText).filter(Boolean).join('\n');
-  if(typeof value === 'object'){
-    return [
-      value.rawText,
-      value.text,
-      value.output_text,
-      value.content,
-      value.message,
-      value.responseText,
-      value.answer
-    ].map(collectAIText).filter(Boolean).join('\n');
-  }
-  return '';
-}
-
-function extractPromptSection(rawText='', names=[]){
-  const src = stripJsonFence(rawText);
-  if(!src) return '';
-  const escaped = names.map(n => String(n).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-  const nextKeys = '(?:image[_\\s-]*prompt|video[_\\s-]*prompt|vdo[_\\s-]*prompt|caption[_\\s-]*hashtags|caption|hashtags)';
-  const re = new RegExp(`(?:^|\\n)\\s*(?:${escaped})\\s*[:：-]\\s*([\\s\\S]*?)(?=\\n\\s*${nextKeys}\\s*[:：-]|$)`, 'i');
-  const m = src.match(re);
-  return m ? m[1].trim() : '';
-}
-
-function normalizeAIResult(raw){
-  const parsed = tryParseAIJson(raw) || raw || {};
-  const body = parsed?.result || parsed?.data || parsed?.output || parsed?.response || parsed;
-  const bodyParsed = tryParseAIJson(collectAIText(body)) || body;
-  const textPool = [collectAIText(raw), collectAIText(body), collectAIText(bodyParsed)].filter(Boolean).join('\n');
-
-  const image_prompt = String(
-    bodyParsed?.image_prompt || bodyParsed?.imagePrompt || bodyParsed?.final_image_prompt || bodyParsed?.finalImagePrompt || bodyParsed?.image ||
-    extractPromptSection(textPool, ['image_prompt','IMAGE_PROMPT','IMAGE PROMPT','Final Image Prompt','final_image_prompt']) || ''
-  ).trim();
-
-  const video_prompt = String(
-    bodyParsed?.video_prompt || bodyParsed?.videoPrompt || bodyParsed?.vdo_prompt || bodyParsed?.vdoPrompt || bodyParsed?.final_video_prompt || bodyParsed?.finalVideoPrompt || bodyParsed?.video ||
-    extractPromptSection(textPool, ['video_prompt','VIDEO_PROMPT','VDO_PROMPT','VIDEO PROMPT','VDO PROMPT','Final Video Prompt','final_video_prompt']) || ''
-  ).trim();
-
-  const caption_hashtags = String(
-    bodyParsed?.caption_hashtags || bodyParsed?.captionHashtags || bodyParsed?.caption || bodyParsed?.hashtags ||
-    extractPromptSection(textPool, ['caption_hashtags','CAPTION_HASHTAGS','Caption Hashtags','caption','hashtags']) || ''
-  ).trim();
-
-  if(!image_prompt && !video_prompt){
-    console.warn('[AI RESULT NORMALIZE FAILED]', raw);
-    throw new Error('AI สร้างผลลัพธ์แล้ว แต่ไม่พบ image_prompt หรือ video_prompt ในรูปแบบที่อ่านได้');
-  }
-  return { image_prompt, video_prompt, caption_hashtags };
-}
-
-async function callSelectedProvider(d){
-  return await callAI(d.providerMode, {
-    systemPrompt: buildSystemInstruction(d),
-    userPrompt: buildUserPrompt(d),
-    responseSchema: buildResponseSchema()
-  });
-}
-
+async function callSelectedProvider(d){ return await callAI(d.providerMode, { systemPrompt: buildSystemInstruction(d), userPrompt: buildUserPrompt(d) }); }
 async function upsertCurrentUser(user){ const email=String(user.email||'').toLowerCase(); const ref=doc(db,'users',user.uid); const snap=await getDoc(ref); const now=serverTimestamp(); const base={uid:user.uid,email,displayName:user.displayName||'',photoURL:user.photoURL||'',lastLoginAt:now,updatedAt:now}; if(hasAdminEmail(email)){ await setDoc(ref,{...base,createdAt:snap.exists()?snap.data().createdAt||now:now,approved:true,role:'admin',approvedAt:now},{merge:true}); } else if(!snap.exists()){ await setDoc(ref,{...base,createdAt:now,approved:false,role:'user'},{merge:true}); } else { await setDoc(ref,base,{merge:true}); } const updated=await getDoc(ref); userDocCache=updated.exists()?updated.data():null; }
 function isApproved(){ return !!(userDocCache?.approved || hasAdminEmail(currentUser?.email)); }
 function isAdmin(){ return !!(userDocCache?.role==='admin' || hasAdminEmail(currentUser?.email)); }
@@ -875,7 +791,7 @@ async function savePromptHistoryRecord(d,result){ const character = buildCharact
 
 function sanitizePolicyStructuredPrompt(text = '') {
   return String(text || '')
-    .split(/(\n?SCENE_\d+_(?:IMAGE|VIDEO)_PROMPT:\n?)/g)
+    .split(/(\n?SCENE_\d+_(?:IMAGE|VIDEO)_PROMPT:\n?)/gi)
     .map(part => {
       if (/SCENE_\d+_(?:IMAGE|VIDEO)_PROMPT:/i.test(part)) return part;
       return sanitizePolicyText(part);
@@ -885,64 +801,21 @@ function sanitizePolicyStructuredPrompt(text = '') {
     .trim();
 }
 
-async function generatePrompts(){
-  showError('');
-  if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน');
-  if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน');
+async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); d.characterSessionId = generateCharacterSessionId(); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); 
+const result = await callSelectedProvider(d);
 
-  const raw=getFormData();
-  const d=getPreparedFormData(raw);
-  d.characterSessionId = generateCharacterSessionId();
-  const err=validateForm(d);
-  if(err) return showToast(err);
-
-  const character = buildCharacterFactoryProfile(d);
-  try{
-    setLoading(true);
-    updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt');
-
-    const providerRawResult = await callSelectedProvider(d);
-const result = normalizeAIResult(providerRawResult);
-
-// 1) ห้าม sanitize ก่อน parse scene
+// ห้าม sanitize ก่อน parse / overlay / DNA เพราะจะทำให้ Scene header เพี้ยน
 result.image_prompt = applyTextOverlayToImagePrompt(result.image_prompt || '', d);
 result.image_prompt = injectDNAIntoStructuredPrompt(result.image_prompt, 'image', d, character);
+
 result.video_prompt = injectDNAIntoStructuredPrompt(result.video_prompt || '', 'video', d, character);
 
-// 2) sanitize หลังสุด และรักษา SCENE header
+// sanitize หลังสุดแบบรักษา Scene header
 result.image_prompt = sanitizePolicyStructuredPrompt(result.image_prompt);
 result.video_prompt = sanitizePolicyStructuredPrompt(result.video_prompt);
 result.caption_hashtags = sanitizePolicyText(result.caption_hashtags || '');
 
-    const imageEl = $('imagePrompt');
-    const videoEl = $('videoPrompt');
-    const captionEl = $('captionPrompt');
-    if(imageEl) imageEl.value = result.image_prompt;
-    if(videoEl) videoEl.value = result.video_prompt;
-    if(captionEl) captionEl.value = result.caption_hashtags;
-
-    renderSceneWorkspace(d.sceneCount, result.image_prompt, result.video_prompt);
-    if($('resultsWrap')) $('resultsWrap').style.display='grid';
-    if($('emptyState')) $('emptyState').style.display='none';
-    if($('captionCard')) $('captionCard').style.display='';
-    if($('statusPill')) $('statusPill').textContent='Done';
-    updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • สร้าง Final Prompt สำเร็จแล้ว');
-
-    currentHistoryId=await savePromptHistoryRecord(d,result);
-    resetPromptEditors();
-    await renderHistory();
-    showToast(character.enabled ? `สร้าง Final Prompt สำเร็จ • ล็อคตัวละคร ${character.shortName}` : 'สร้าง Final Prompt สำเร็จ');
-  }catch(e){
-    if($('statusPill')) $('statusPill').textContent='Error';
-    updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • เกิดข้อผิดพลาด');
-    updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`);
-    showError(e.message);
-    showToast(e.message);
-  }finally{
-    setLoading(false);
-  }
-}
-
+      if($('imagePrompt')) $('imagePrompt').value=result.image_prompt; if($('videoPrompt')) $('videoPrompt').value=result.video_prompt; if($('captionPrompt')) $('captionPrompt').value=result.caption_hashtags; renderSceneWorkspace(d.sceneCount, result.image_prompt, result.video_prompt); if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('emptyState')) $('emptyState').style.display='none'; if($('captionCard')) $('captionCard').style.display=''; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,result); resetPromptEditors(); await renderHistory(); showToast(character.enabled ? `สร้าง Final Prompt สำเร็จ • ล็อคตัวละคร ${character.shortName}` : 'สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
 async function copyBlock(id,btn){ const text=$(id)?.value||''; if(!text.trim()) return showToast('ยังไม่มีข้อความให้คัดลอก'); await navigator.clipboard.writeText(text); const old=btn.textContent; btn.textContent='✔ คัดลอกแล้ว'; btn.classList.remove('btn-dark'); btn.classList.add('btn-green'); setTimeout(()=>{btn.textContent=old; btn.classList.remove('btn-green'); btn.classList.add('btn-dark');},1200); }
 function escapeHtml(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
 function renderHistoryList(items){
