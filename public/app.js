@@ -6,6 +6,7 @@ import { firebaseConfig } from './firebase-config.js';
 import * as ViralModes from './gem-modes.js';
 import * as ConversionModes from './gem-modes-conversion.js';
 import * as HybridModes from './gem-modes-hybrid.js';
+import * as ProMaxModes from './GEM_MODES_MASTER_PROMPT_PRO_MAX.js';
 import { buildCharacterFactoryProfile } from './character-factory.js';
 import { callAI } from './providers.js';
 import { sanitizePolicyText } from './policy-engine.js';
@@ -36,6 +37,7 @@ function getModeSource(){
   const strategy = $('promptStrategy')?.value || localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral';
   if (strategy === 'conversion') return ConversionModes;
   if (strategy === 'hybrid') return HybridModes;
+  if (strategy === 'pro_max') return ProMaxModes;
   return ViralModes;
 }
 function getCurrentStrategy(){
