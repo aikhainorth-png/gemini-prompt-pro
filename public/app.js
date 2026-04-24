@@ -727,7 +727,43 @@ Requirements:
 }
 function buildResponseSchema(){ return {type:'OBJECT',properties:{image_prompt:{type:'STRING'},video_prompt:{type:'STRING'},caption_hashtags:{type:'STRING'}},required:['image_prompt','video_prompt','caption_hashtags'],propertyOrdering:['image_prompt','video_prompt','caption_hashtags']}; }
 async function callSelectedProvider(d){ return await callAI(d.providerMode, { systemPrompt: buildSystemInstruction(d), userPrompt: buildUserPrompt(d) }); }
-async function upsertCurrentUser(user){ const email=String(user.email||'').toLowerCase(); const ref=doc(db,'users',user.uid); const snap=await getDoc(ref); const now=serverTimestamp(); const base={uid:user.uid,email,displayName:user.displayName||'',photoURL:user.photoURL||'',lastLoginAt:now,updatedAt:now}; if(hasAdminEmail(email)){ await setDoc(ref,{...base,createdAt:snap.exists()?snap.data().createdAt||now:now,approved:true,role:'admin',approvedAt:now},{merge:true}); } else if(!snap.exists()){ await setDoc(ref,{...base,createdAt:now,approved:false,role:'user'},{merge:true}); } else { await setDoc(ref,base,{merge:true}); } const updated=await getDoc(ref); userDocCache=updated.exists()?updated.data():null; }
+async function upsertCurrentUser(user){
+  const email = String(user.email || '').toLowerCase();
+  const ref = doc(db, 'users', user.uid);
+  const snap = await getDoc(ref);
+  const now = serverTimestamp();
+
+  const base = {
+    uid: user.uid,
+    email,
+    displayName: user.displayName || '',
+    photoURL: user.photoURL || '',
+    lastLoginAt: now,
+    updatedAt: now
+  };
+
+  if (hasAdminEmail(email)) {
+    await setDoc(ref, {
+      ...base,
+      createdAt: snap.exists() ? (snap.data().createdAt || now) : now,
+      approved: true,
+      role: 'admin',
+      approvedAt: now
+    }, { merge: true });
+  } else if (!snap.exists()) {
+    await setDoc(ref, {
+      ...base,
+      createdAt: now,
+      approved: false,
+      role: 'user'
+    }, { merge: true });
+  } else {
+    await setDoc(ref, base, { merge: true });
+  }
+
+  const updated = await getDoc(ref);
+  userDocCache = updated.exists() ? updated.data() : null;
+}
 function isApproved(){ return !!(userDocCache?.approved || hasAdminEmail(currentUser?.email)); }
 function isAdmin(){ return !!(userDocCache?.role==='admin' || hasAdminEmail(currentUser?.email)); }
 async function signInGoogle(){
