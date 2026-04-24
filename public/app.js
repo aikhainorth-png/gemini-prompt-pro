@@ -59,31 +59,66 @@ function getThaiCharacterVoiceProfile(voiceType='thai_female'){
   const normalized = {'หญิง':'thai_female','ชาย':'thai_male','ผู้หญิง':'thai_female','ผู้ชาย':'thai_male','หญิงชรา':'elder_female','ชายชรา':'elder_male','เด็กผู้หญิง':'thai_girl','เด็กผู้ชาย':'thai_boy'}[voiceType] || voiceType || 'thai_female';
   return THAI_CHARACTER_VOICE_PROFILES[normalized] || THAI_CHARACTER_VOICE_PROFILES.thai_female;
 }
-function buildCharacterDNAHeader(d, character){
+function getCharacterId(d={}, character={}){
+  return character?.characterId || character?.shortName || d.characterSessionId || generateCharacterSessionId();
+}
+
+function stripRepeatedCharacterBlocks(text=''){
+  let src = normalizeTextBlock(text);
+  if(!src) return src;
+
+  // Remove existing injected/meta blocks so each scene can be rebuilt cleanly.
+  const patterns = [
+    /\n?Character\s*ID\s*:\s*[^\n]*(?:\n|$)/ig,
+    /\n?Character\s*DNA\s*Block\s*:\s*[\s\S]*?(?=\n(?:Voice\s*Profile\s*:|Continuity\s*Lock\s*:|Character\s*Description\s*:|Thai\s*\/\s*Asian\s*identity\s*:|\[TEXT OVERLAY\]|\[H2 OVERLAY\]|SCENE[_\s]*\d+|Scene\s*\d+|$))/ig,
+    /\n?Character\s*Description\s*:\s*[\s\S]*?(?=\n(?:Voice\s*Profile\s*:|Continuity\s*Lock\s*:|Character\s*DNA\s*Block\s*:|\[TEXT OVERLAY\]|\[H2 OVERLAY\]|SCENE[_\s]*\d+|Scene\s*\d+|$))/ig,
+    /\n?Thai\s*\/\s*Asian\s*identity\s*:\s*[^\n]*(?:\n|$)/ig,
+    /\n?Voice\s*Profile\s*:\s*[\s\S]*?(?=\n(?:Continuity\s*Lock\s*:|Character\s*ID\s*:|Character\s*DNA\s*Block\s*:|\[TEXT OVERLAY\]|\[H2 OVERLAY\]|SCENE[_\s]*\d+|Scene\s*\d+|$))/ig,
+    /\n?Continuity\s*Lock\s*:\s*[\s\S]*?(?=\n(?:Character\s*ID\s*:|Character\s*DNA\s*Block\s*:|Voice\s*Profile\s*:|\[TEXT OVERLAY\]|\[H2 OVERLAY\]|SCENE[_\s]*\d+|Scene\s*\d+|$))/ig,
+    /\n?Lip\s*sync\s*[^\n]*(?:\n|$)/ig,
+    /\n?Audio\s*(?:Cue|Requirement|Profile)?\s*:\s*[^\n]*(?:\n|$)/ig
+  ];
+  patterns.forEach(re => { src = src.replace(re, '\n'); });
+  return src.replace(/\n{3,}/g, '\n\n').trim();
+}
+
+function buildCharacterDNAHeader(d, character, type='image'){
   const profile = getThaiCharacterVoiceProfile(d.voiceType);
-  const id = character?.characterId || character?.shortName || d.characterSessionId || generateCharacterSessionId();
-  return `Character ID: ${id}\nCharacter DNA Block:\n${profile.dna}; ${character?.summary || ''}\nVoice Profile:\n${profile.voice}\nContinuity Lock:\nsame person, same Thai / Asian identity, same face, same hair, same outfit, same body proportions, same age, same voice profile, same identity across all scenes, only expression / pose / camera angle may change. Photorealistic live-action only. No 3D, no cartoon, no chibi, no mascot, no CGI, no animation style.`;
+  const id = getCharacterId(d, character);
+  const visualDna = `${profile.dna}; ${character?.summary || ''}`.replace(/\s+/g,' ').trim();
+
+  if(type === 'image'){
+    return `Character ID: ${id}\nCharacter DNA Block:\n${visualDna}\nContinuity Lock:\nsame person, same Thai / Asian identity, same face, same hair, same outfit, same body proportions, same age, same identity across all scenes, only expression / pose / camera angle may change. Photorealistic live-action still image only. No voice profile, no dialogue, no lip sync, no audio instructions in IMAGE PROMPT. No 3D, no cartoon, no chibi, no mascot, no CGI, no animation style.`;
+  }
+
+  return `Character ID: ${id}\nCharacter DNA Block:\n${visualDna}\nVoice Profile:\n${profile.voice}\nContinuity Lock:\nsame person, same Thai / Asian identity, same face, same hair, same outfit, same body proportions, same age, same voice profile, same identity across all scenes, only expression / pose / camera angle may change. Photorealistic live-action video only. No 3D, no cartoon, no chibi, no mascot, no CGI, no animation style.`;
 }
-function prependDNAIfMissing(text='', d, character){
-  const src = normalizeTextBlock(text);
-  const header = buildCharacterDNAHeader(d, character);
-  if(/Character\s*ID\s*:/i.test(src) && /Character\s*DNA\s*Block\s*:/i.test(src)) return src;
-  return `${header}\n\n${src}`.trim();
+
+function prependDNAIfMissing(text='', d, character, type='image'){
+  const cleaned = stripRepeatedCharacterBlocks(text);
+  const header = buildCharacterDNAHeader(d, character, type);
+  return `${header}\n\n${cleaned}`.trim();
 }
+
 function injectDNAIntoStructuredPrompt(prompt='', type='image', d={}, character={}){
   const count = Number(d.sceneCount || 1);
   const src = normalizeTextBlock(prompt);
   if(!src) return src;
-  if(count <= 1) return prependDNAIfMissing(src, d, character);
+  if(count <= 1) return prependDNAIfMissing(src, d, character, type);
+
   const blocks = splitBySceneMarkers(src);
   const hasAllScenes = blocks.length >= count && Array.from({length:count}, (_,i)=>i+1).every(no => blocks.some(b => b.sceneNo === no));
-  if(!hasAllScenes) return prependDNAIfMissing(src, d, character);
+
+  // Keep the stable engine result when the parser cannot see all scenes.
+  // Do not rebuild partial scenes, because that is what made scene 2/3 disappear.
+  if(!hasAllScenes) return prependDNAIfMissing(src, d, character, type);
+
   return Array.from({length:count}, (_,i)=>{
     const sceneNo=i+1;
     const block=blocks.find(b=>b.sceneNo===sceneNo);
     const body=block ? cleanSceneBlock(block.raw, type, sceneNo) : '';
     const header=type==='image'?`SCENE_${sceneNo}_IMAGE_PROMPT:`:`SCENE_${sceneNo}_VIDEO_PROMPT:`;
-    return `${header}\n${prependDNAIfMissing(body,d,character)}`;
+    return `${header}\n${prependDNAIfMissing(body,d,character,type)}`;
   }).join('\n\n');
 }
 
@@ -324,8 +359,16 @@ function appendOverlayBlocksToText(baseText, blocks=[]){
   return [cleaned, extras].filter(Boolean).join('\n\n');
 }
 function applyOverlayToSceneStructuredPrompt(imagePrompt, sceneCount, overlayCfgs=[]){
-  const scenes = parseScenePrompts(imagePrompt, '', sceneCount);
-  if(!scenes.length) return imagePrompt;
+  const count = Number(sceneCount || 1);
+  const scenes = parseScenePrompts(imagePrompt, '', count);
+  const hasAllScenes = scenes.length >= count && Array.from({length:count}, (_,i)=>i+1).every(no => scenes.some(s => Number(s.sceneNo) === no && String(s.imagePrompt||'').trim()));
+
+  // SAFE MODE: if scene parsing is incomplete, do not rebuild image_prompt.
+  // Append overlay instructions once at the end to preserve the original AI-generated scene prompts.
+  if(!hasAllScenes){
+    return appendOverlayBlocksToText(imagePrompt, overlayCfgs.filter(c=>c?.enabled).map(c=>c.block));
+  }
+
   const rebuilt = scenes.map(scene => {
     const blocks = [];
     overlayCfgs.forEach(cfg => {
@@ -338,6 +381,7 @@ function applyOverlayToSceneStructuredPrompt(imagePrompt, sceneCount, overlayCfg
   });
   return rebuilt.join('\n\n');
 }
+
 function applyTextOverlayToImagePrompt(imagePrompt, d){
   const cfgs = [];
   if(d.textOverlayEnabled){
@@ -672,7 +716,8 @@ Requirements:
 - The selling psychology and urgency must follow the selected viral tone: ${d.viralTone}.
 - Add exact spoken Thai lines for every scene, ready for voiceover or lip-sync.
 - Follow the selected GEM MODE creative strategy closely.
-- If scene count is greater than 1 and CHARACTER FACTORY PRO MAX is active, every SCENE_n_IMAGE_PROMPT and every SCENE_n_VIDEO_PROMPT must begin with Character ID, Character DNA Block, Voice Profile, and Continuity Lock.
+- If scene count is greater than 1 and CHARACTER FACTORY PRO MAX is active, every SCENE_n_IMAGE_PROMPT must begin with Character ID, Character DNA Block, and Continuity Lock only. Do not put Voice Profile, dialogue, lip-sync, or audio instructions inside IMAGE PROMPT.
+- Every SCENE_n_VIDEO_PROMPT must begin with Character ID, Character DNA Block, Voice Profile, and Continuity Lock.
 - For multi-scene outputs, keep the same main character identity across all scenes with no redesign or reinterpretation.
 - If scene count is greater than 1, split both image_prompt and video_prompt into clear scene blocks using these exact headers only: SCENE_1_IMAGE_PROMPT:, SCENE_2_IMAGE_PROMPT:, ... and SCENE_1_VIDEO_PROMPT:, SCENE_2_VIDEO_PROMPT:, ...
 - Also return caption_hashtags: one Thai caption line plus exactly 5 hashtags, where 3 hashtags are product-related and 2 hashtags are trending Thai commerce/social hashtags.
@@ -743,7 +788,7 @@ async function renderAuthState(){
 
 async function savePromptHistoryRecord(d,result){ const character = buildCharacterFactoryProfile(d); const ref=await addDoc(collection(db,'promptHistory'),{ uid:currentUser.uid,email:currentUser.email||'',product:d.product,location:d.location,view:d.view,gemMode:d.gemMode,providerMode:d.providerMode,voiceType:d.voiceType,viralTone:d.viralTone,sceneCount:d.sceneCount,duration:d.duration,characterFactorySummary: character.enabled ? character.summary : '',imagePrompt:result.image_prompt,videoPrompt:result.video_prompt,captionHashtags:result.caption_hashtags,createdAt:serverTimestamp() }); return ref.id; }
 async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); d.characterSessionId = generateCharacterSessionId(); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); const result=await callSelectedProvider(d);
-      // Preserve stable baseline image prompt engine: do not rewrite/rebuild image_prompt with TEXT OVERLAY here.
+      result.image_prompt = applyTextOverlayToImagePrompt(result.image_prompt, d);
       result.image_prompt = injectDNAIntoStructuredPrompt(result.image_prompt, 'image', d, character);
       result.video_prompt = injectDNAIntoStructuredPrompt(result.video_prompt, 'video', d, character);
       if($('imagePrompt')) $('imagePrompt').value=result.image_prompt; if($('videoPrompt')) $('videoPrompt').value=result.video_prompt; if($('captionPrompt')) $('captionPrompt').value=result.caption_hashtags; renderSceneWorkspace(d.sceneCount, result.image_prompt, result.video_prompt); if($('resultsWrap')) $('resultsWrap').style.display='grid'; if($('emptyState')) $('emptyState').style.display='none'; if($('captionCard')) $('captionCard').style.display=''; if($('statusPill')) $('statusPill').textContent='Done'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • สร้าง Final Prompt สำเร็จแล้ว'); currentHistoryId=await savePromptHistoryRecord(d,result); resetPromptEditors(); await renderHistory(); showToast(character.enabled ? `สร้าง Final Prompt สำเร็จ • ล็อคตัวละคร ${character.shortName}` : 'สร้าง Final Prompt สำเร็จ'); }catch(e){ if($('statusPill')) $('statusPill').textContent='Error'; updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • เกิดข้อผิดพลาด'); updateGeminiKeyStatus(`เกิดข้อผิดพลาด • ${e.message}`); showError(e.message); showToast(e.message); }finally{ setLoading(false); } }
