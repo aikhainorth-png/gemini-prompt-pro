@@ -74,12 +74,28 @@ function pick(seed, list) {
 
 function getCharacterId(input='') {
   const raw = String(input || '').replace(/\D/g, '');
-  if (raw.length >= 6) return raw.slice(0, 6);
-  const hash = String(hashString(input)).padStart(6, '0');
-  return hash.slice(0, 6);
+  if (raw.length >= 16) return raw.slice(0, 16);
+  const base = `${Date.now()}${Math.floor(Math.random()*1000000000)}`.replace(/\D/g,'');
+  return (raw + base + String(hashString(input)).padStart(16, '0')).slice(0, 16);
 }
 
-export function buildCharacterFactoryProfile({ productName='', gemMode='signboard', sceneCount=1, characterSessionId='' }) {
+function getThaiVoiceProfile(voiceType='thai_female') {
+  const normalized = {
+    'หญิง':'thai_female','ชาย':'thai_male','ผู้หญิง':'thai_female','ผู้ชาย':'thai_male',
+    'หญิงชรา':'elder_female','ชายชรา':'elder_male','เด็กผู้หญิง':'thai_girl','เด็กผู้ชาย':'thai_boy'
+  }[voiceType] || voiceType || 'thai_female';
+  const map = {
+    thai_female: { gender:'Female', age:'young adult Thai woman appearance', role:'Thai female product presenter', voice:'Thai female natural commercial voice', hair:'long natural dark hair', eyes:'natural dark expressive eyes' },
+    thai_male: { gender:'Male', age:'adult Thai man appearance', role:'Thai male product presenter', voice:'Thai male natural commercial voice', hair:'short natural dark hair', eyes:'natural dark confident eyes' },
+    elder_female: { gender:'Female', age:'elderly Thai woman appearance', role:'elderly Thai female trusted presenter', voice:'Thai elderly female warm wise voice', hair:'grey or silver neatly kept hair', eyes:'kind elder dark eyes' },
+    elder_male: { gender:'Male', age:'elderly Thai man appearance', role:'elderly Thai male trusted presenter', voice:'Thai elderly male calm deep voice', hair:'silver neatly kept hair', eyes:'wise elder dark eyes' },
+    thai_girl: { gender:'Female', age:'Thai little girl child appearance', role:'Thai little girl child presenter', voice:'Thai little girl cheerful voice', hair:'natural dark child hairstyle', eyes:'bright childlike dark eyes' },
+    thai_boy: { gender:'Male', age:'Thai little boy child appearance', role:'Thai little boy child presenter', voice:'Thai little boy energetic voice', hair:'natural dark child hairstyle', eyes:'bright childlike dark eyes' }
+  };
+  return map[normalized] || map.thai_female;
+}
+
+export function buildCharacterFactoryProfile({ productName='', gemMode='signboard', sceneCount=1, characterSessionId='', voiceType='thai_female' }) {
   if (Number(sceneCount || 1) <= 1) {
     return { enabled: false, profileBlock: '', dnaBlock: '', lockBlock: '', summary: '', seed: '' };
   }
@@ -87,18 +103,19 @@ export function buildCharacterFactoryProfile({ productName='', gemMode='signboar
   const sessionId = getCharacterId(characterSessionId || `${Date.now()}${Math.random()}`);
   const seedSource = `${gemMode}::${String(productName).trim().toLowerCase()}::${sessionId}`;
   const seed = hashString(seedSource);
+  const voiceProfile = getThaiVoiceProfile(voiceType);
   const modeTypes = TYPE_BY_MODE[gemMode] || TYPE_BY_MODE.signboard;
   const outfitPool = OUTFIT_BASE[gemMode] || OUTFIT_BASE.signboard;
 
-  const gender = pick(seed + 1, ['Male', 'Female']);
-  const age = pick(seed + 2, ['young adult appearance', 'adult appearance', 'late 20s appearance', 'early 30s appearance']);
-  const archetype = pick(seed + 3, modeTypes);
+  const gender = voiceProfile.gender;
+  const age = voiceProfile.age;
+  const archetype = voiceProfile.role || pick(seed + 3, modeTypes);
   const bodyType = pick(seed + 4, BODY_TYPES);
   const skinTone = pick(seed + 5, SKIN_TONES);
   const material = pick(seed + 6, MATERIALS);
-  const hairStyle = pick(seed + 7, HAIR_STYLES);
+  const hairStyle = voiceProfile.hair || pick(seed + 7, HAIR_STYLES);
   const hairColor = pick(seed + 8, HAIR_COLORS);
-  const eyes = pick(seed + 9, EYE_STYLES);
+  const eyes = voiceProfile.eyes || pick(seed + 9, EYE_STYLES);
   const outfit = pick(seed + 10, outfitPool);
   const trait = pick(seed + 11, UNIQUE_TRAITS);
   const expressionStyle = pick(seed + 12, EXPRESSIONS);
@@ -115,9 +132,9 @@ Hair color: ${hairColor}
 Eyes: ${eyes}
 Outfit: ${outfit}
 Unique traits: ${trait}
-Core expression style: ${expressionStyle}`;
+Core expression style: ${expressionStyle}\nVoice profile: ${voiceProfile.voice}\nEthnicity lock: Thai / Asian only`;
 
-  const dnaSummary = `Character ID ${sessionId}, a ${archetype}, ${bodyType}, ${skinTone}, ${material}, ${hairStyle}, ${hairColor}, ${eyes}, wearing ${outfit}, with ${trait}.`;
+  const dnaSummary = `Character ID ${sessionId}, a ${archetype}, ${bodyType}, ${skinTone}, ${material}, ${hairStyle}, ${hairColor}, ${eyes}, wearing ${outfit}, with ${trait}, Thai / Asian only, voice profile ${voiceProfile.voice}.`;
 
   const dnaBlock = `🧬 CHARACTER DNA BLOCK (Used in every prompt)
 Character Profile: ${dnaSummary}
@@ -132,10 +149,10 @@ Style Lock: same photorealistic live-action cinematic style across every scene, 
 
 Scale Lock: character scale must remain consistent relative to surrounding environment and props across all scenes unless the story explicitly changes scale.
 
-Motion Continuity Rule: this is the exact same character continuing from scene to scene, with the same identity, body proportions, outfit, and face.`;
+Motion Continuity Rule: this is the exact same character continuing from scene to scene, with the same identity, body proportions, outfit, face, Thai / Asian ethnicity, and voice profile.`;
 
   const lockBlock = `MULTI-SCENE CHARACTER LOCK RULE:
-Because sceneCount is greater than 1, every scene must use the exact same locked main character with Character ID ${sessionId}. You must carry the same character identity, face, costume, colors, materials, and proportions through every scene. Only pose, expression, camera angle, environment progression, and action can change. The character must remain photorealistic human live-action, never 3D or animated.`;
+Because sceneCount is greater than 1, every scene must use the exact same locked main character with Character ID ${sessionId}. You must carry the same character identity, face, costume, colors, materials, and proportions through every scene. Only pose, expression, camera angle, environment progression, and action can change. The character must remain photorealistic Thai / Asian human live-action, never 3D, cartoon, chibi, mascot, CGI, animation, or Pixar-like.`;
 
   return {
     enabled: true,
