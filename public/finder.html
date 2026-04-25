@@ -228,22 +228,13 @@ let ALL = [], CATS = [], filtered = [], sortField = 'score', sortDir = -1;
 let page = 1; const PER_PAGE = 20;
 let medianRevenue = 0;
 
-fetch('https://fancy-buttercream-d3e748.netlify.app/data.json', {
-  cache: 'no-store'
-})
-.then(r => {
-  if (!r.ok) throw new Error('โหลด data.json ไม่สำเร็จ: ' + r.status);
-  return r.json();
-})
-.then(data => { 
-  ALL = data.products || [];
-  CATS = data.categories || [];
-
-  medianRevenue = [...ALL]
-    .sort((a,b)=>a.revenue-b.revenue)[Math.floor(ALL.length/2)]?.revenue || 0;
+fetch('data.json').then(r=>r.json()).then(data=>{
+  ALL = data.products;
+  CATS = data.categories;
+  medianRevenue = [...ALL].sort((a,b)=>a.revenue-b.revenue)[Math.floor(ALL.length/2)].revenue;
 
   document.getElementById('date-info').innerHTML =
-    `ข้อมูล: ${data.date_range || '-'}<br>อัปเดต: ${data.generated || '-'}`;
+    `ข้อมูล: ${data.date_range}<br>อัปเดต: ${data.generated}`;
 
   // KPIs
   const gold  = ALL.filter(p=>p.tier==='gold').length;
