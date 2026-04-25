@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔥 TikTok Shop Finder — สินค้าขายดี คู่แข่งน้อย</title>
+<style>
+  :root {
+    --gold: #f59e0b; --silver: #94a3b8; --bronze: #b45309;
+    --green: #10b981; --blue: #3b82f6; --purple: #8b5cf6;
+    --red: #ef4444; --orange: #f97316;
+    --bg: #0f172a; --surface: #1e293b; --surface2: #273549;
+    --text: #f1f5f9; --muted: #94a3b8; --border: #334155;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  header { background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%); padding: 24px 20px 20px; border-bottom: 1px solid var(--border); }
+  header h1 { font-size: clamp(1.2rem,3vw,1.8rem); font-weight: 800; letter-spacing: -0.5px; }
+  header p { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+  .header-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+
+  /* KPI CARDS */
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 12px; padding: 20px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+  .kpi .val { font-size: 1.6rem; font-weight: 800; }
+  .kpi .lbl { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+  .kpi.gold  { border-color: var(--gold);   } .kpi.gold  .val { color: var(--gold);   }
+  .kpi.green { border-color: var(--green);  } .kpi.green .val { color: var(--green);  }
+  .kpi.blue  { border-color: var(--blue);   } .kpi.blue  .val { color: var(--blue);   }
+  .kpi.purple{ border-color: var(--purple); } .kpi.purple .val { color: var(--purple); }
+  .kpi.orange{ border-color: var(--orange); } .kpi.orange .val { color: var(--orange); }
+
+  /* TABS */
+  .tabs { display: flex; gap: 4px; padding: 0 20px; flex-wrap: wrap; }
+  .tab { padding: 8px 18px; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 0.85rem; font-weight: 600; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); border-bottom: none; transition: all .2s; }
+  .tab.active { background: var(--surface); color: var(--text); border-color: var(--blue); border-bottom: 1px solid var(--surface); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* MAIN CONTENT */
+  .content { background: var(--surface); border: 1px solid var(--border); border-radius: 0 8px 8px 8px; margin: 0 20px 20px; padding: 20px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* FILTERS */
+  .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+  .filters input, .filters select { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; outline: none; }
+  .filters input:focus, .filters select:focus { border-color: var(--blue); }
+  .filters input { flex: 1; min-width: 200px; }
+  .filter-btn { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all .2s; }
+  .filter-btn.active { background: var(--blue); border-color: var(--blue); color: white; }
+  .filter-btn:hover:not(.active) { border-color: var(--blue); }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  thead th { background: var(--bg); color: var(--muted); font-weight: 700; padding: 10px 12px; text-align: left; border-bottom: 2px solid var(--border); white-space: nowrap; cursor: pointer; user-select: none; }
+  thead th:hover { color: var(--text); }
+  thead th .sort-icon { margin-left: 4px; opacity: 0.4; }
+  thead th.sorted .sort-icon { opacity: 1; color: var(--blue); }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td { padding: 10px 12px; vertical-align: middle; }
+  .product-name { font-weight: 600; max-width: 280px; line-height: 1.4; }
+  .product-name a { color: var(--text); text-decoration: none; }
+  .product-name a:hover { color: var(--blue); }
+  .cat-badge { display: inline-block; background: var(--bg); color: var(--muted); border-radius: 4px; padding: 2px 7px; font-size: 0.72rem; margin-top: 3px; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .score-bar { display: flex; align-items: center; gap: 8px; }
+  .score-num { font-weight: 800; font-size: 1rem; width: 36px; }
+  .bar-wrap { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
+
+  /* TIER BADGES */
+  .tier { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
+  .tier.gold   { background: rgba(245,158,11,.15); color: var(--gold);   border: 1px solid rgba(245,158,11,.3); }
+  .tier.silver { background: rgba(148,163,184,.15); color: var(--silver); border: 1px solid rgba(148,163,184,.3); }
+  .tier.bronze { background: rgba(180,83,9,.15);   color: #d97706;        border: 1px solid rgba(180,83,9,.3); }
+  .tier.normal { background: rgba(148,163,184,.08); color: var(--muted);  border: 1px solid var(--border); }
+
+  /* COMPETITION */
+  .comp { display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; font-weight: 600; }
+  .comp.very_low { color: #10b981; }
+  .comp.low      { color: #84cc16; }
+  .comp.medium   { color: #f59e0b; }
+  .comp.high     { color: #ef4444; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .very_low .dot { background: #10b981; }
+  .low      .dot { background: #84cc16; }
+  .medium   .dot { background: #f59e0b; }
+  .high     .dot { background: #ef4444; }
+
+  /* CATEGORY GRID */
+  .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 12px; }
+  .cat-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; transition: border-color .2s; }
+  .cat-card:hover { border-color: var(--blue); }
+  .cat-card h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; }
+  .cat-stat { display: flex; justify-content: space-between; font-size: 0.8rem; margin: 4px 0; }
+  .cat-stat .v { font-weight: 600; }
+  .cat-score { font-size: 1.6rem; font-weight: 800; color: var(--gold); }
+  .cat-header { display: flex; justify-content: space-between; align-items: flex-start; }
+
+  /* GEMS */
+  .gems-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 14px; }
+  .gem-card { background: linear-gradient(135deg, #1a0f2e, #0f172a); border: 1px solid #6d28d9; border-radius: 14px; padding: 16px; transition: transform .2s, box-shadow .2s; }
+  .gem-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(109,40,217,.3); }
+  .gem-img { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; background: var(--surface); flex-shrink: 0; }
+  .gem-top { display: flex; gap: 12px; margin-bottom: 10px; }
+  .gem-info h3 { font-size: 0.85rem; font-weight: 700; line-height: 1.4; }
+  .gem-info .gc { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+  .gem-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .gem-stat { background: rgba(255,255,255,.04); border-radius: 6px; padding: 6px 8px; }
+  .gem-stat .sv { font-size: 0.9rem; font-weight: 700; }
+  .gem-stat .sk { font-size: 0.68rem; color: var(--muted); margin-top: 1px; }
+  .gem-score-wrap { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(109,40,217,.3); }
+  .gem-score { font-size: 1.2rem; font-weight: 800; color: #a78bfa; }
+  .gem-link { color: #818cf8; font-size: 0.78rem; text-decoration: none; }
+  .gem-link:hover { color: #a78bfa; text-decoration: underline; }
+
+  /* PAGINATION */
+  .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 16px; }
+  .page-btn { padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; font-size: 0.82rem; transition: all .2s; }
+  .page-btn:hover, .page-btn.active { background: var(--blue); border-color: var(--blue); color: white; }
+  .page-info { color: var(--muted); font-size: 0.82rem; }
+
+  /* COUNT */
+  .result-count { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; }
+  .result-count span { color: var(--blue); font-weight: 700; }
+
+  /* GROWTH */
+  .growth-pos { color: #10b981; font-weight: 600; }
+  .growth-neg { color: #ef4444; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media(max-width:600px) {
+    .kpi-row { grid-template-columns: repeat(2,1fr); }
+    .content { margin: 0 10px 20px; padding: 14px; }
+    .tabs { padding: 0 10px; }
+    .kpi-row { padding: 14px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div>
+      <h1>🔥 TikTok Shop Finder</h1>
+      <p>ระบบค้นหาสินค้าขายดี คู่แข่งน้อย | Thailand 2026</p>
+    </div>
+    <div style="color:var(--muted);font-size:0.8rem;text-align:right;" id="date-info"></div>
+  </div>
+</header>
+
+<div class="kpi-row" id="kpi-row"></div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('all')">📋 สินค้าทั้งหมด</div>
+  <div class="tab" onclick="switchTab('gems')">💎 Hidden Gems</div>
+  <div class="tab" onclick="switchTab('cats')">📊 หมวดหมู่</div>
+</div>
+
+<div class="content">
+  <!-- ALL PRODUCTS TAB -->
+  <div class="tab-panel active" id="tab-all">
+    <div class="filters">
+      <input type="text" id="search" placeholder="🔍 ค้นหาชื่อสินค้า..." oninput="applyFilters()">
+      <select id="sel-cat" onchange="applyFilters()"><option value="">ทุกหมวดหมู่</option></select>
+      <select id="sel-tier" onchange="applyFilters()">
+        <option value="">ทุกระดับ</option>
+        <option value="gold">🔥 ทองคำ</option>
+        <option value="silver">⭐ เงิน</option>
+        <option value="bronze">💡 ทองแดง</option>
+      </select>
+      <select id="sel-comp" onchange="applyFilters()">
+        <option value="">ทุกระดับคู่แข่ง</option>
+        <option value="very_low">🟢 น้อยมาก (≤10)</option>
+        <option value="low">🟡 น้อย (≤50)</option>
+        <option value="medium">🟠 ปานกลาง</option>
+        <option value="high">🔴 สูง</option>
+      </select>
+      <button class="filter-btn active" onclick="clearFilters()">รีเซ็ต</button>
+    </div>
+    <div class="result-count" id="result-count"></div>
+    <div class="table-wrap">
+      <table id="products-table">
+        <thead>
+          <tr>
+            <th onclick="sortBy('rank')">#<span class="sort-icon">↕</span></th>
+            <th>สินค้า</th>
+            <th onclick="sortBy('score')" class="sorted">คะแนน<span class="sort-icon">↓</span></th>
+            <th>ระดับ</th>
+            <th onclick="sortBy('revenue')" class="num">รายได้<span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('sales')" class="num">ยอดขาย<span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('creators')" class="num">ครีเอเตอร์<span class="sort-icon">↕</span></th>
+            <th>คู่แข่ง</th>
+            <th>เติบโต</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- HIDDEN GEMS TAB -->
+  <div class="tab-panel" id="tab-gems">
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px;">
+      💎 <strong style="color:#a78bfa">Hidden Gems</strong> = สินค้าที่มีครีเอเตอร์ ≤50 คน แต่รายได้สูงกว่าค่ากลาง — โอกาส Blue Ocean ที่ยังไม่มีคนแย่ง
+    </p>
+    <div class="gems-grid" id="gems-grid"></div>
+  </div>
+
+  <!-- CATEGORIES TAB -->
+  <div class="tab-panel" id="tab-cats">
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px;">เรียงตามคะแนนโอกาสเฉลี่ยของหมวดหมู่</p>
+    <div class="cat-grid" id="cat-grid"></div>
+  </div>
+</div>
+
+<script>
+let ALL = [], CATS = [], filtered = [], sortField = 'score', sortDir = -1;
+let page = 1; const PER_PAGE = 20;
+let medianRevenue = 0;
+
+fetch('https://fancy-buttercream-d3e748.netlify.app/data.json', {
+  cache: 'no-store'
+})
+.then(r => {
+  if (!r.ok) throw new Error('โหลด data.json ไม่สำเร็จ: ' + r.status);
+  return r.json();
+})
+.then(data => { 
+  ALL = data.products || [];
+  CATS = data.categories || [];
+
+  medianRevenue = [...ALL]
+    .sort((a,b)=>a.revenue-b.revenue)[Math.floor(ALL.length/2)]?.revenue || 0;
+
+  document.getElementById('date-info').innerHTML =
+    `ข้อมูล: ${data.date_range || '-'}<br>อัปเดต: ${data.generated || '-'}`;
+
+  // KPIs
+  const gold  = ALL.filter(p=>p.tier==='gold').length;
+  const gems  = ALL.filter(p=>p.creators<=50 && p.revenue>=medianRevenue).length;
+  const totalRev = ALL.reduce((s,p)=>s+p.revenue,0);
+  const totalSales = ALL.reduce((s,p)=>s+p.sales,0);
+  document.getElementById('kpi-row').innerHTML = `
+    <div class="kpi gold"><div class="val">${gold}</div><div class="lbl">🔥 สินค้าระดับทองคำ</div></div>
+    <div class="kpi purple"><div class="val">${gems}</div><div class="lbl">💎 Hidden Gems</div></div>
+    <div class="kpi green"><div class="val">฿${(totalRev/1e9).toFixed(1)}B</div><div class="lbl">💰 รายได้รวม</div></div>
+    <div class="kpi blue"><div class="val">${(totalSales/1e6).toFixed(1)}M</div><div class="lbl">📦 ยอดขายรวม (ชิ้น)</div></div>
+    <div class="kpi orange"><div class="val">${CATS.length}</div><div class="lbl">🗂️ หมวดหมู่</div></div>
+  `;
+
+  // Category select
+  const catSel = document.getElementById('sel-cat');
+  [...new Set(ALL.map(p=>p.cat))].sort().forEach(c=>{
+    const o=document.createElement('option'); o.value=c; o.text=c; catSel.appendChild(o);
+  });
+
+  filtered = [...ALL];
+  renderTable();
+  renderGems();
+  renderCats();
+});
+
+function fmt(n){ return n>=1e6?`฿${(n/1e6).toFixed(1)}M`:`฿${n.toLocaleString()}`; }
+function fmtNum(n){ return n>=1e6?`${(n/1e6).toFixed(1)}M`:n.toLocaleString(); }
+
+function tierBadge(t){
+  const map={gold:['🔥','ทองคำ'],silver:['⭐','เงิน'],bronze:['💡','ทองแดง'],normal:['📦','ธรรมดา']};
+  const [ico,lbl]=map[t]||['',''];
+  return `<span class="tier ${t}">${ico} ${lbl}</span>`;
+}
+function compBadge(c,n){
+  const map={very_low:['🟢','น้อยมาก'],low:['🟡','น้อย'],medium:['🟠','ปานกลาง'],high:['🔴','สูง']};
+  const [dot,lbl]=map[c]||['',''];
+  return `<span class="comp ${c}"><span class="dot"></span>${n.toLocaleString()} (${lbl})</span>`;
+}
+function scoreBar(s,t){
+  const colors={gold:'#f59e0b',silver:'#94a3b8',bronze:'#b45309',normal:'#475569'};
+  const c=colors[t]||'#475569';
+  return `<div class="score-bar"><span class="score-num" style="color:${c}">${s}</span><div class="bar-wrap"><div class="bar-fill" style="width:${s}%;background:${c}"></div></div></div>`;
+}
+function growthCell(g){
+  if(!g||g==='-') return '<span style="color:var(--muted)">—</span>';
+  const pos=g.startsWith('-')?false:true;
+  return `<span class="${pos?'growth-pos':'growth-neg'}">${pos?'+':''}${g}</span>`;
+}
+
+function renderTable(){
+  const body = document.getElementById('table-body');
+  const start=(page-1)*PER_PAGE, end=start+PER_PAGE;
+  const slice=filtered.slice(start,end);
+  document.getElementById('result-count').innerHTML =
+    `แสดง <span>${filtered.length.toLocaleString()}</span> รายการ`;
+  body.innerHTML = slice.map((p,i)=>`
+    <tr>
+      <td style="color:var(--muted);text-align:center">${start+i+1}</td>
+      <td>
+        <div class="product-name">
+          ${p.tiktok_url?`<a href="${p.tiktok_url}" target="_blank">${p.name}</a>`:p.name}
+        </div>
+        <span class="cat-badge">${p.cat}</span>
+      </td>
+      <td>${scoreBar(p.score,p.tier)}</td>
+      <td>${tierBadge(p.tier)}</td>
+      <td class="num">${fmt(p.revenue)}</td>
+      <td class="num">${fmtNum(p.sales)}</td>
+      <td class="num">${p.creators.toLocaleString()}</td>
+      <td>${compBadge(p.comp_level,p.creators)}</td>
+      <td>${growthCell(p.growth)}</td>
+    </tr>`).join('');
+  renderPagination();
+}
+
+function renderPagination(){
+  const total=Math.ceil(filtered.length/PER_PAGE);
+  if(total<=1){document.getElementById('pagination').innerHTML='';return;}
+  let html='';
+  if(page>1) html+=`<button class="page-btn" onclick="goPage(${page-1})">‹</button>`;
+  const start=Math.max(1,page-2), end=Math.min(total,page+2);
+  if(start>1) html+=`<button class="page-btn" onclick="goPage(1)">1</button>${start>2?'<span class="page-info">…</span>':''}`;
+  for(let i=start;i<=end;i++) html+=`<button class="page-btn ${i===page?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  if(end<total) html+=`${end<total-1?'<span class="page-info">…</span>':''}<button class="page-btn" onclick="goPage(${total})">${total}</button>`;
+  if(page<total) html+=`<button class="page-btn" onclick="goPage(${page+1})">›</button>`;
+  html+=`<span class="page-info">หน้า ${page}/${total}</span>`;
+  document.getElementById('pagination').innerHTML=html;
+}
+
+function goPage(p){ page=p; renderTable(); window.scrollTo(0,300); }
+
+function applyFilters(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const cat=document.getElementById('sel-cat').value;
+  const tier=document.getElementById('sel-tier').value;
+  const comp=document.getElementById('sel-comp').value;
+  filtered=ALL.filter(p=>{
+    if(q && !p.name.toLowerCase().includes(q)) return false;
+    if(cat && p.cat!==cat) return false;
+    if(tier && p.tier!==tier) return false;
+    if(comp && p.comp_level!==comp) return false;
+    return true;
+  });
+  filtered.sort((a,b)=>sortDir*(a[sortField]>b[sortField]?1:-1));
+  page=1; renderTable();
+}
+
+function clearFilters(){
+  document.getElementById('search').value='';
+  document.getElementById('sel-cat').value='';
+  document.getElementById('sel-tier').value='';
+  document.getElementById('sel-comp').value='';
+  applyFilters();
+}
+
+function sortBy(field){
+  if(sortField===field) sortDir*=-1; else{ sortField=field; sortDir=-1; }
+  filtered.sort((a,b)=>sortDir*(a[field]>b[field]?1:-1));
+  page=1; renderTable();
+}
+
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach((el,i)=>{
+    el.classList.toggle('active',['all','gems','cats'][i]===t);
+  });
+  document.querySelectorAll('.tab-panel').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+}
+
+function renderGems(){
+  const gems=ALL.filter(p=>p.creators<=50 && p.revenue>=medianRevenue)
+    .sort((a,b)=>b.score-a.score);
+  document.getElementById('gems-grid').innerHTML=gems.map(p=>`
+    <div class="gem-card">
+      <div class="gem-top">
+        <img class="gem-img" src="${p.img}" onerror="this.src='https://via.placeholder.com/64x64/1a0f2e/a78bfa?text=💎'" alt="">
+        <div class="gem-info">
+          <h3>${p.tiktok_url?`<a href="${p.tiktok_url}" target="_blank" style="color:var(--text);text-decoration:none">${p.name}</a>`:p.name}</h3>
+          <div class="gc">${p.cat}</div>
+          <div class="gc" style="margin-top:3px">ราคา: ${p.price}</div>
+        </div>
+      </div>
+      <div class="gem-stats">
+        <div class="gem-stat"><div class="sv" style="color:#10b981">${fmtNum(p.sales)}</div><div class="sk">ยอดขาย</div></div>
+        <div class="gem-stat"><div class="sv" style="color:#f59e0b">${fmt(p.revenue)}</div><div class="sk">รายได้</div></div>
+        <div class="gem-stat"><div class="sv" style="color:#a78bfa">${p.creators}</div><div class="sk">ครีเอเตอร์</div></div>
+        <div class="gem-stat"><div class="sv">${growthCell(p.growth)}</div><div class="sk">เติบโต GMV</div></div>
+      </div>
+      <div class="gem-score-wrap">
+        <div><span class="gem-score">${p.score}</span> <span style="color:var(--muted);font-size:0.75rem">คะแนนโอกาส</span></div>
+        ${p.tiktok_url?`<a class="gem-link" href="${p.tiktok_url}" target="_blank">ดูบน TikTok →</a>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function renderCats(){
+  document.getElementById('cat-grid').innerHTML=CATS.map((c,i)=>`
+    <div class="cat-card">
+      <div class="cat-header">
+        <h3>${c.cat}</h3>
+        <div class="cat-score">${c.avg_score.toFixed(1)}</div>
+      </div>
+      <div class="cat-stat"><span style="color:var(--muted)">สินค้า</span><span class="v">${c.count} รายการ</span></div>
+      <div class="cat-stat"><span style="color:var(--muted)">รายได้รวม</span><span class="v" style="color:#f59e0b">${fmt(c.total_revenue)}</span></div>
+      <div class="cat-stat"><span style="color:var(--muted)">ยอดขายรวม</span><span class="v">${fmtNum(c.total_sales)} ชิ้น</span></div>
+      <div class="cat-stat"><span style="color:var(--muted)">ครีเอเตอร์เฉลี่ย</span><span class="v">${c.avg_creators.toFixed(0)} คน</span></div>
+      <div style="margin-top:10px">
+        <div class="bar-wrap" style="height:8px">
+          <div class="bar-fill" style="width:${c.avg_score}%;background:${i<3?'#f59e0b':i<7?'#3b82f6':'#475569'}"></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
