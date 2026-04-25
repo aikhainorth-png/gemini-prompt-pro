@@ -304,11 +304,18 @@ function renderTable(){
     <tr>
       <td style="color:var(--muted);text-align:center">${start+i+1}</td>
       <td>
-        <div class="product-name">
-          ${p.tiktok_url?`<a href="${p.tiktok_url}" target="_blank">${p.name}</a>`:p.name}
-        </div>
-        <span class="cat-badge">${p.cat}</span>
-      </td>
+  <div class="product-name">
+    ${p.tiktok_url ? `
+      <a href="${p.tiktok_url}" target="_blank">${p.name}</a>
+      <br>
+      <a href="${convertToDeepLink(p.tiktok_url)}" 
+         style="font-size:11px;color:#10b981;text-decoration:none;">
+         📱 เปิดใน TikTok App
+      </a>
+    ` : p.name}
+  </div>
+  <span class="cat-badge">${p.cat}</span>
+</td>
       <td>${scoreBar(p.score,p.tier)}</td>
       <td>${tierBadge(p.tier)}</td>
       <td class="num">${fmt(p.revenue)}</td>
@@ -417,6 +424,17 @@ function renderCats(){
         </div>
       </div>
     </div>`).join('');
+}
+</script>
+
+<script>
+function convertToDeepLink(url) {
+  if (!url) return '#';
+
+  const match = url.match(/\/pdp\/(\d+)/);
+  if (!match) return url; // fallback
+
+  return `snssdk1128://product/detail?product_id=${match[1]}`;
 }
 </script>
 
