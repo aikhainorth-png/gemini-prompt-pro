@@ -827,8 +827,9 @@ function startApprovalWatcher(){
   }, 5000);
 }
 
-async function renderAuthState(){
+async function renderAuthState(){ 
   const approved = isApproved();
+  const finderBtn = $('finderBtn');
 
   if(!currentUser){
     showLoginGate(true);
@@ -839,6 +840,7 @@ async function renderAuthState(){
     if($('loginBtn')) $('loginBtn').style.display = 'inline-flex';
     if($('logoutBtn')) $('logoutBtn').style.display = 'none';
     if($('adminLink')) $('adminLink').style.display = 'none';
+    if(finderBtn) finderBtn.style.display = 'none';
 
     showPending(false);
     await renderHistory();
@@ -855,6 +857,7 @@ async function renderAuthState(){
     if($('loginBtn')) $('loginBtn').style.display = 'none';
     if($('logoutBtn')) $('logoutBtn').style.display = 'inline-flex';
     if($('adminLink')) $('adminLink').style.display = isAdmin() ? 'inline-flex' : 'none';
+    if(finderBtn) finderBtn.style.display = 'none';
 
     showPending(true);
     await renderHistory();
@@ -869,6 +872,7 @@ async function renderAuthState(){
   if($('loginBtn')) $('loginBtn').style.display = 'none';
   if($('logoutBtn')) $('logoutBtn').style.display = 'inline-flex';
   if($('adminLink')) $('adminLink').style.display = isAdmin() ? 'inline-flex' : 'none';
+  if(finderBtn) finderBtn.style.display = 'inline-flex';
 
   showPending(false);
   await renderHistory();

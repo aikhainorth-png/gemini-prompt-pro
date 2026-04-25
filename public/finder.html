@@ -155,6 +155,15 @@
     </div>
     <div style="color:var(--muted);font-size:0.8rem;text-align:right;" id="date-info"></div>
   </div>
+
+<div style="padding:15px 20px;">
+  <a href="./index.html"
+     class="btn btn-dark"
+     style="text-decoration:none;">
+     ← กลับหน้าแรก
+  </a>
+</div>
+
 </header>
 
 <div class="kpi-row" id="kpi-row"></div>
@@ -410,5 +419,52 @@ function renderCats(){
     </div>`).join('');
 }
 </script>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+import { firebaseConfig } from './firebase-config.js';
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async(user)=>{
+
+  // ยังไม่ login
+  if(!user){
+    window.location.replace('./index.html');
+    return;
+  }
+
+  try{
+    const ref = doc(db,'users',user.uid);
+    const snap = await getDoc(ref);
+
+    // ไม่มี user doc
+    if(!snap.exists()){
+      window.location.replace('./index.html');
+      return;
+    }
+
+    const data = snap.data();
+
+    // ยังไม่อนุมัติ
+    if(!data.approved){
+      window.location.replace('./index.html');
+      return;
+    }
+
+    // ผ่าน = เข้า finder ได้
+
+  }catch(err){
+    console.error(err);
+    window.location.replace('./index.html');
+  }
+
+});
+</script>
+
 </body>
 </html>
