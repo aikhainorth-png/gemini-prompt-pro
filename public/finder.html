@@ -440,14 +440,10 @@ function renderCats(){
 function convertToDeepLink(url) {
   if (!url) return '#';
 
-  // รองรับหลายรูปแบบลิงก์ TikTok
-  const match = url.match(/(\d{16,})/);
+  const match = url.match(/\/pdp\/(\d+)/);
+  if (!match) return url; // fallback
 
-  if (!match) return url;
-
-  const productId = match[1];
-
-  return `https://www.tiktok.com/shop/product/${productId}`;
+  return `snssdk1128://product/detail?product_id=${match[1]}`;
 }
 </script>
 
