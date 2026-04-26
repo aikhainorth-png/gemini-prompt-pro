@@ -235,45 +235,253 @@
 
 <script>
 let ALL = [], CATS = [], filtered = [], sortField = 'score', sortDir = -1;
-let CATALOG_LIST = [], CATALOG_BY_ID = {}, CATALOG_BY_NAME = {};
-let currentPage = 1, perPage = 50;
-const OLD_NAME_ALIASES = {
-  "เสื้อผ้าสตรีและชุดชั้นใน":"เสื้อผ้าผู้หญิงและชุดชั้นใน", "เสื้อผ้าบุรุษและชุดชั้นใน":"เสื้อผ้าผู้ชายและชุดชั้นใน", "อุปกรณ์เครื่องใช้ภายในบ้าน":"ของใช้ในบ้าน", "กระเป๋าใส่สัมภาระและกระเป๋า":"กระเป๋าและกระเป๋าเดินทาง", "ยานยนต์และจักรยานยนต์":"ยานยนต์และมอเตอร์ไซค์", "แฟชั่นสำหรับเด็ก":"แฟชั่นเด็ก", "เด็กและการคลอดบุตร":"แม่และเด็ก", "เครื่องมือและเครื่องโลหะ":"เครื่องมือและฮาร์ดแวร์", "สิ่งทอและเครื่องตกแต่งที่ใช้วัสดุผิวนุ่ม":"สิ่งทอและของตกแต่งผ้านุ่ม", "อุปกรณ์สัตว์เลี้ยง":"ของใช้สัตว์เลี้ยง", "การปรับปรุงบ้าน":"อุปกรณ์ปรับปรุงบ้าน", "หนังสือ นิตยสาร และเสียง":"หนังสือ นิตยสาร และสื่อเสียง", "เครื่องใช้ในบ้าน":"เครื่องใช้ไฟฟ้าในครัวเรือน", "เครื่องประดับและสินค้าอื่นๆ จากอัญมณี":"เครื่องประดับและอุปกรณ์เกี่ยวเนื่อง"
-};
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function toNum(v){if(v==null||v==='-'||v==='')return 0;if(typeof v==='number')return Number.isFinite(v)?v:0;let s=String(v).replace(/[฿,\s]/g,'').toLowerCase();const mult=s.includes('m')?1000000:s.includes('k')?1000:1;s=s.replace(/[mk%]/g,'');const n=parseFloat(s);return Number.isFinite(n)?n*mult:0;}
-function fmt(n){n=Number(n||0);if(n>=1000000)return '฿'+(n/1000000).toFixed(1)+'M';if(n>=1000)return '฿'+(n/1000).toFixed(1)+'K';return '฿'+n.toLocaleString('th-TH');}
-function fmtNum(n){return Number(n||0).toLocaleString('th-TH');}
-function cleanName(s){return String(s||'').replace(/\s+/g,' ').trim();}
-function productIdFromUrl(url){const m=String(url||'').match(/(?:pdp|product|detail)[^\d]*(\d{10,})|\/(\d{10,})(?:\?|$)/i);return m?(m[1]||m[2]):'';}
-function toAgencyProductUrl(url,id){id=id||productIdFromUrl(url);return id?`https://shop.tiktok.com/view/product/${id}?region=TH&locale=th-TH&source=agency`:(url||'#');}
-function normalizeUrl(url,id){return toAgencyProductUrl(url,id);}
-function convertToDeepLink(url){const id=productIdFromUrl(url);return id?`snssdk1128://product/detail?product_id=${id}`:(url||'#');}
-function normalizeImageUrl(url){if(!url)return '';let s=String(url).replace(/&amp;/g,'&').trim();if(s.startsWith('//'))s='https:'+s;return s;}
-function getRawCategoryId(p){return String(p.cat_id||p.category_id||p.categoryId||p.cate_id||p.cateId||p.shop_category_id||p.first_category_id||p.primary_category_id||p.category?.id||p.category?.category_id||'').trim();}
-function getRawCategoryName(p){return cleanName(p.cat||p.category||p.category_name||p.categoryName||p.cate_name||p.first_category_name||p.primary_category_name||p.category?.name||'');}
-function buildCatalogMaps(catalog){CATALOG_LIST=Array.isArray(catalog)?catalog:[];CATALOG_BY_ID={};CATALOG_BY_NAME={};for(const c of CATALOG_LIST){const item={id:String(c.id||'').trim(),parent_id:String(c.parent_id||'').trim(),level:Number(c.level||0),name:cleanName(c.catalog_thai||c.name||c.catalog_en||''),en:cleanName(c.catalog_en||''),url:c.url||''};if(!item.id||!item.name)continue;CATALOG_BY_ID[item.id]=item;CATALOG_BY_NAME[item.name]=item;}}
-function resolveCatalog(p){const rawId=getRawCategoryId(p),rawName=getRawCategoryName(p);let hit=rawId?CATALOG_BY_ID[rawId]:null;if(hit&&hit.level===2&&hit.parent_id&&CATALOG_BY_ID[hit.parent_id]){const parent=CATALOG_BY_ID[hit.parent_id];return{cat:parent.name,cat_id:parent.id,cat_en:parent.en,cat_url:parent.url,subcat:hit.name,subcat_id:hit.id,subcat_en:hit.en,subcat_url:hit.url,cat_match:true,cat_source:'category_id'};}if(hit)return{cat:hit.name,cat_id:hit.id,cat_en:hit.en,cat_url:hit.url,subcat:'',subcat_id:'',subcat_en:'',subcat_url:'',cat_match:true,cat_source:'category_id'};const aliasName=OLD_NAME_ALIASES[rawName]||rawName;hit=CATALOG_BY_NAME[aliasName]||CATALOG_BY_NAME[rawName];if(hit&&hit.level===2&&hit.parent_id&&CATALOG_BY_ID[hit.parent_id]){const parent=CATALOG_BY_ID[hit.parent_id];return{cat:parent.name,cat_id:parent.id,cat_en:parent.en,cat_url:parent.url,subcat:hit.name,subcat_id:hit.id,subcat_en:hit.en,subcat_url:hit.url,cat_match:true,cat_source:'category_name'};}if(hit)return{cat:hit.name,cat_id:hit.id,cat_en:hit.en,cat_url:hit.url,subcat:'',subcat_id:'',subcat_en:'',subcat_url:'',cat_match:true,cat_source:'category_name'};return{cat:rawName||'ไม่ระบุหมวดหมู่',cat_id:rawId||'',cat_en:'',cat_url:'',subcat:'',subcat_id:'',subcat_en:'',subcat_url:'',cat_match:false,cat_source:rawId?'unknown_id':'unknown_name'};}
-function normalizeProduct(p,idx){const cat=resolveCatalog(p);const product_id=String(p.product_id||p.productId||p.id||productIdFromUrl(p.tiktok_url||p.url||p.link)||'').trim();const revenue=toNum(p.revenue??p.gmv??p.revenueValue??p._revenueValue);const sales=toNum(p.sales??p.sale??p.item_sold??p._sale);const creators=toNum(p.creators??p.creator_num??p.creatorCount??p._creators);const commission=p.commission??p.commission_rate??p.commissionRate??'-';const score=Number(p.score??p._score??0)||Math.round(((revenue/100000)+(sales/1000)+(toNum(commission)*5))/Math.max(1,Math.sqrt(creators+1))*10)/10;const name=cleanName(p.name||p.product_title||p.title||p.productName||'Untitled');const tiktok_url=toAgencyProductUrl(p.tiktok_url||p.url||p.link||p.product_url,product_id);return{...p,rank:Number(p.rank||idx+1),product_id,name,price:p.price??p.unit_price??p.real_price??p.min_real_price??'-',revenue,sales,creators,commission,score,tier:p.tier||(score>=31.1?'gold':score>=28.9?'silver':score>=27?'bronze':'normal'),comp_level:p.comp_level||(creators<=10?'very_low':creators<=50?'low':creators<=200?'medium':'high'),rating:p.rating??p.product_rating??'-',growth:p.growth??'-',conversion:p.conversion??'-',img:normalizeImageUrl(p.img||p.image||p.product_img||p.cover||p.image_url||''),tiktok_url,deeplink:convertToDeepLink(tiktok_url),cat_original:getRawCategoryName(p),...cat};}
-function readProductsPayload(data){if(Array.isArray(data))return data;if(Array.isArray(data.products))return data.products;if(Array.isArray(data.rows))return data.rows;if(Array.isArray(data.items))return data.items;if(Array.isArray(data.hidden_gems))return data.hidden_gems;return[];}
-function buildCategoryStats(products){const groups=new Map();for(const p of products){const key=p.cat_id||p.cat||'unknown';if(!groups.has(key))groups.set(key,{cat_id:p.cat_id||'',cat:p.cat||'ไม่ระบุหมวดหมู่',cat_en:p.cat_en||'',cat_url:p.cat_url||'',count:0,total_sales:0,total_revenue:0,total_creators:0,total_score:0,matched:0});const g=groups.get(key);g.count++;g.total_sales+=Number(p.sales||0);g.total_revenue+=Number(p.revenue||0);g.total_creators+=Number(p.creators||0);g.total_score+=Number(p.score||0);if(p.cat_match)g.matched++;}return[...groups.values()].map(g=>({...g,avg_score:g.total_score/Math.max(1,g.count),avg_creators:g.total_creators/Math.max(1,g.count),match_rate:Math.round((g.matched/Math.max(1,g.count))*100)})).sort((a,b)=>b.avg_score-a.avg_score);}
-function catalogBadge(p){const id=p.cat_id?` <small style="color:#64748b">ID:${esc(p.cat_id)}</small>`:'';const sub=p.subcat?`<br><small style="color:#94a3b8">ย่อย: ${esc(p.subcat)}${p.subcat_id?' · ID:'+esc(p.subcat_id):''}</small>`:'';const label=`${esc(p.cat)}${id}${sub}`;return p.cat_url?`<a class="cat-badge" href="${esc(p.cat_url)}" target="_blank" title="${esc(p.cat_en||'')}">${label}</a>`:`<span class="cat-badge">${label}</span>`;}
-function tierBadge(t){const m={gold:'🔥 ทองคำ',silver:'⭐ เงิน',bronze:'💡 ทองแดง',normal:'ทั่วไป'};return`<span class="tier ${esc(t||'normal')}">${m[t]||'ทั่วไป'}</span>`;}
-function compBadge(c){const m={very_low:'น้อยมาก',low:'น้อย',medium:'ปานกลาง',high:'สูง'};return`<span class="comp ${esc(c||'medium')}"><span class="dot"></span>${m[c]||c||'-'}</span>`;}
-function getGems(){return ALL.filter(p=>Number(p.creators||0)<=50&&Number(p.sales||0)>=1).sort((a,b)=>b.score-a.score);}
-async function loadJSON(path){const r=await fetch(path+'?v='+Date.now());if(!r.ok)throw new Error(`โหลด ${path} ไม่สำเร็จ`);return r.json();}
-async function init(){try{document.getElementById('date-info').textContent='กำลังโหลด data.json + catalog...';const [catalog,data]=await Promise.all([loadJSON('tiktok_catalog_th_by_id.json'),loadJSON('data.json')]);buildCatalogMaps(catalog);ALL=readProductsPayload(data).map(normalizeProduct);CATS=buildCategoryStats(ALL);filtered=[...ALL].sort((a,b)=>b.score-a.score);document.getElementById('date-info').textContent=`Data: ${esc(data.generated||'-')} | Catalog: ${CATALOG_LIST.length} รายการ | Products: ${ALL.length}`;renderKpis();populateFilters();applyFilters();renderGems();renderCats();}catch(e){document.getElementById('date-info').textContent='โหลดข้อมูลไม่สำเร็จ';document.getElementById('table-body').innerHTML=`<tr><td colspan="9" style="color:#ef4444;padding:20px">Error: ${esc(e.message)}</td></tr>`;console.error(e);}}
-function renderKpis(){const gems=getGems();const matched=ALL.filter(p=>p.cat_match).length;const totalRevenue=ALL.reduce((s,p)=>s+Number(p.revenue||0),0);document.getElementById('kpi-row').innerHTML=`<div class="kpi gold"><div class="val">${fmtNum(ALL.length)}</div><div class="lbl">สินค้าทั้งหมด</div></div><div class="kpi green"><div class="val">${fmtNum(gems.length)}</div><div class="lbl">Hidden Gems</div></div><div class="kpi blue"><div class="val">${fmt(totalRevenue)}</div><div class="lbl">รายได้รวม</div></div><div class="kpi purple"><div class="val">${CATS.length}</div><div class="lbl">หมวดหมู่</div></div><div class="kpi orange"><div class="val">${Math.round((matched/Math.max(1,ALL.length))*100)}%</div><div class="lbl">ตรง Catalog JSON</div></div>`;}
-function populateFilters(){const catSel=document.getElementById('sel-cat');catSel.innerHTML='<option value="">ทุกหมวดหมู่</option>';CATS.forEach(c=>{const o=document.createElement('option');o.value=c.cat;o.text=`${c.cat}${c.cat_id?' — ID:'+c.cat_id:''}`;catSel.appendChild(o);});}
-function sortBy(field){if(sortField===field)sortDir*=-1;else{sortField=field;sortDir=-1;}filtered.sort((a,b)=>{const av=a[field],bv=b[field];if(typeof av==='number'||typeof bv==='number')return((Number(av)||0)-(Number(bv)||0))*sortDir;return String(av||'').localeCompare(String(bv||''),'th')*sortDir;});currentPage=1;renderTable();}
-function applyFilters(){const q=cleanName(document.getElementById('search').value).toLowerCase();const cat=document.getElementById('sel-cat').value;const tier=document.getElementById('sel-tier').value;const comp=document.getElementById('sel-comp').value;filtered=ALL.filter(p=>{if(q&&!(`${p.name} ${p.cat} ${p.subcat} ${p.product_id}`.toLowerCase().includes(q)))return false;if(cat&&p.cat!==cat)return false;if(tier&&p.tier!==tier)return false;if(comp&&p.comp_level!==comp)return false;return true;}).sort((a,b)=>b.score-a.score);currentPage=1;renderTable();}
-function clearFilters(){document.getElementById('search').value='';document.getElementById('sel-cat').value='';document.getElementById('sel-tier').value='';document.getElementById('sel-comp').value='';applyFilters();}
-function renderTable(){document.getElementById('result-count').innerHTML=`พบ <span>${fmtNum(filtered.length)}</span> รายการ`;const start=(currentPage-1)*perPage;const rows=filtered.slice(start,start+perPage);document.getElementById('table-body').innerHTML=rows.map((p,i)=>`<tr><td>${start+i+1}</td><td><div class="product-name"><a href="${esc(p.tiktok_url)}" target="_blank">${esc(p.name)}</a>${catalogBadge(p)}</div></td><td><div class="score-bar"><span class="score-num">${Number(p.score||0).toFixed(1)}</span><div class="bar-wrap"><div class="bar-fill" style="width:${Math.min(100,Number(p.score||0))}%;background:${p.tier==='gold'?'#f59e0b':p.tier==='silver'?'#94a3b8':p.tier==='bronze'?'#b45309':'#475569'}"></div></div></div></td><td>${tierBadge(p.tier)}</td><td class="num">${fmt(p.revenue)}</td><td class="num">${fmtNum(p.sales)}</td><td class="num">${fmtNum(p.creators)}</td><td>${compBadge(p.comp_level)}</td><td class="${String(p.growth).includes('-')?'growth-neg':'growth-pos'}">${esc(p.growth)}</td></tr>`).join('');renderPagination();}
-function renderPagination(){const pages=Math.max(1,Math.ceil(filtered.length/perPage));document.getElementById('pagination').innerHTML=`<button class="page-btn" onclick="currentPage=Math.max(1,currentPage-1);renderTable()">ก่อนหน้า</button><span class="page-info">หน้า ${currentPage} / ${pages}</span><button class="page-btn" onclick="currentPage=Math.min(${pages},currentPage+1);renderTable()">ถัดไป</button>`;}
-function switchTab(t){document.querySelectorAll('.tab-panel').forEach(el=>el.classList.remove('active'));document.getElementById('tab-'+t).classList.add('active');document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['all','gems','cats'][i]===t));if(t==='gems')renderGems();if(t==='cats')renderCats();}
-function renderGems(){const gems=getGems().slice(0,100);document.getElementById('gems-grid').innerHTML=gems.map(p=>`<div class="gem-card"><div class="gem-top">${p.img?`<img class="gem-img" src="${esc(p.img)}" loading="lazy">`:`<div class="gem-img"></div>`}<div class="gem-info"><h3>${esc(p.name)}</h3><div class="gc">${esc(p.cat)}${p.cat_id?` · ID:${esc(p.cat_id)}`:''}</div>${p.subcat?`<div class="gc">ย่อย: ${esc(p.subcat)}${p.subcat_id?` · ${esc(p.subcat_id)}`:''}</div>`:''}</div></div><div class="gem-stats"><div class="gem-stat"><div class="sv">${fmt(p.revenue)}</div><div class="sk">รายได้</div></div><div class="gem-stat"><div class="sv">${fmtNum(p.sales)}</div><div class="sk">ยอดขาย</div></div><div class="gem-stat"><div class="sv">${fmtNum(p.creators)}</div><div class="sk">ครีเอเตอร์</div></div><div class="gem-stat"><div class="sv">${esc(p.commission)}</div><div class="sk">คอมมิชชั่น</div></div></div><div class="gem-score-wrap"><span class="gem-score">Score ${Number(p.score||0).toFixed(1)}</span><a class="gem-link" href="${esc(p.tiktok_url)}" target="_blank">เปิดสินค้า →</a></div></div>`).join('');}
-function renderCats(){document.getElementById('cat-grid').innerHTML=CATS.map((c,i)=>`<div class="cat-card"><div class="cat-header"><div><h3>${esc(c.cat)}</h3><div style="color:var(--muted);font-size:0.72rem;margin-top:3px">ID: ${esc(c.cat_id||'-')}</div></div><div class="cat-score">${c.avg_score.toFixed(1)}</div></div><div class="cat-stat"><span style="color:var(--muted)">สินค้า</span><span class="v">${fmtNum(c.count)} รายการ</span></div><div class="cat-stat"><span style="color:var(--muted)">ชื่อ EN</span><span class="v" style="text-align:right">${esc(c.cat_en||'-')}</span></div><div class="cat-stat"><span style="color:var(--muted)">ตรง catalog</span><span class="v">${c.match_rate}%</span></div><div class="cat-stat"><span style="color:var(--muted)">รายได้รวม</span><span class="v" style="color:#f59e0b">${fmt(c.total_revenue)}</span></div><div class="cat-stat"><span style="color:var(--muted)">ยอดขายรวม</span><span class="v">${fmtNum(c.total_sales)} ชิ้น</span></div><div class="cat-stat"><span style="color:var(--muted)">ครีเอเตอร์เฉลี่ย</span><span class="v">${c.avg_creators.toFixed(0)} คน</span></div><div style="margin-top:10px"><div class="bar-wrap" style="height:8px"><div class="bar-fill" style="width:${Math.min(100,c.avg_score)}%;background:${i<3?'#f59e0b':i<7?'#3b82f6':'#475569'}"></div></div></div>${c.cat_url?`<div style="margin-top:10px"><a href="${esc(c.cat_url)}" target="_blank" style="color:#60a5fa;font-size:0.78rem;text-decoration:none">เปิดแคตตาล็อก →</a></div>`:''}</div>`).join('');}
-document.addEventListener('DOMContentLoaded', init);
+
+// Official TikTok Shop catalog TH names generated from Sitemap by Category ID
+const OFFICIAL_CATALOG_BY_ID = {"601152": {"id": "601152", "name": "เสื้อผ้าผู้หญิงและชุดชั้นใน", "en": "Womenswear & Underwear", "url": "https://shop.tiktok.com/th/c/womenswear-underwear/601152"}, "601739": {"id": "601739", "name": "โทรศัพท์และอุปกรณ์อิเล็กทรอนิกส์", "en": "Phones & Electronics", "url": "https://shop.tiktok.com/th/c/phones-electronics/601739"}, "605248": {"id": "605248", "name": "เครื่องประดับแฟชั่น", "en": "Fashion Accessories", "url": "https://shop.tiktok.com/th/c/fashion-accessories/605248"}, "824328": {"id": "824328", "name": "เสื้อผ้าผู้ชายและชุดชั้นใน", "en": "Menswear & Underwear", "url": "https://shop.tiktok.com/th/c/menswear-underwear/824328"}, "600001": {"id": "600001", "name": "ของใช้ในบ้าน", "en": "Home Supplies", "url": "https://shop.tiktok.com/th/c/home-supplies/600001"}, "601450": {"id": "601450", "name": "ความงามและของใช้ส่วนตัว", "en": "Beauty & Personal Care", "url": "https://shop.tiktok.com/th/c/beauty-personal-care/601450"}, "601352": {"id": "601352", "name": "รองเท้า", "en": "Shoes", "url": "https://shop.tiktok.com/th/c/shoes/601352"}, "603014": {"id": "603014", "name": "กีฬาและกิจกรรมกลางแจ้ง", "en": "Sports & Outdoor", "url": "https://shop.tiktok.com/th/c/sports-outdoor/603014"}, "824584": {"id": "824584", "name": "กระเป๋าและกระเป๋าเดินทาง", "en": "Luggage & Bags", "url": "https://shop.tiktok.com/th/c/luggage-bags/824584"}, "604206": {"id": "604206", "name": "ของเล่นและงานอดิเรก", "en": "Toys & Hobbies", "url": "https://shop.tiktok.com/th/c/toys-hobbies/604206"}, "605196": {"id": "605196", "name": "ยานยนต์และมอเตอร์ไซค์", "en": "Automotive & Motorcycle", "url": "https://shop.tiktok.com/th/c/automotive-motorcycle/605196"}, "802184": {"id": "802184", "name": "แฟชั่นเด็ก", "en": "Kids' Fashion", "url": "https://shop.tiktok.com/th/c/kids-fashion/802184"}, "600024": {"id": "600024", "name": "เครื่องครัว", "en": "Kitchenware", "url": "https://shop.tiktok.com/th/c/kitchenware/600024"}, "601755": {"id": "601755", "name": "คอมพิวเตอร์และอุปกรณ์สำนักงาน", "en": "Computers & Office Equipment", "url": "https://shop.tiktok.com/th/c/computers-office-equipment/601755"}, "602284": {"id": "602284", "name": "แม่และเด็ก", "en": "Baby & Maternity", "url": "https://shop.tiktok.com/th/c/baby-maternity/602284"}, "604579": {"id": "604579", "name": "เครื่องมือและฮาร์ดแวร์", "en": "Tools & Hardware", "url": "https://shop.tiktok.com/th/c/tools-hardware/604579"}, "600154": {"id": "600154", "name": "สิ่งทอและของตกแต่งผ้านุ่ม", "en": "Textiles & Soft Furnishings", "url": "https://shop.tiktok.com/th/c/textiles-soft-furnishings/600154"}, "602118": {"id": "602118", "name": "ของใช้สัตว์เลี้ยง", "en": "Pet Supplies", "url": "https://shop.tiktok.com/th/c/pet-supplies/602118"}, "604968": {"id": "604968", "name": "อุปกรณ์ปรับปรุงบ้าน", "en": "Home Improvement", "url": "https://shop.tiktok.com/th/c/home-improvement/604968"}, "700437": {"id": "700437", "name": "อาหารและเครื่องดื่ม", "en": "Food & Beverages", "url": "https://shop.tiktok.com/th/c/food-beverages/700437"}, "601303": {"id": "601303", "name": "แฟชั่นมิดชิด", "en": "Modest Fashion", "url": "https://shop.tiktok.com/th/c/modest-fashion/601303"}, "801928": {"id": "801928", "name": "หนังสือ นิตยสาร และสื่อเสียง", "en": "Books, Magazines & Audio", "url": "https://shop.tiktok.com/th/c/books-magazines-audio/801928"}, "600942": {"id": "600942", "name": "เครื่องใช้ไฟฟ้าในครัวเรือน", "en": "Household Appliances", "url": "https://shop.tiktok.com/th/c/household-appliances/600942"}, "700645": {"id": "700645", "name": "สุขภาพ", "en": "Health", "url": "https://shop.tiktok.com/th/c/health/700645"}, "604453": {"id": "604453", "name": "เฟอร์นิเจอร์", "en": "Furniture", "url": "https://shop.tiktok.com/th/c/furniture/604453"}, "953224": {"id": "953224", "name": "เครื่องประดับและอุปกรณ์เกี่ยวเนื่อง", "en": "Jewelry Accessories & Derivatives", "url": "https://shop.tiktok.com/th/c/jewelry-accessories-derivatives/953224"}, "951432": {"id": "951432", "name": "ของสะสม", "en": "Collectibles", "url": "https://shop.tiktok.com/th/c/collectibles/951432"}, "856720": {"id": "856720", "name": "สินค้ามือสอง", "en": "Pre-Owned", "url": "https://shop.tiktok.com/th/c/pre-owned/856720"}};
+const CATEGORY_ID_BY_OLD_NAME = {"เสื้อผ้าสตรีและชุดชั้นใน": {"id": "601152", "name": "เสื้อผ้าผู้หญิงและชุดชั้นใน", "en": "Womenswear & Underwear", "url": "https://shop.tiktok.com/th/c/womenswear-underwear/601152"}, "โทรศัพท์และอุปกรณ์อิเล็กทรอนิกส์": {"id": "601739", "name": "โทรศัพท์และอุปกรณ์อิเล็กทรอนิกส์", "en": "Phones & Electronics", "url": "https://shop.tiktok.com/th/c/phones-electronics/601739"}, "เครื่องประดับแฟชั่น": {"id": "605248", "name": "เครื่องประดับแฟชั่น", "en": "Fashion Accessories", "url": "https://shop.tiktok.com/th/c/fashion-accessories/605248"}, "เสื้อผ้าบุรุษและชุดชั้นใน": {"id": "824328", "name": "เสื้อผ้าผู้ชายและชุดชั้นใน", "en": "Menswear & Underwear", "url": "https://shop.tiktok.com/th/c/menswear-underwear/824328"}, "อุปกรณ์เครื่องใช้ภายในบ้าน": {"id": "600001", "name": "ของใช้ในบ้าน", "en": "Home Supplies", "url": "https://shop.tiktok.com/th/c/home-supplies/600001"}, "ความงามและของใช้ส่วนตัว": {"id": "601450", "name": "ความงามและของใช้ส่วนตัว", "en": "Beauty & Personal Care", "url": "https://shop.tiktok.com/th/c/beauty-personal-care/601450"}, "รองเท้า": {"id": "601352", "name": "รองเท้า", "en": "Shoes", "url": "https://shop.tiktok.com/th/c/shoes/601352"}, "กีฬาและกิจกรรมกลางแจ้ง": {"id": "603014", "name": "กีฬาและกิจกรรมกลางแจ้ง", "en": "Sports & Outdoor", "url": "https://shop.tiktok.com/th/c/sports-outdoor/603014"}, "กระเป๋าใส่สัมภาระและกระเป๋า": {"id": "824584", "name": "กระเป๋าและกระเป๋าเดินทาง", "en": "Luggage & Bags", "url": "https://shop.tiktok.com/th/c/luggage-bags/824584"}, "ของเล่นและงานอดิเรก": {"id": "604206", "name": "ของเล่นและงานอดิเรก", "en": "Toys & Hobbies", "url": "https://shop.tiktok.com/th/c/toys-hobbies/604206"}, "ยานยนต์และจักรยานยนต์": {"id": "605196", "name": "ยานยนต์และมอเตอร์ไซค์", "en": "Automotive & Motorcycle", "url": "https://shop.tiktok.com/th/c/automotive-motorcycle/605196"}, "แฟชั่นสำหรับเด็ก": {"id": "802184", "name": "แฟชั่นเด็ก", "en": "Kids' Fashion", "url": "https://shop.tiktok.com/th/c/kids-fashion/802184"}, "เครื่องครัว": {"id": "600024", "name": "เครื่องครัว", "en": "Kitchenware", "url": "https://shop.tiktok.com/th/c/kitchenware/600024"}, "คอมพิวเตอร์และอุปกรณ์สำนักงาน": {"id": "601755", "name": "คอมพิวเตอร์และอุปกรณ์สำนักงาน", "en": "Computers & Office Equipment", "url": "https://shop.tiktok.com/th/c/computers-office-equipment/601755"}, "เด็กและการคลอดบุตร": {"id": "602284", "name": "แม่และเด็ก", "en": "Baby & Maternity", "url": "https://shop.tiktok.com/th/c/baby-maternity/602284"}, "เครื่องมือและเครื่องโลหะ": {"id": "604579", "name": "เครื่องมือและฮาร์ดแวร์", "en": "Tools & Hardware", "url": "https://shop.tiktok.com/th/c/tools-hardware/604579"}, "สิ่งทอและเครื่องตกแต่งที่ใช้วัสดุผิวนุ่ม": {"id": "600154", "name": "สิ่งทอและของตกแต่งผ้านุ่ม", "en": "Textiles & Soft Furnishings", "url": "https://shop.tiktok.com/th/c/textiles-soft-furnishings/600154"}, "อุปกรณ์สัตว์เลี้ยง": {"id": "602118", "name": "ของใช้สัตว์เลี้ยง", "en": "Pet Supplies", "url": "https://shop.tiktok.com/th/c/pet-supplies/602118"}, "การปรับปรุงบ้าน": {"id": "604968", "name": "อุปกรณ์ปรับปรุงบ้าน", "en": "Home Improvement", "url": "https://shop.tiktok.com/th/c/home-improvement/604968"}, "อาหารและเครื่องดื่ม": {"id": "700437", "name": "อาหารและเครื่องดื่ม", "en": "Food & Beverages", "url": "https://shop.tiktok.com/th/c/food-beverages/700437"}, "หนังสือ นิตยสาร และเสียง": {"id": "801928", "name": "หนังสือ นิตยสาร และสื่อเสียง", "en": "Books, Magazines & Audio", "url": "https://shop.tiktok.com/th/c/books-magazines-audio/801928"}, "เครื่องใช้ในบ้าน": {"id": "600942", "name": "เครื่องใช้ไฟฟ้าในครัวเรือน", "en": "Household Appliances", "url": "https://shop.tiktok.com/th/c/household-appliances/600942"}, "สุขภาพ": {"id": "700645", "name": "สุขภาพ", "en": "Health", "url": "https://shop.tiktok.com/th/c/health/700645"}, "เฟอร์นิเจอร์": {"id": "604453", "name": "เฟอร์นิเจอร์", "en": "Furniture", "url": "https://shop.tiktok.com/th/c/furniture/604453"}, "เครื่องประดับและสินค้าอื่นๆ จากอัญมณี": {"id": "953224", "name": "เครื่องประดับและอุปกรณ์เกี่ยวเนื่อง", "en": "Jewelry Accessories & Derivatives", "url": "https://shop.tiktok.com/th/c/jewelry-accessories-derivatives/953224"}, "เสื้อผ้าผู้หญิงและชุดชั้นใน": {"id": "601152", "name": "เสื้อผ้าผู้หญิงและชุดชั้นใน", "en": "Womenswear & Underwear", "url": "https://shop.tiktok.com/th/c/womenswear-underwear/601152"}, "เสื้อผ้าผู้ชายและชุดชั้นใน": {"id": "824328", "name": "เสื้อผ้าผู้ชายและชุดชั้นใน", "en": "Menswear & Underwear", "url": "https://shop.tiktok.com/th/c/menswear-underwear/824328"}, "ของใช้ในบ้าน": {"id": "600001", "name": "ของใช้ในบ้าน", "en": "Home Supplies", "url": "https://shop.tiktok.com/th/c/home-supplies/600001"}, "กระเป๋าและกระเป๋าเดินทาง": {"id": "824584", "name": "กระเป๋าและกระเป๋าเดินทาง", "en": "Luggage & Bags", "url": "https://shop.tiktok.com/th/c/luggage-bags/824584"}, "ยานยนต์และมอเตอร์ไซค์": {"id": "605196", "name": "ยานยนต์และมอเตอร์ไซค์", "en": "Automotive & Motorcycle", "url": "https://shop.tiktok.com/th/c/automotive-motorcycle/605196"}, "แฟชั่นเด็ก": {"id": "802184", "name": "แฟชั่นเด็ก", "en": "Kids' Fashion", "url": "https://shop.tiktok.com/th/c/kids-fashion/802184"}, "แม่และเด็ก": {"id": "602284", "name": "แม่และเด็ก", "en": "Baby & Maternity", "url": "https://shop.tiktok.com/th/c/baby-maternity/602284"}, "เครื่องมือและฮาร์ดแวร์": {"id": "604579", "name": "เครื่องมือและฮาร์ดแวร์", "en": "Tools & Hardware", "url": "https://shop.tiktok.com/th/c/tools-hardware/604579"}, "สิ่งทอและของตกแต่งผ้านุ่ม": {"id": "600154", "name": "สิ่งทอและของตกแต่งผ้านุ่ม", "en": "Textiles & Soft Furnishings", "url": "https://shop.tiktok.com/th/c/textiles-soft-furnishings/600154"}, "ของใช้สัตว์เลี้ยง": {"id": "602118", "name": "ของใช้สัตว์เลี้ยง", "en": "Pet Supplies", "url": "https://shop.tiktok.com/th/c/pet-supplies/602118"}, "อุปกรณ์ปรับปรุงบ้าน": {"id": "604968", "name": "อุปกรณ์ปรับปรุงบ้าน", "en": "Home Improvement", "url": "https://shop.tiktok.com/th/c/home-improvement/604968"}, "หนังสือ นิตยสาร และสื่อเสียง": {"id": "801928", "name": "หนังสือ นิตยสาร และสื่อเสียง", "en": "Books, Magazines & Audio", "url": "https://shop.tiktok.com/th/c/books-magazines-audio/801928"}, "เครื่องใช้ไฟฟ้าในครัวเรือน": {"id": "600942", "name": "เครื่องใช้ไฟฟ้าในครัวเรือน", "en": "Household Appliances", "url": "https://shop.tiktok.com/th/c/household-appliances/600942"}, "เครื่องประดับและอุปกรณ์เกี่ยวเนื่อง": {"id": "953224", "name": "เครื่องประดับและอุปกรณ์เกี่ยวเนื่อง", "en": "Jewelry Accessories & Derivatives", "url": "https://shop.tiktok.com/th/c/jewelry-accessories-derivatives/953224"}};
+
+function normalizeProductCategory(p){
+  const current = String(p.cat || '').trim();
+  const hit = CATEGORY_ID_BY_OLD_NAME[current];
+  if(!hit) return { ...p, cat: current || 'ไม่ระบุหมวดหมู่', cat_id: '', cat_en: '', cat_url: '' };
+  return { ...p, cat_original: current, cat: hit.name, cat_id: hit.id, cat_en: hit.en, cat_url: hit.url };
+}
+
+function buildCategoryStats(products){
+  const groups = new Map();
+  products.forEach(p=>{
+    const key = p.cat_id || p.cat || 'unknown';
+    if(!groups.has(key)) groups.set(key, { cat_id:p.cat_id||'', cat:p.cat||'ไม่ระบุหมวดหมู่', cat_en:p.cat_en||'', cat_url:p.cat_url||'', count:0, total_sales:0, total_revenue:0, total_creators:0, total_score:0 });
+    const g = groups.get(key);
+    g.count += 1;
+    g.total_sales += Number(p.sales)||0;
+    g.total_revenue += Number(p.revenue)||0;
+    g.total_creators += Number(p.creators)||0;
+    g.total_score += Number(p.score)||0;
+  });
+  return [...groups.values()].map(g=>({
+    ...g,
+    avg_creators: g.count ? g.total_creators/g.count : 0,
+    avg_score: g.count ? g.total_score/g.count : 0
+  })).sort((a,b)=>b.avg_score-a.avg_score);
+}
+
+function catalogBadge(p){
+  const id = p.cat_id ? ` <small style="color:#64748b">ID:${p.cat_id}</small>` : '';
+  const label = `${p.cat}${id}`;
+  return p.cat_url
+    ? `<a class="cat-badge" href="${p.cat_url}" target="_blank" title="${p.cat_en || ''}">${label}</a>`
+    : `<span class="cat-badge">${label}</span>`;
+}
+
+let page = 1; const PER_PAGE = 20;
+let medianRevenue = 0;
+
+fetch('data.json').then(r=>r.json()).then(data=>{
+  ALL = data.products.map(normalizeProductCategory);
+  CATS = buildCategoryStats(ALL);
+  medianRevenue = [...ALL].sort((a,b)=>a.revenue-b.revenue)[Math.floor(ALL.length/2)].revenue;
+
+  document.getElementById('date-info').innerHTML =
+    `ข้อมูล: ${data.date_range}<br>อัปเดต: ${data.generated}`;
+
+  // KPIs
+  const gold  = ALL.filter(p=>p.tier==='gold').length;
+  const gems  = ALL.filter(p=>p.creators<=50 && p.revenue>=medianRevenue).length;
+  const totalRev = ALL.reduce((s,p)=>s+p.revenue,0);
+  const totalSales = ALL.reduce((s,p)=>s+p.sales,0);
+  document.getElementById('kpi-row').innerHTML = `
+    <div class="kpi gold"><div class="val">${gold}</div><div class="lbl">🔥 สินค้าระดับทองคำ</div></div>
+    <div class="kpi purple"><div class="val">${gems}</div><div class="lbl">💎 Hidden Gems</div></div>
+    <div class="kpi green"><div class="val">฿${(totalRev/1e9).toFixed(1)}B</div><div class="lbl">💰 รายได้รวม</div></div>
+    <div class="kpi blue"><div class="val">${(totalSales/1e6).toFixed(1)}M</div><div class="lbl">📦 ยอดขายรวม (ชิ้น)</div></div>
+    <div class="kpi orange"><div class="val">${CATS.length}</div><div class="lbl">🗂️ หมวดหมู่</div></div>
+  `;
+
+  // Category select
+  const catSel = document.getElementById('sel-cat');
+  CATS.forEach(c=>{
+    const o=document.createElement('option');
+    o.value=c.cat;
+    o.text=`${c.cat}${c.cat_id ? ' — ID:'+c.cat_id : ''}`;
+    catSel.appendChild(o);
+  });
+
+  filtered = [...ALL];
+  renderTable();
+  renderGems();
+  renderCats();
+});
+
+function fmt(n){ return n>=1e6?`฿${(n/1e6).toFixed(1)}M`:`฿${n.toLocaleString()}`; }
+function fmtNum(n){ return n>=1e6?`${(n/1e6).toFixed(1)}M`:n.toLocaleString(); }
+function getProductId(url){
+  const m = String(url || '').match(/\/pdp\/(\d+)/);
+  return m ? m[1] : '';
+}
+
+function makeAgencyUrl(url){
+  const id = getProductId(url);
+  if(!id) return url || '#';
+  return `https://shop.tiktok.com/view/product/${id}?region=TH&locale=th-TH&source=agency`;
+}
+function tierBadge(t){
+  const map={gold:['🔥','ทองคำ'],silver:['⭐','เงิน'],bronze:['💡','ทองแดง'],normal:['📦','ธรรมดา']};
+  const [ico,lbl]=map[t]||['',''];
+  return `<span class="tier ${t}">${ico} ${lbl}</span>`;
+}
+function compBadge(c,n){
+  const map={very_low:['🟢','น้อยมาก'],low:['🟡','น้อย'],medium:['🟠','ปานกลาง'],high:['🔴','สูง']};
+  const [dot,lbl]=map[c]||['',''];
+  return `<span class="comp ${c}"><span class="dot"></span>${n.toLocaleString()} (${lbl})</span>`;
+}
+function scoreBar(s,t){
+  const colors={gold:'#f59e0b',silver:'#94a3b8',bronze:'#b45309',normal:'#475569'};
+  const c=colors[t]||'#475569';
+  return `<div class="score-bar"><span class="score-num" style="color:${c}">${s}</span><div class="bar-wrap"><div class="bar-fill" style="width:${s}%;background:${c}"></div></div></div>`;
+}
+function growthCell(g){
+  if(!g||g==='-') return '<span style="color:var(--muted)">—</span>';
+  const pos=g.startsWith('-')?false:true;
+  return `<span class="${pos?'growth-pos':'growth-neg'}">${pos?'+':''}${g}</span>`;
+}
+
+function renderTable(){
+  const body = document.getElementById('table-body');
+  const start=(page-1)*PER_PAGE, end=start+PER_PAGE;
+  const slice=filtered.slice(start,end);
+  document.getElementById('result-count').innerHTML =
+    `แสดง <span>${filtered.length.toLocaleString()}</span> รายการ`;
+  body.innerHTML = slice.map((p,i)=>`
+    <tr>
+      <td style="color:var(--muted);text-align:center">${start+i+1}</td>
+      <td>
+  <div class="product-name">
+    ${p.tiktok_url ? `
+      <a href="${makeAgencyUrl(p.tiktok_url)}" target="_blank">${p.name}</a>
+      <br>
+      <a href="${convertToDeepLink(p.tiktok_url)}" 
+         style="font-size:11px;color:#10b981;text-decoration:none;">
+         📱 เปิดใน TikTok App
+      </a>
+    ` : p.name}
+  </div>
+  ${catalogBadge(p)}
+</td>
+      <td>${scoreBar(p.score,p.tier)}</td>
+      <td>${tierBadge(p.tier)}</td>
+      <td class="num">${fmt(p.revenue)}</td>
+      <td class="num">${fmtNum(p.sales)}</td>
+      <td class="num">${p.creators.toLocaleString()}</td>
+      <td>${compBadge(p.comp_level,p.creators)}</td>
+      <td>${growthCell(p.growth)}</td>
+    </tr>`).join('');
+  renderPagination();
+}
+
+function renderPagination(){
+  const total=Math.ceil(filtered.length/PER_PAGE);
+  if(total<=1){document.getElementById('pagination').innerHTML='';return;}
+  let html='';
+  if(page>1) html+=`<button class="page-btn" onclick="goPage(${page-1})">‹</button>`;
+  const start=Math.max(1,page-2), end=Math.min(total,page+2);
+  if(start>1) html+=`<button class="page-btn" onclick="goPage(1)">1</button>${start>2?'<span class="page-info">…</span>':''}`;
+  for(let i=start;i<=end;i++) html+=`<button class="page-btn ${i===page?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  if(end<total) html+=`${end<total-1?'<span class="page-info">…</span>':''}<button class="page-btn" onclick="goPage(${total})">${total}</button>`;
+  if(page<total) html+=`<button class="page-btn" onclick="goPage(${page+1})">›</button>`;
+  html+=`<span class="page-info">หน้า ${page}/${total}</span>`;
+  document.getElementById('pagination').innerHTML=html;
+}
+
+function goPage(p){ page=p; renderTable(); window.scrollTo(0,300); }
+
+function applyFilters(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const cat=document.getElementById('sel-cat').value;
+  const tier=document.getElementById('sel-tier').value;
+  const comp=document.getElementById('sel-comp').value;
+  filtered=ALL.filter(p=>{
+    if(q && !p.name.toLowerCase().includes(q)) return false;
+    if(cat && p.cat!==cat) return false;
+    if(tier && p.tier!==tier) return false;
+    if(comp && p.comp_level!==comp) return false;
+    return true;
+  });
+  filtered.sort((a,b)=>sortDir*(a[sortField]>b[sortField]?1:-1));
+  page=1; renderTable();
+}
+
+function clearFilters(){
+  document.getElementById('search').value='';
+  document.getElementById('sel-cat').value='';
+  document.getElementById('sel-tier').value='';
+  document.getElementById('sel-comp').value='';
+  applyFilters();
+}
+
+function sortBy(field){
+  if(sortField===field) sortDir*=-1; else{ sortField=field; sortDir=-1; }
+  filtered.sort((a,b)=>sortDir*(a[field]>b[field]?1:-1));
+  page=1; renderTable();
+}
+
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach((el,i)=>{
+    el.classList.toggle('active',['all','gems','cats'][i]===t);
+  });
+  document.querySelectorAll('.tab-panel').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+}
+
+function renderGems(){
+  const gems=ALL.filter(p=>p.creators<=50 && p.revenue>=medianRevenue)
+    .sort((a,b)=>b.score-a.score);
+  document.getElementById('gems-grid').innerHTML=gems.map(p=>`
+    <div class="gem-card">
+      <div class="gem-top">
+        <img class="gem-img" src="${p.img}" onerror="this.src='https://via.placeholder.com/64x64/1a0f2e/a78bfa?text=💎'" alt="">
+        <div class="gem-info">
+          <h3>${p.tiktok_url?`<a href="${makeAgencyUrl(p.tiktok_url)}" target="_blank" style="color:var(--text);text-decoration:none">${p.name}</a>`:p.name}</h3>
+          <div class="gc">${p.cat}${p.cat_id ? ` · ID:${p.cat_id}` : ''}</div>
+          <div class="gc" style="margin-top:3px">ราคา: ${p.price}</div>
+        </div>
+      </div>
+      <div class="gem-stats">
+        <div class="gem-stat"><div class="sv" style="color:#10b981">${fmtNum(p.sales)}</div><div class="sk">ยอดขาย</div></div>
+        <div class="gem-stat"><div class="sv" style="color:#f59e0b">${fmt(p.revenue)}</div><div class="sk">รายได้</div></div>
+        <div class="gem-stat"><div class="sv" style="color:#a78bfa">${p.creators}</div><div class="sk">ครีเอเตอร์</div></div>
+        <div class="gem-stat"><div class="sv">${growthCell(p.growth)}</div><div class="sk">เติบโต GMV</div></div>
+      </div>
+      <div class="gem-score-wrap">
+        <div><span class="gem-score">${p.score}</span> <span style="color:var(--muted);font-size:0.75rem">คะแนนโอกาส</span></div>
+        ${p.tiktok_url?`<a class="gem-link" href="${makeAgencyUrl(p.tiktok_url)}" target="_blank">ดูบน TikTok →</a>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function renderCats(){
+  document.getElementById('cat-grid').innerHTML=CATS.map((c,i)=>`
+    <div class="cat-card">
+      <div class="cat-header">
+        <div>
+          <h3>${c.cat}</h3>
+          <div style="color:var(--muted);font-size:0.72rem;margin-top:3px">ID: ${c.cat_id || '-'}</div>
+        </div>
+        <div class="cat-score">${c.avg_score.toFixed(1)}</div>
+      </div>
+      <div class="cat-stat"><span style="color:var(--muted)">สินค้า</span><span class="v">${c.count} รายการ</span></div>
+      <div class="cat-stat"><span style="color:var(--muted)">ชื่อ EN</span><span class="v" style="text-align:right">${c.cat_en || '-'}</span></div>
+      <div class="cat-stat"><span style="color:var(--muted)">รายได้รวม</span><span class="v" style="color:#f59e0b">${fmt(c.total_revenue)}</span></div>
+      <div class="cat-stat"><span style="color:var(--muted)">ยอดขายรวม</span><span class="v">${fmtNum(c.total_sales)} ชิ้น</span></div>
+      <div class="cat-stat"><span style="color:var(--muted)">ครีเอเตอร์เฉลี่ย</span><span class="v">${c.avg_creators.toFixed(0)} คน</span></div>
+      <div style="margin-top:10px">
+        <div class="bar-wrap" style="height:8px">
+          <div class="bar-fill" style="width:${c.avg_score}%;background:${i<3?'#f59e0b':i<7?'#3b82f6':'#475569'}"></div>
+        </div>
+      </div>
+      ${c.cat_url ? `<div style="margin-top:10px"><a href="${c.cat_url}" target="_blank" style="color:#60a5fa;font-size:0.78rem;text-decoration:none">เปิดแคตตาล็อก →</a></div>` : ``}
+    </div>`).join('');
+}
 </script>
 
 <script>
