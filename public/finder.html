@@ -39,7 +39,14 @@
   .tab:hover:not(.active) { color: var(--text); }
 
   /* MAIN CONTENT */
-  .content { background: var(--surface); border: 1px solid var(--border); border-radius: 0 8px 8px 8px; margin: 0 20px 20px; padding: 20px; }
+  .content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0 8px 8px 8px;
+  margin: 0 12px 20px;
+  padding: 20px;
+  width: calc(100% - 24px);
+}
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
 
@@ -103,8 +110,20 @@
   .cat-header { display: flex; justify-content: space-between; align-items: flex-start; }
 
   /* GEMS */
-  .gems-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 14px; }
-  .gem-card { background: linear-gradient(135deg, #1a0f2e, #0f172a); border: 1px solid #6d28d9; border-radius: 14px; padding: 16px; transition: transform .2s, box-shadow .2s; }
+  .gems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  width: 100%;
+}
+  .gem-card {
+  background: linear-gradient(135deg, #1a0f2e, #0f172a);
+  border: 1px solid #6d28d9;
+  border-radius: 14px;
+  padding: 16px;
+  width: 100%;
+  min-height: 260px;
+}
   .gem-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(109,40,217,.3); }
   .gem-img { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; background: var(--surface); flex-shrink: 0; }
   .gem-top { display: flex; gap: 12px; margin-bottom: 10px; }
@@ -128,6 +147,44 @@
   /* COUNT */
   .result-count { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; }
   .result-count span { color: var(--blue); font-weight: 700; }
+   
+   /* GOHOME */
+   .home-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 18px;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:0.95rem;
+  color:#fff;
+  background:linear-gradient(135deg,#f59e0b,#f97316);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 8px 24px rgba(37,99,235,.25);
+  transition:all .22s ease;
+}
+
+.home-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 28px rgba(124,58,237,.35);
+  filter:brightness(1.08);
+}
+
+.home-btn:active{
+  transform:translateY(0);
+}
+
+.home-btn .icon{
+  width:28px;
+  height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:999px;
+  background:rgba(255,255,255,.14);
+  font-size:1rem;
+}
 
   /* GROWTH */
   .growth-pos { color: #10b981; font-weight: 600; }
@@ -158,11 +215,10 @@
   </div>
 
 <div style="padding:15px 20px;">
-  <a href="./index.html"
-     class="btn btn-dark"
-     style="text-decoration:none;">
-     ← กลับหน้าแรก
-  </a>
+  <a href="./index.html" class="home-btn">
+  <span class="icon">←</span>
+  <span>กลับหน้าแรก</span>
+</a>
 </div>
 
 </header>
@@ -211,9 +267,9 @@
             <th>ระดับ</th>
             <th onclick="sortBy('revenue')" class="num">รายได้<span class="sort-icon">↕</span></th>
             <th onclick="sortBy('sales')" class="num">ยอดขาย<span class="sort-icon">↕</span></th>
-            <th onclick="sortBy('creators')" class="num">ครีเอเตอร์<span class="sort-icon">↕</span></th>
-            <th>คู่แข่ง</th>
-            <th>เติบโต</th>
+            <th onclick="sortBy('source')" class="num">แหล่งข้อมูล<span class="sort-icon">↕</span></th>
+<th>คู่แข่งโดยประมาณ</th>
+<th>สถานะข้อมูล</th>
           </tr>
         </thead>
         <tbody id="table-body"></tbody>
@@ -225,7 +281,7 @@
   <!-- HIDDEN GEMS TAB -->
   <div class="tab-panel" id="tab-gems">
     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px;">
-      💎 <strong style="color:#a78bfa">Hidden Gems</strong> = สินค้าที่มีครีเอเตอร์ ≤50 คน แต่รายได้สูงกว่าค่ากลาง — โอกาส Blue Ocean ที่ยังไม่มีคนแย่ง
+      💎 <strong style="color:#a78bfa">Hidden Gems</strong> = สินค้ายอดขายสูง รายได้ดี เรทติ้งดี และข้อมูลครบ — โอกาสสินค้าน่าทำคอนเทนต์
     </p>
     <div class="gems-grid" id="gems-grid"></div>
   </div>
@@ -592,7 +648,7 @@ function renderCats(){
       <div class="cat-stat"><span style="color:var(--muted)">ชื่อ EN</span><span class="v" style="text-align:right">${c.cat_en || '-'}</span></div>
       <div class="cat-stat"><span style="color:var(--muted)">รายได้รวม</span><span class="v" style="color:#f59e0b">${fmt(c.total_revenue)}</span></div>
       <div class="cat-stat"><span style="color:var(--muted)">ยอดขายรวม</span><span class="v">${fmtNum(c.total_sales)} ชิ้น</span></div>
-      <div class="cat-stat"><span style="color:var(--muted)">ครีเอเตอร์เฉลี่ย</span><span class="v">${c.avg_creators.toFixed(0)} คน</span></div>
+      <div class="cat-stat"><span style="color:var(--muted)">สินค้าในหมวด</span><span class="v">${c.avg_creators.toFixed(0)} คน</span></div>
       <div style="margin-top:10px">
         <div class="bar-wrap" style="height:8px">
           <div class="bar-fill" style="width:${c.avg_score}%;background:${i<3?'#f59e0b':i<7?'#3b82f6':'#475569'}"></div>
