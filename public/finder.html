@@ -267,9 +267,9 @@
             <th>ระดับ</th>
             <th onclick="sortBy('revenue')" class="num">รายได้<span class="sort-icon">↕</span></th>
             <th onclick="sortBy('sales')" class="num">ยอดขาย<span class="sort-icon">↕</span></th>
-            <th onclick="sortBy('source')" class="num">แหล่งข้อมูล<span class="sort-icon">↕</span></th>
-<th>คู่แข่งโดยประมาณ</th>
-<th>สถานะข้อมูล</th>
+            <th onclick="sortBy('source')" class="num">เรทติ้ง<span class="sort-icon">↕</span></th>
+<th>ความนิยม</th>
+<th>คุณภาพ</th>
           </tr>
         </thead>
         <tbody id="table-body"></tbody>
@@ -311,19 +311,19 @@ function buildCategoryStats(products){
   const groups = new Map();
   products.forEach(p=>{
     const key = p.cat_id || p.cat || 'unknown';
-    if(!groups.has(key)) groups.set(key, { cat_id:p.cat_id||'', cat:p.cat||'ไม่ระบุหมวดหมู่', cat_en:p.cat_en||'', cat_url:p.cat_url||'', count:0, total_sales:0, total_revenue:0, total_creators:0, total_score:0 });
+    if(!groups.has(key)) groups.set(key, { cat_id:p.cat_id||'', cat:p.cat||'ไม่ระบุหมวดหมู่', cat_en:p.cat_en||'', cat_url:p.cat_url||'', count:0, total_sales:0, total_revenue:0, total_rating:0, total_score:0 });
     const g = groups.get(key);
     g.count += 1;
     g.total_sales += Number(p.sales)||0;
     g.total_revenue += Number(p.revenue)||0;
-    g.total_creators += Number(p.creators)||0;
+    g.total_rating += Number(p.rating)||0;
     g.total_score += Number(p.score)||0;
   });
   return [...groups.values()].map(g=>({
-    ...g,
-    avg_creators: g.count ? g.total_creators/g.count : 0,
-    avg_score: g.count ? g.total_score/g.count : 0
-  })).sort((a,b)=>b.avg_score-a.avg_score);
+  ...g,
+  avg_rating: g.count ? g.total_rating/g.count : 0,
+  avg_score: g.count ? g.total_score/g.count : 0
+})).sort((a,b)=>b.avg_score-a.avg_score);
 }
 
 function catalogBadge(p){
@@ -521,6 +521,24 @@ function growthCell(g){
   return `<span class="${pos?'growth-pos':'growth-neg'}">${pos?'+':''}${g}</span>`;
 }
 
+function popularityBadge(s){
+  s = Number(s)||0;
+
+  if(s > 500000) return '🔥 สูงมาก';
+  if(s > 100000) return '⭐ สูง';
+  if(s > 30000) return '📈 กลาง';
+  return '🌱 เริ่มต้น';
+}
+
+function qualityBadge(r){
+  r = Number(r)||0;
+
+  if(r >= 4.8) return '🏆 Premium';
+  if(r >= 4.5) return '✅ ดี';
+  if(r >= 4.0) return '👍 พอใช้';
+  return '⚠️ เสี่ยง';
+}
+
 function renderTable(){
   const body = document.getElementById('table-body');
   const start=(page-1)*PER_PAGE, end=start+PER_PAGE;
@@ -547,9 +565,9 @@ function renderTable(){
       <td>${tierBadge(p.tier)}</td>
       <td class="num">${fmt(p.revenue)}</td>
       <td class="num">${fmtNum(p.sales)}</td>
-      <td class="num">${p.creators.toLocaleString()}</td>
-      <td>${compBadge(p.comp_level,p.creators)}</td>
-      <td>${growthCell(p.growth)}</td>
+      <td class="num">${p.rating || 0}★</td>
+<td>${popularityBadge(p.sales)}</td>
+<td>${qualityBadge(p.rating)}</td>
     </tr>`).join('');
   renderPagination();
 }
@@ -608,6 +626,12 @@ function switchTab(t){
   document.getElementById('tab-'+t).classList.add('active');
 }
 
+function calcValuePerPrice(p){
+  const sales = Number(p.sales)||0;
+  const price = Number(p.price)||1;
+  return (sales / price).toFixed(1);
+}
+
 function renderGems(){
   const gems=ALL.filter(p=>p.creators<=50 && p.revenue>=medianRevenue)
     .sort((a,b)=>b.score-a.score);
@@ -624,8 +648,15 @@ function renderGems(){
       <div class="gem-stats">
         <div class="gem-stat"><div class="sv" style="color:#10b981">${fmtNum(p.sales)}</div><div class="sk">ยอดขาย</div></div>
         <div class="gem-stat"><div class="sv" style="color:#f59e0b">${fmt(p.revenue)}</div><div class="sk">รายได้</div></div>
-        <div class="gem-stat"><div class="sv" style="color:#a78bfa">${p.creators}</div><div class="sk">ครีเอเตอร์</div></div>
-        <div class="gem-stat"><div class="sv">${growthCell(p.growth)}</div><div class="sk">เติบโต GMV</div></div>
+        <div class="gem-stat">
+<div class="sv" style="color:#38bdf8">${p.rating || 0}★</div>
+<div class="sk">เรทติ้ง</div>
+</div>
+
+<div class="gem-stat">
+<div class="sv" style="color:#22c55e">${calcValuePerPrice(p)}</div>
+<div class="sk">ยอดขาย/ราคา</div>
+</div>
       </div>
       <div class="gem-score-wrap">
         <div><span class="gem-score">${p.score}</span> <span style="color:var(--muted);font-size:0.75rem">คะแนนโอกาส</span></div>
@@ -648,7 +679,7 @@ function renderCats(){
       <div class="cat-stat"><span style="color:var(--muted)">ชื่อ EN</span><span class="v" style="text-align:right">${c.cat_en || '-'}</span></div>
       <div class="cat-stat"><span style="color:var(--muted)">รายได้รวม</span><span class="v" style="color:#f59e0b">${fmt(c.total_revenue)}</span></div>
       <div class="cat-stat"><span style="color:var(--muted)">ยอดขายรวม</span><span class="v">${fmtNum(c.total_sales)} ชิ้น</span></div>
-      <div class="cat-stat"><span style="color:var(--muted)">สินค้าในหมวด</span><span class="v">${c.avg_creators.toFixed(0)} คน</span></div>
+      <div class="cat-stat"><span style="color:var(--muted)">เรทติ้งเฉลี่ย</span><span class="v">${c.avg_rating.toFixed(1)}★</span></div>
       <div style="margin-top:10px">
         <div class="bar-wrap" style="height:8px">
           <div class="bar-fill" style="width:${c.avg_score}%;background:${i<3?'#f59e0b':i<7?'#3b82f6':'#475569'}"></div>
