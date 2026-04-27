@@ -1,0 +1,16 @@
+{
+  "generated": "2026-04-27",
+  "exported_at": "2026-04-27T07:53:44.122Z",
+  "total": 23729,
+  "part_size": 3000,
+  "files": [
+    "data/data_part_1.json",
+    "data/data_part_2.json",
+    "data/data_part_3.json",
+    "data/data_part_4.json",
+    "data/data_part_5.json",
+    "data/data_part_6.json",
+    "data/data_part_7.json",
+    "data/data_part_8.json"
+  ]
+}
