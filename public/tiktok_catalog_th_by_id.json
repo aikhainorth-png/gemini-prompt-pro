@@ -2150,13 +2150,13 @@
     "catalog_en": "Collectible Trading Cards",
     "url": "https://shop.tiktok.com/th/c/collectible-trading-cards/856976"
   },
-  {
-    "level": 2,
-    "parent_id": "856720",
-    "parent_thai": "สินค้ามือสอง",
-    "id": "857744",
-    "catalog_thai": "โทรศัพท์และอิเล็กทรอนิกส์รีเฟอร์บิช",
-    "catalog_en": "Refurbished Phones & Electronics",
-    "url": "https://shop.tiktok.com/th/c/refurbished-phones-electronics/857744"
-  }
+{
+  "level": 2,
+  "parent_id": "601739",
+  "parent_thai": "โทรศัพท์และอุปกรณ์อิเล็กทรอนิกส์",
+  "id": "999999",
+  "catalog_thai": "อุปกรณ์ใหม่",
+  "catalog_en": "New Devices",
+  "url": "https://shop.tiktok.com/th/c/new-devices/999999"
+}
 ]

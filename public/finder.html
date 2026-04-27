@@ -180,7 +180,11 @@
   <div class="tab-panel active" id="tab-all">
     <div class="filters">
       <input type="text" id="search" placeholder="🔍 ค้นหาชื่อสินค้า..." oninput="applyFilters()">
-      <select id="sel-cat" onchange="applyFilters()"><option value="">ทุกหมวดหมู่</option></select>
+	  <input type="file" id="browse-json" multiple accept=".json" onchange="handleBrowseFiles(this.files)">
+
+<button class="filter-btn" onclick="exportCsvThai()">Export CSV ไทย</button>
+
+<select id="sel-cat" onchange="applyFilters()"><option value="">ทุกหมวดหมู่</option></select>
       <select id="sel-tier" onchange="applyFilters()">
         <option value="">ทุกระดับ</option>
         <option value="gold">🔥 ทองคำ</option>
@@ -277,19 +281,82 @@ function catalogBadge(p){
 let page = 1; const PER_PAGE = 20;
 let medianRevenue = 0;
 
-fetch('data.json').then(r=>r.json()).then(data=>{
-  ALL = data.products.map(normalizeProductCategory);
+function dedupe(rows){
+  const map = new Map();
+  rows.forEach(r=>{
+    const key = r.product_id || r.id || getProductId(r.tiktok_url) || r.name;
+    if(key) map.set(String(key), r);
+  });
+  return [...map.values()];
+}
+
+async function loadJsonFile(file){
+  const data = await file.text();
+  return JSON.parse(data);
+}
+
+async function handleBrowseFiles(files){
+  let all = [];
+
+  for(const file of files){
+    const json = await loadJsonFile(file);
+
+    if(Array.isArray(json)) all.push(...json);
+    else if(Array.isArray(json.products)) all.push(...json.products);
+    else if(Array.isArray(json.files)){
+      console.warn('data_index.json จาก Browse ใช้ร่วมกับไฟล์ part ที่เลือกมาพร้อมกันเท่านั้น');
+    }
+  }
+
+  initData({
+    generated: new Date().toISOString().slice(0,10),
+    date_range: 'Browse Files',
+    products: dedupe(all)
+  });
+}
+
+async function autoLoadParts(){
+  try{
+    const idx = await fetch('./data/data_index.json').then(r=>r.json());
+
+    let all = [];
+
+    for(const f of idx.files){
+      const part = await fetch('./data/' + f).then(r=>r.json());
+      if(Array.isArray(part)) all.push(...part);
+      else if(Array.isArray(part.products)) all.push(...part.products);
+    }
+
+    initData({
+      generated: idx.generated || '',
+      date_range: idx.date_range || '',
+      products: dedupe(all)
+    });
+
+  }catch(err){
+    console.warn('โหลด data_index ไม่สำเร็จ จะลองโหลด data.json แทน', err);
+
+    const data = await fetch('./data/data.json').then(r=>r.json());
+    initData(data);
+  }
+}
+
+function initData(data){
+  ALL = dedupe(data.products || []).map(normalizeProductCategory);
   CATS = buildCategoryStats(ALL);
-  medianRevenue = [...ALL].sort((a,b)=>a.revenue-b.revenue)[Math.floor(ALL.length/2)].revenue;
+
+  medianRevenue = ALL.length
+    ? [...ALL].sort((a,b)=>a.revenue-b.revenue)[Math.floor(ALL.length/2)].revenue
+    : 0;
 
   document.getElementById('date-info').innerHTML =
-    `ข้อมูล: ${data.date_range}<br>อัปเดต: ${data.generated}`;
+    `ข้อมูล: ${data.date_range || '-'}<br>อัปเดต: ${data.generated || '-'}`;
 
-  // KPIs
   const gold  = ALL.filter(p=>p.tier==='gold').length;
   const gems  = ALL.filter(p=>p.creators<=50 && p.revenue>=medianRevenue).length;
-  const totalRev = ALL.reduce((s,p)=>s+p.revenue,0);
-  const totalSales = ALL.reduce((s,p)=>s+p.sales,0);
+  const totalRev = ALL.reduce((s,p)=>s+(Number(p.revenue)||0),0);
+  const totalSales = ALL.reduce((s,p)=>s+(Number(p.sales)||0),0);
+
   document.getElementById('kpi-row').innerHTML = `
     <div class="kpi gold"><div class="val">${gold}</div><div class="lbl">🔥 สินค้าระดับทองคำ</div></div>
     <div class="kpi purple"><div class="val">${gems}</div><div class="lbl">💎 Hidden Gems</div></div>
@@ -298,8 +365,8 @@ fetch('data.json').then(r=>r.json()).then(data=>{
     <div class="kpi orange"><div class="val">${CATS.length}</div><div class="lbl">🗂️ หมวดหมู่</div></div>
   `;
 
-  // Category select
   const catSel = document.getElementById('sel-cat');
+  catSel.innerHTML = '<option value="">ทุกหมวดหมู่</option>';
   CATS.forEach(c=>{
     const o=document.createElement('option');
     o.value=c.cat;
@@ -311,12 +378,64 @@ fetch('data.json').then(r=>r.json()).then(data=>{
   renderTable();
   renderGems();
   renderCats();
-});
+}
+
+autoLoadParts();
+
+function downloadFile(filename, text, mime){
+  const blob = new Blob([text], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{
+    URL.revokeObjectURL(url);
+    a.remove();
+  }, 1000);
+}
+
+function exportCsvThai(){
+  const rows = filtered.length ? filtered : ALL;
+  const cols = [
+    'product_id',
+    'name',
+    'cat_id',
+    'cat',
+    'price',
+    'rating',
+    'sales',
+    'revenue',
+    'creators',
+    'score',
+    'tiktok_url',
+    'img'
+  ];
+
+  const csvText = [
+    cols.join(','),
+    ...rows.map(r => cols.map(c => JSON.stringify(r[c] ?? '')).join(','))
+  ].join('\n');
+
+  const bom = '\uFEFF';
+
+  downloadFile(
+    'report.csv',
+    bom + csvText,
+    'text/csv;charset=utf-8;'
+  );
+}
 
 function fmt(n){ return n>=1e6?`฿${(n/1e6).toFixed(1)}M`:`฿${n.toLocaleString()}`; }
+
 function fmtNum(n){ return n>=1e6?`${(n/1e6).toFixed(1)}M`:n.toLocaleString(); }
 function getProductId(url){
-  const m = String(url || '').match(/\/pdp\/(\d+)/);
+  const txt = String(url || '');
+  const m = txt.match(/\/pdp\/(\d+)/)
+    || txt.match(/\/view\/product\/(\d+)/)
+    || txt.match(/\/shop\/product\/(\d+)/)
+    || txt.match(/\b(17\d{14,})\b/);
   return m ? m[1] : '';
 }
 
