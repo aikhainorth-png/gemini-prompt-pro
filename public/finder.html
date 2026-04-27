@@ -112,7 +112,7 @@
   /* GEMS */
   .gems-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 18px;
   width: 100%;
 }
@@ -195,12 +195,61 @@
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-  @media(max-width:600px) {
-    .kpi-row { grid-template-columns: repeat(2,1fr); }
-    .content { margin: 0 10px 20px; padding: 14px; }
-    .tabs { padding: 0 10px; }
-    .kpi-row { padding: 14px 10px; }
+ @media (max-width: 1024px) {
+  .gems-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
   }
+
+  .gem-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .kpi-row {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 14px 10px;
+  }
+
+  .tabs {
+    padding: 0 10px;
+    gap: 6px;
+  }
+
+  .content {
+    margin: 0 8px 20px;
+    width: calc(100% - 16px);
+    padding: 12px;
+  }
+
+  .gems-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .gem-card {
+    width: 100%;
+    min-height: auto;
+    padding: 14px;
+  }
+
+  .gem-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters input,
+  .filters select,
+  .filter-btn {
+    width: 100%;
+  }
+}
 </style>
 </head>
 <body>
@@ -627,9 +676,11 @@ function switchTab(t){
 }
 
 function calcValuePerPrice(p){
+  const revenue = Number(p.revenue)||0;
   const sales = Number(p.sales)||0;
-  const price = Number(p.price)||1;
-  return (sales / price).toFixed(1);
+  if(!revenue || !sales) return '—';
+
+  return '฿' + Math.round(revenue / sales).toLocaleString();
 }
 
 function renderGems(){
@@ -655,7 +706,7 @@ function renderGems(){
 
 <div class="gem-stat">
 <div class="sv" style="color:#22c55e">${calcValuePerPrice(p)}</div>
-<div class="sk">ยอดขาย/ราคา</div>
+<div class="sk">ราคาเฉลี่ย/Order</div>
 </div>
       </div>
       <div class="gem-score-wrap">
