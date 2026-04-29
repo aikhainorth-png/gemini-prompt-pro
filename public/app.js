@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, addDoc, query, where, orderBy, limit, getDocs, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
 import * as ViralModes from './gem-modes.js';
@@ -769,20 +769,19 @@ async function signInGoogle(){
   }
 
   try{
-    if(isMobileLike() || !canUseSessionStorage()){
-      await signInWithRedirect(auth, provider);
-      return;
-    }
     await signInWithPopup(auth, provider);
     return;
   }catch(e){
-    try{
-      await signInWithRedirect(auth, provider);
+    const code = String(e?.code || '');
+    const message = String(e?.message || '');
+
+    if(isMobileLike() || !canUseSessionStorage() || /missing initial state|sessionStorage|storage-partitioned|popup-blocked|popup-closed-by-user|cancelled-popup-request|operation-not-supported/i.test(code + ' ' + message)){
+      showMobileLoginHelp(e);
       return;
-    }catch(redirectError){
-      showError('เข้าสู่ระบบไม่สำเร็จ: ' + ((redirectError && redirectError.message) || (e && e.message) || e));
-      showToast('เข้าสู่ระบบไม่สำเร็จ');
     }
+
+    showError('เข้าสู่ระบบไม่สำเร็จ: ' + (e?.message || e));
+    showToast('เข้าสู่ระบบไม่สำเร็จ');
   }
 }
 
@@ -1063,7 +1062,7 @@ async function init(){
   const savedOpenAIKey=getOpenAIKey();
   if(savedOpenAIKey&&$('userOpenAIKey')){ $('userOpenAIKey').value=savedOpenAIKey; updateOpenAIKeyStatus('พบ OpenAI API Key ที่บันทึกไว้ในเครื่องนี้ • พร้อมใช้งาน', true); }
   else { updateOpenAIKeyStatus('ยังไม่ได้เชื่อมต่อ OpenAI API Key • ระบบจะเก็บ Key ใน localStorage ของเครื่องนี้เท่านั้น', false); }
-  try { await getRedirectResult(auth); } catch(e) { console.warn('Google redirect result skipped:', e); }
+  // Redirect result disabled: popup-only Google login prevents Firebase missing-initial-state errors.
 
   onAuthStateChanged(auth, async (user)=>{
     stopApprovalWatcher();
