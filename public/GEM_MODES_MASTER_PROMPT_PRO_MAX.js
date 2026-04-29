@@ -32,6 +32,18 @@ SAFETY + COMPLIANCE:
 `;
 
 export const CATEGORY_MASTER_DNA = {
+  tiktok_live: {
+    visualIdentity: 'TikTok Live Commerce Screenshot + Live Selling Video — real phone screen capture feeling, Thai live host, UI comments, hearts, gift notification, viewer count, basket CTA, urgent live-commerce trust.',
+    characterStyle: 'Thai / Asian live host, natural seller energy, friendly expressive face, realistic hands holding or demonstrating the product, live speaking expression.',
+    environmentStyle: 'Real Thai live room, bedroom, vanity desk, shop corner, warehouse pack station, home counter, beauty table, food table, or product-specific live setup.',
+    lightingStyle: 'Realistic phone screen capture lighting, ring light or warm indoor light, clear product visibility, natural skin texture, readable Thai UI overlays.',
+    cameraStyle: 'Smartphone vertical 9:16 screen-capture composition, host centered, product close to camera, live comments stacked left, hearts floating right, cart and gift UI bottom area.',
+    psychologyTriggers: ['คนดูทะลุแสน', 'คอมเมนต์ถามรัว', 'โปรเฉพาะไลฟ์', 'Gift เด้งไม่หยุด', 'กดตะกร้าด่วน', 'ของใกล้หมด'],
+    masterPrompt: `Ultra realistic TikTok Live smartphone screenshot style scene, Thai live host presenting [PRODUCT] naturally to the camera, real TikTok Live UI overlay with username, follow button, viewer count, comment bubbles in Thai, floating hearts, share button, gift notification, bottom comment bar, shopping cart CTA, product clearly visible, live commerce urgency, photographic real phone screen capture look, vertical 9:16, no watermark, no broken Thai text, no fake-looking UI.`,
+    sceneFormula: ['HOOK: live host opens with urgent product reveal and viewer/comment surge', 'DEMO: host holds or uses product close to camera while comments ask questions', 'PROOF: comments, viewer count, gift animation, repeated demand/social proof', 'CTA: host points to basket/cart and announces live-only promo'],
+    negativePrompt: 'no cartoon, no 3D, no illustration, no broken Thai text, no fake app UI, no watermark, no distorted hands, no extra limbs, no prohibited claims'
+  },
+
   signboard: {
     visualIdentity: 'Yellow Sign Shock Sale Chaos Store — Thai retail clearance, urgent crowd energy, product stacks, bold sale sign feeling, fast UGC discovery.',
     characterStyle: 'Thai shop staff or Thai shopper, natural UGC style, expressive shock/interest, realistic hands touching product.',
@@ -251,24 +263,6 @@ export const CATEGORY_MASTER_DNA = {
     masterPrompt: `Ultra realistic Thai BookTok lifestyle scene, [PRODUCT] book shown clearly on a cozy reading desk, Thai reader flipping pages and highlighting useful sections, warm lamp light, calm intellectual mood, cover and page texture visible without copying copyrighted text, vertical 9:16, no watermark, no random background text.`,
     sceneFormula: ['HOOK: book cover/page flip reveal', 'VALUE: show chapter/page layout generally', 'USAGE: highlight/note/read moment', 'PAYOFF: reader inspired or confident', 'CTA: why this book is worth adding'],
     negativePrompt: 'no readable copyrighted page reproduction, no fake author claims, no watermark, no random text'
-  },
-
-  tiktok_live: {
-    visualIdentity: 'Ultra Realistic TikTok Live Commerce Screenshot + Live Video — real smartphone screen capture feeling, Thai live host, viewer count, comments, hearts, gifts, basket urgency, social proof, live-only promo energy.',
-    characterStyle: 'Thai / Asian live host only, natural charisma, expressive selling energy, speaks naturally to camera, demonstrates product with real hands and trustworthy UGC live style.',
-    environmentStyle: 'TikTok Shop live room, beauty vanity, cozy bedroom, product table, store stock corner, kitchen table, home demo area, or small live studio with ring light and visible product display.',
-    lightingStyle: 'Realistic live streaming light, soft ring light on face, warm indoor ambience, clean smartphone exposure, readable UI overlays, product details sharp and clear.',
-    cameraStyle: 'Portrait 9:16 smartphone live framing, front-camera host shot, product close-up to camera, handheld micro movement, comments popping, hearts floating, gift notification, basket/product card visible.',
-    psychologyTriggers: ['คนดูทะลุแสน', 'คอมเมนต์ถามรัว', 'โปรเฉพาะไลฟ์', 'ของใกล้หมด', 'Gift เด้งไม่หยุด', 'กดตะกร้าด่วน', 'ยอดวิวพุ่ง', 'แม่ค้าเอนเตอร์เทน', 'คนแห่แชร์ไลฟ์', 'รีวิวสดเห็นผลจริง'],
-    masterPrompt: `Ultra realistic TikTok Live smartphone screenshot, portrait 9:16, real phone screen capture look, Thai / Asian live host presenting [PRODUCT] naturally toward the camera, TikTok Live UI overlay with profile photo, username, + follow button, viewer count, floating comments in Thai, red hearts, share button, gift notification, bottom comment bar, product basket commerce feeling, live-only promo banner, realistic lighting, natural skin texture, product label visible, not illustration, not mockup, no 3D, no cartoon, no watermark, no broken Thai text.`,
-    sceneFormula: [
-      'HOOK: live starts with host holding product close to camera and greeting viewers in Thai',
-      'SOCIAL PROOF: comments pop up asking price, size, texture, stock, delivery, COD, while viewer count feels high',
-      'DEMO: host demonstrates real product usage, texture, size, function, or before/after-safe result',
-      'URGENCY: live-only promo, limited stock, gift animation, hearts and shares increase',
-      'CTA: host points to basket and tells viewers in natural Thai to tap the cart now'
-    ],
-    negativePrompt: 'no fake-looking UI, no broken Thai text, no watermark, no illustration, no painting, no 3D, no cartoon, no mockup, no distorted hands, no extra limbs, no unrealistic proportions, no prohibited claims, no guaranteed results'
   },
   cosmetics: {
     visualIdentity: 'Luxury Beauty God Mode — texture payoff, makeup transformation, beauty counter, Thai/K-beauty luxury UGC hybrid.',

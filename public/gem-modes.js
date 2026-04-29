@@ -1,4 +1,95 @@
 export const GEM_MODES = {
+  'tiktok_live': {
+    id: 'tiktok_live',
+    label: 'TikTok Live',
+    description: 'สร้างทั้ง IMAGE PROMPT และ VIDEO + AUDIO PROMPT สำหรับภาพ/คลิปไลฟ์สด TikTok แบบสมจริง มี UI Live คอมเมนต์ หัวใจ Gift ตะกร้า และ CTA กดซื้อ',
+    keywords: ['tiktok live', 'live', 'ไลฟ์', 'ไลฟ์สด', 'ขายไลฟ์', 'แม่ค้าไลฟ์', 'พ่อค้าไลฟ์', 'คอมเมนต์ไลฟ์', 'gift', 'ของขวัญไลฟ์', 'ตะกร้าไลฟ์'],
+    viralTones: [
+      'คนดูทะลุแสน',
+      'คอมเมนต์ถามรัว',
+      'โปรเฉพาะไลฟ์',
+      'ของใกล้หมด',
+      'Gift เด้งไม่หยุด',
+      'กดตะกร้าด่วน',
+      'ยอดวิวพุ่ง',
+      'แม่ค้าเอนเตอร์เทน',
+      'คนแห่แชร์ไลฟ์',
+      'รีวิวสดเห็นผลจริง'
+    ],
+    randomLocations: [
+      'ห้องนอนโทนอุ่นพร้อมไฟไลฟ์และโต๊ะวางสินค้า',
+      'โต๊ะเครื่องแป้ง beauty live setup พร้อม ring light',
+      'มุมร้านค้า/โกดังแพ็กของจริง มีสินค้าเรียงหลังไลฟ์',
+      'ห้องนั่งเล่นบ้านไทยแสงอบอุ่น เหมือนไลฟ์ขายของจริง',
+      'มุมครัวหรือโต๊ะอาหารสำหรับไลฟ์ชิมสินค้า',
+      'ระเบียงหรือสวนบ้านสำหรับไลฟ์สินค้า outdoor'
+    ],
+    randomViews: [
+      'โฮสต์ไทยถือสินค้าเข้ากล้อง เห็น TikTok Live UI คอมเมนต์เด้ง หัวใจลอย และปุ่มตะกร้าเด่น',
+      'มุมจอมือถือ 9:16 เหมือนแคปหน้าจอไลฟ์จริง โฮสต์พูดกับกล้องและโชว์สินค้าใกล้เลนส์',
+      'โฮสต์สาธิตสินค้าแบบสด ตอบคอมเมนต์ถามราคา พร้อม Gift notification และยอดคนดูสูง',
+      'กล้องเหมือน screen capture จากมือถือจริง มีโปรเฉพาะไลฟ์ แบนเนอร์และปุ่มติดตาม',
+      'โฮสต์ยกสินค้าเทียบกับมือ/โต๊ะให้เห็นขนาดจริง คอมเมนต์ถามรัวและหัวใจลอยด้านขวา'
+    ],
+    examples: [
+      {
+        title: 'Beauty Live',
+        location: 'โต๊ะเครื่องแป้ง beauty live setup แสง ring light นุ่ม ๆ เครื่องสำอางเรียงด้านหลัง',
+        view: 'สาวไทยไลฟ์ขายครีมกันแดด ถือหลอดสินค้าใกล้กล้อง มีคอมเมนต์ถามราคา เนื้อครีม และปุ่มตะกร้าเด่นบนหน้าจอ'
+      },
+      {
+        title: 'Fashion Live',
+        location: 'ห้องนอนโทนอุ่น เตียงผ้าซาตินและราวแขวนเสื้อผ้าอยู่ด้านหลัง',
+        view: 'สาวไทยไลฟ์ขายชุดนอน ถือชุดบนไม้แขวนโชว์หน้ากล้อง มีโปรเฉพาะไลฟ์ คนดูหลักแสน และหัวใจลอยต่อเนื่อง'
+      },
+      {
+        title: 'Home Product Live',
+        location: 'มุมบ้านหรือระเบียงสวน แสงธรรมชาติ มีสินค้าใช้งานจริงวางใกล้ตัว',
+        view: 'ผู้ชายไทยไลฟ์ขายเก้าอี้พับ ยกเก้าอี้โชว์ความแข็งแรง ตอบคอมเมนต์เรื่องรับน้ำหนักและจัดส่งไว'
+      }
+    ],
+    systemPrompt: `You are a TikTok Live commerce prompt director for Thai market.
+Create FINAL READY IMAGE PROMPT and VIDEO + AUDIO PROMPT for a realistic TikTok Live selling scene.
+
+CORE OUTPUT:
+- image_prompt must be an ultra-realistic TikTok Live smartphone screenshot style prompt, vertical 9:16, photographic, real phone screen capture feeling, not mockup, not illustration.
+- video_prompt must be an ultra-realistic TikTok Live video scene prompt with visible host movement, product demo, Thai spoken live dialogue, comment reactions, floating hearts, gift notification, cart CTA, and live-commerce urgency.
+
+IMAGE PROMPT MUST INCLUDE:
+- Realistic phone screenshot look, 9:16 portrait.
+- TikTok Live UI top profile area, username, follow button, viewer count, close button.
+- Thai host holding or demonstrating the product naturally.
+- Comment bubbles on the left with Thai usernames and Thai messages.
+- Floating red hearts and share icon on the right.
+- Bottom comment bar and gift/share/cart elements.
+- Optional gift notification if the selected viral tone implies gifts.
+- Thai language text must be readable and realistic.
+- Product must be clear and central.
+
+VIDEO + AUDIO PROMPT MUST INCLUDE:
+- Live host speaking Thai naturally to camera.
+- Product shown within first 3 seconds.
+- Host reads or answers live comments.
+- Visible TikTok Live UI motion: comments popping, hearts floating, gift animation, basket/cart CTA.
+- Clear demo or usage proof depending on product category.
+- Thai voiceover/live dialogue lines ready for lip sync.
+- Strong CTA: tap cart / promo only in live / order now.
+
+CATEGORY ADAPTATION:
+- Beauty/skincare/cosmetics: beauty room, texture demo, skin/finish payoff, compliant beauty wording.
+- Fashion/lingerie: try-on, fabric/fit, confidence, tasteful framing.
+- Food/snack: live tasting, texture, appetite reaction, freshness.
+- Home/appliance/tools: practical demo, before-after, use proof.
+- Mom/baby/health-adjacent: soft safe wording, no medical guarantees.
+
+STRICT NEGATIVE RULES:
+- no 3D, no cartoon, no chibi, no mascot, no illustration, no painting, no fake-looking UI.
+- no broken Thai text, no unreadable random text, no watermark.
+- no unrealistic body proportions, no distorted hands, no extra limbs.
+- no prohibited medical guarantees or exaggerated claims.
+- Must feel like real Thai TikTok Live commerce content.`
+  },
+
   'signboard': {
     id: 'signboard',
     label: 'สินค้าติดป้าย',
@@ -1207,94 +1298,11 @@ Output quality:
 - final-ready
 - premium, detailed, conversion-focused
 - suited for TikTok Shop / affiliate / UGC / creator content
-- visually rich, emotionally engaging, platform-native`,
-  
-  'tiktok_live': {
-    id: 'tiktok_live',
-    label: 'TikTok Live',
-    description: 'GEM MODE ไลฟ์สด TikTok สมจริง สร้างทั้ง IMAGE PROMPT แบบ screenshot ไลฟ์ และ VIDEO + AUDIO PROMPT แบบโฮสต์ไลฟ์ขายสด ตอบคอมเมนต์ ปิดการขาย กดตะกร้า',
-    keywords: [
-      'tiktok live','live','ไลฟ์','ไลฟ์สด','ขายไลฟ์','ไลฟ์ขายของ','แม่ค้าไลฟ์','พ่อค้าไลฟ์','คอมเมนต์ไลฟ์','ของขวัญไลฟ์','ตะกร้า','คนดูเยอะ','กดตะกร้า','โปรเฉพาะไลฟ์','live commerce','tiktok shop live'
-    ],
-    viralTones: [
-      'คนดูทะลุแสน',
-      'คอมเมนต์ถามรัว',
-      'โปรเฉพาะไลฟ์',
-      'ของใกล้หมด',
-      'Gift เด้งไม่หยุด',
-      'กดตะกร้าด่วน',
-      'ยอดวิวพุ่ง',
-      'แม่ค้าเอนเตอร์เทน',
-      'คนแห่แชร์ไลฟ์',
-      'รีวิวสดเห็นผลจริง'
-    ],
-    randomLocations: [
-      'ห้องไลฟ์ขายของแสงนุ่ม มีโต๊ะสินค้าและไฟวงแหวนด้านหน้า',
-      'มุมห้องนอน cozy สำหรับไลฟ์ขายแฟชั่น มีเตียงและไฟอุ่นด้านหลัง',
-      'โต๊ะเครื่องแป้งและ beauty shelf สำหรับไลฟ์ขายเครื่องสำอาง',
-      'ร้านค้าหรือสต็อกสินค้าแน่น ๆ เหมือนไลฟ์จากหน้าร้านจริง',
-      'มุมครัวหรือโต๊ะกินข้าวสำหรับไลฟ์ขายอาหาร มีแสงอบอุ่นและสินค้าจัดเต็ม',
-      'ห้องนั่งเล่นบ้านไทยหรือคอนโดสำหรับไลฟ์ขายของใช้ในบ้าน',
-      'โต๊ะ demo สินค้าในสตูดิโอเล็ก มีฉากหลังเป็นกล่องพัสดุและไฟไลฟ์',
-      'มุมสวน/ระเบียงบ้าน สำหรับไลฟ์ขายของ outdoor หรือของใช้ทั่วไป'
-    ],
-    randomViews: [
-      'โฮสต์ไทยถือสินค้าใกล้กล้องเหมือนไลฟ์จริง มีคอมเมนต์ถามราคาเด้งทางซ้าย หัวใจลอยทางขวา และตะกร้าสินค้าเด่นด้านล่าง',
-      'กล้องมือถือแนวตั้งเหมือน screenshot TikTok Live โฮสต์พูดกับกล้อง ยกสินค้าโชว์ ตอบคอมเมนต์สด และชี้ให้กดตะกร้า',
-      'สินค้าอยู่กลางเฟรม โฮสต์ทดลองใช้ให้เห็นจริง มี live UI, viewer count, follow button, gift notification และแบนเนอร์โปรเฉพาะไลฟ์',
-      'มุมใกล้แบบ live commerce เห็นมือโฮสต์ถือสินค้า ฉลากหันเข้ากล้อง คอมเมนต์ถามรัวและหัวใจเด้งต่อเนื่อง',
-      'โฮสต์เปรียบเทียบก่อนใช้/หลังใช้แบบปลอดภัยและสมจริง พร้อมพูดไทยธรรมชาติในไลฟ์และ CTA กดตะกร้า'
-    ],
-    examples: [
-      { title: 'Live Beauty — ไลฟ์ขายครีมกันแดด', location: 'โต๊ะเครื่องแป้ง beauty room, ring light, soft warm light, skincare shelf blurred behind', view: 'สาวไทยโฮสต์ไลฟ์ถือครีมกันแดดใกล้กล้อง บีบเนื้อครีมให้ดู texture มีคอมเมนต์ถามว่าเหนียวไหม ราคาเท่าไหร่ และมีป้ายโปรเฉพาะไลฟ์' },
-      { title: 'Live Fashion — ไลฟ์ขายชุดนอน', location: 'cozy bedroom, pink satin bedding, warm lamp, curtains behind, soft pink beige tones', view: 'สาวไทยโฮสต์ไลฟ์ถือชุดนอนบนไม้แขวน ยิ้มพูดกับกล้อง มี viewer count สูง หัวใจลอย และคอมเมนต์ถามไซซ์กับเก็บปลายทาง' },
-      { title: 'Live Home Product — ไลฟ์ขายเก้าอี้พับ', location: 'ระเบียงบ้านหรือสวน outdoor แสงธรรมชาติ มีพื้นที่สาธิตสินค้า', view: 'ผู้ชายไทยโฮสต์ไลฟ์กางเก้าอี้พับให้ดูความแข็งแรง ทดลองนั่งจริง คอมเมนต์ถามรับน้ำหนักเท่าไหร่ มีตะกร้าและ CTA กดสั่งในไลฟ์' }
-    ],
-    systemPrompt: `You are a TikTok Live Commerce PRO MAX prompt engineer for Thai-market short-form commerce.
-Your job is to create BOTH final-ready IMAGE PROMPT and VIDEO + AUDIO PROMPT for a TikTok Live selling scene.
-
-CORE OUTPUT:
-1) image_prompt = an ultra-realistic TikTok Live smartphone screenshot style image prompt.
-2) video_prompt = an ultra-realistic TikTok Live video scene prompt with Thai host speaking live, visible product demo, floating comments, hearts, gift animation, and CTA to tap the basket.
-
-IMAGE PROMPT STYLE:
-- Create an ultra-realistic TikTok Live screenshot on a smartphone screen, portrait 9:16, photographic, real phone screen capture feeling.
-- The UI must feel like a real TikTok Live interface: phone status bar, small circular profile photo, username, follower text, + follow button, viewer count, close X, upper live badges, center banner, floating comments, red hearts, share button, bottom comment bar, gift icons, basket / product commerce energy.
-- Thai language UI text must be readable and natural.
-- Host must be Thai / Asian only unless user explicitly asks otherwise.
-- Product must be held, demonstrated, or placed clearly near the host.
-- Use the uploaded / attached product image strictly as the product reference if available.
-- Must look like a real screenshot, not illustration, not mockup, not 3D.
-
-VIDEO + AUDIO PROMPT STYLE:
-- Create a live commerce video scene, vertical 9:16.
-- The host speaks natural Thai as if livestreaming.
-- Include real-time actions: greeting viewers, answering comments, showing product close-up, demo / texture / size / usage, urgency, CTA to tap the basket.
-- Include UI motion: comments pop up, hearts float, gift animation appears, viewer count feels high, basket / product card is visible.
-- Every scene must include Thai voiceover / spoken live dialogue.
-- Product appears within the first 3 seconds.
-
-CATEGORY ADAPTATION:
-- If product is beauty/cosmetics/skincare: use beauty live room, vanity, ring light, texture swatch, comments asking shade/texture/price.
-- If product is fashion/lingerie/bedding: use bedroom / fitting area, show fabric, size, fit, comments asking size/color/COD.
-- If product is home/furniture/appliance/tools: use real demo area, show durability/function, comments asking specs and delivery.
-- If product is food/snack: use kitchen/table setup, close-up texture/taste, comments saying hungry and asking how to order.
-- If category is unclear, choose a Thai TikTok Shop live room with product table and enthusiastic host.
-
-VIRAL LIVE TONES:
-Use the selected viral tone strongly: high viewers, comments asking fast, live-only promo, almost sold out, gift popping, share energy, basket urgency, host entertainment, real demo proof.
-
-NEGATIVE RULES:
-- no blurry, no fake-looking UI, no broken Thai text, no watermark, no illustration, no painting, no 3D, no cartoon, no mockup, no extra limbs, no distorted hands, no unrealistic proportions.
-- Avoid prohibited claims, guaranteed results, medical cure claims, and unsafe promises.
-
-FINAL QUALITY:
-- Final-ready prompts only.
-- Highly detailed, polished, realistic, Thai TikTok Live native, conversion-focused.`
-  }
+- visually rich, emotionally engaging, platform-native`
 };
 
 const EXTRA_VIRAL_TONES = {
+  tiktok_live: ['คนดูทะลุแสน','คอมเมนต์ถามรัว','โปรเฉพาะไลฟ์','ของใกล้หมด','Gift เด้งไม่หยุด','กดตะกร้าด่วน','ยอดวิวพุ่ง','แม่ค้าเอนเตอร์เทน','คนแห่แชร์ไลฟ์','รีวิวสดเห็นผลจริง'],
   "signboard": [
     "ช็อตแรกก็ต้องหยุดดู",
     "โปรนี้คนถามเยอะ",
@@ -1441,19 +1449,6 @@ const EXTRA_VIRAL_TONES = {
     "ตัวนี้กำลังดังใน TikTok",
     "สีสวยจนต้องหยุดดู",
     "บิวตี้รีวิวตัวนี้เพียบ"
-  ],
-
-  "tiktok_live": [
-    "คนดูทะลุแสน",
-    "คอมเมนต์ถามรัว",
-    "โปรเฉพาะไลฟ์",
-    "ของใกล้หมด",
-    "Gift เด้งไม่หยุด",
-    "กดตะกร้าด่วน",
-    "ยอดวิวพุ่ง",
-    "แม่ค้าเอนเตอร์เทน",
-    "คนแห่แชร์ไลฟ์",
-    "รีวิวสดเห็นผลจริง"
   ]
 };
 
@@ -1482,7 +1477,6 @@ export function getGemModeOptions(){
 export function autoDetectGemMode(productName = '') {
   const name = String(productName || '').toLowerCase().trim();
   if (!name) return 'signboard';
-  if (/(tiktok\s*live|live|ไลฟ์|ไลฟ์สด|ขายไลฟ์|แม่ค้าไลฟ์|พ่อค้าไลฟ์|ตะกร้าไลฟ์|โปรเฉพาะไลฟ์)/i.test(name)) return 'tiktok_live';
 
   let bestMode = 'signboard';
   let bestScore = 0;
@@ -1754,6 +1748,7 @@ export const H2_STYLE_LIBRARY = {
 };
 
 const MODE_TEXT_STYLE_MAP = {
+  tiktok_live: { text:'S-142', h2:'H2-22' },
   signboard: { text:'S-142', h2:'H2-22' },
   supplement_stop_scroll: { text:'S-151', h2:'H2-13' },
   food: { text:'S-138', h2:'H2-20' },
@@ -1778,7 +1773,6 @@ const MODE_TEXT_STYLE_MAP = {
   stationery: { text:'S-137', h2:'H2-14' },
   books: { text:'S-132', h2:'H2-17' },
   cosmetics: { text:'S-131', h2:'H2-06' },
-  tiktok_live: { text:'S-142', h2:'H2-22' },
 };
 
 export function getTextStyleOptions(){
