@@ -1207,8 +1207,8 @@ Output quality:
 - final-ready
 - premium, detailed, conversion-focused
 - suited for TikTok Shop / affiliate / UGC / creator content
-- visually rich, emotionally engaging, platform-native`,
-
+- visually rich, emotionally engaging, platform-native`
+},
   'tiktok_live': {
     id: 'tiktok_live',
     label: 'TikTok Live',
