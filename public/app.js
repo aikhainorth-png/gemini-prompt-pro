@@ -687,6 +687,7 @@ THAI CHARACTER + VOICE LOCK:
 - Never use 3D, cartoon, chibi, mascot, CGI, animation, Pixar-like, or stylized character unless the user explicitly types those words.
 
 GLOBAL OUTPUT RULES:
+- If GEM MODE is TikTok Live, output must be complete TikTok Live IMAGE PROMPT + VIDEO + AUDIO PROMPT with real Live UI details, Thai comments, hearts, gift, cart CTA, and live host dialogue.
 - Return FINAL-READY prompts only, not analysis.
 - Generate two polished deliverables:
 1) image_prompt: a single final image generation prompt for a vertical 9:16 promotional image
@@ -720,8 +721,9 @@ function buildUserPrompt(d){
   const randomNote = d.randomizedFields?.length ? `\nAUTO RANDOM FILLED: ${d.randomizedFields.join(', ')}` : '';
   const thaiCharacterProfile = getThaiCharacterVoiceProfile(d.voiceType);
   const characterNote = character.enabled ? `\n\nCHARACTER FACTORY PRO MAX:\n${character.profileBlock}\n\n${character.dnaBlock}\n\n${character.lockBlock}` : '';
+  const tiktokLiveNote = d.gemMode === 'tiktok_live' ? `\n\nTIKTOK LIVE PRO MAX V2 ACTIVE:\n- IMAGE PROMPT must be an ultra realistic TikTok Live smartphone screenshot, vertical 9:16, photographic real phone screen capture feeling. Include status bar, profile area, follow button, viewer count, Thai comments, floating hearts, gift notification, bottom comment bar, shopping cart CTA, and clear product presentation.\n- VIDEO + AUDIO PROMPT must be a live selling video prompt: Thai host speaks naturally, product appears within first 3 seconds, host answers comments, demonstrates product, hearts/comments/gifts animate, and ends with direct CTA to tap cart.\n- Adapt to product category automatically: beauty = texture demo, fashion = try-on/fabric, food = live tasting/texture, home = practical demo, health-adjacent = compliant soft wording.\n- Return complete image_prompt, complete video_prompt, and caption_hashtags. No markdown. No broken JSON. No fake-looking UI. No 3D/cartoon/CGI.` : '';
   return `GEM MODE: ${gem.label}
-GEM DESCRIPTION: ${gem.description}${randomNote}${characterNote}
+GEM DESCRIPTION: ${gem.description}${randomNote}${characterNote}${tiktokLiveNote}
 
 Create final production-ready prompts using these inputs.
 Product: ${sanitizePolicyText(d.product)}
