@@ -138,6 +138,42 @@
   .gem-link { color: #818cf8; font-size: 0.78rem; text-decoration: none; }
   .gem-link:hover { color: #a78bfa; text-decoration: underline; }
 
+
+
+  /* COPY PRODUCT BUTTONS */
+  .product-actions, .gem-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .copy-mini-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 5px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: rgba(15,23,42,.9);
+    color: var(--text);
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .18s ease;
+    white-space: nowrap;
+  }
+  .copy-mini-btn:hover {
+    border-color: var(--blue);
+    color: #bfdbfe;
+    transform: translateY(-1px);
+  }
+  .copy-mini-btn.copied {
+    background: rgba(16,185,129,.18);
+    border-color: var(--green);
+    color: #6ee7b7;
+  }
+
   /* PAGINATION */
   .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 16px; }
   .page-btn { padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; font-size: 0.82rem; transition: all .2s; }
@@ -549,6 +585,70 @@ function makeAgencyUrl(url){
   if(!id) return url || '#';
   return `https://shop.tiktok.com/view/product/${id}?region=TH&locale=th-TH&source=agency`;
 }
+
+function getCopyProductId(p){
+  return String(p.product_id || p.id || getProductId(p.tiktok_url) || '').trim();
+}
+
+function getCopyProductUrl(p){
+  const id = getCopyProductId(p);
+  if(id) return `https://www.tiktok.com/shop/product/${id}`;
+  return p.tiktok_url ? makeAgencyUrl(p.tiktok_url) : '';
+}
+
+async function copyTextWithState(btn, text, copiedLabel){
+  const value = String(text || '').trim();
+  if(!value){
+    alert('ไม่พบข้อมูลสำหรับคัดลอก');
+    return;
+  }
+
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(value);
+    }else{
+      const ta = document.createElement('textarea');
+      ta.value = value;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+
+    const old = btn.innerHTML;
+    btn.classList.add('copied');
+    btn.innerHTML = `✅ ${copiedLabel || 'คัดลอกแล้ว'}`;
+    setTimeout(()=>{
+      btn.classList.remove('copied');
+      btn.innerHTML = old;
+    }, 1600);
+  }catch(err){
+    console.error('Copy failed:', err);
+    alert('คัดลอกไม่สำเร็จ กรุณาลองใหม่');
+  }
+}
+
+function productCopyButtons(p){
+  const id = getCopyProductId(p);
+  const url = getCopyProductUrl(p);
+  return `
+    <div class="product-actions">
+      <button type="button" class="copy-mini-btn" onclick="copyTextWithState(this, '${escapeAttr(id)}', 'คัดลอก ID แล้ว')">📋 CopyIDสินค้า</button>
+      <button type="button" class="copy-mini-btn" onclick="copyTextWithState(this, '${escapeAttr(url)}', 'คัดลอก URL แล้ว')">🔗 CopyURLสินค้า</button>
+    </div>`;
+}
+
+function escapeAttr(v){
+  return String(v ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/'/g,'&#39;')
+    .replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
 function tierBadge(t){
   const map={gold:['🔥','ทองคำ'],silver:['⭐','เงิน'],bronze:['💡','ทองแดง'],normal:['📦','ธรรมดา']};
   const [ico,lbl]=map[t]||['',''];
@@ -608,6 +708,7 @@ function renderTable(){
       </a>
     ` : p.name}
   </div>
+  ${productCopyButtons(p)}
   ${catalogBadge(p)}
 </td>
       <td>${scoreBar(p.score,p.tier)}</td>
@@ -694,6 +795,7 @@ function renderGems(){
           <h3>${p.tiktok_url?`<a href="${makeAgencyUrl(p.tiktok_url)}" target="_blank" style="color:var(--text);text-decoration:none">${p.name}</a>`:p.name}</h3>
           <div class="gc">${p.cat}${p.cat_id ? ` · ID:${p.cat_id}` : ''}</div>
           <div class="gc" style="margin-top:3px">ราคา: ${p.price}</div>
+          ${productCopyButtons(p).replace('product-actions','gem-actions')}
         </div>
       </div>
       <div class="gem-stats">
