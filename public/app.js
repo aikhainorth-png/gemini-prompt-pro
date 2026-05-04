@@ -134,7 +134,21 @@ function injectDNAIntoStructuredPrompt(prompt='', type='image', d={}, character=
   const count = Number(d.sceneCount || 1);
   const src = normalizeTextBlock(prompt);
   if(!src) return src;
-  if(count <= 1) return prependDNAIfMissing(src, d, character, type);
+  if(count <= 1){
+    const alreadyStructured = type === 'image'
+      ? /^\s*SCENE[_\s]*1[_\s]*IMAGE[_\s]*PROMPT\s*:/i.test(src)
+      : /^\s*SCENE[_\s]*1[_\s]*(?:VIDEO|VDO)(?:[_\s]*(?:\+\s*AUDIO|AUDIO))?[_\s]*PROMPT\s*:/i.test(src);
+    if(alreadyStructured) return src.replace(
+      type === 'image'
+        ? /^\s*SCENE[_\s]*1[_\s]*IMAGE[_\s]*PROMPT\s*:\s*/i
+        : /^\s*SCENE[_\s]*1[_\s]*(?:VIDEO|VDO)(?:[_\s]*(?:\+\s*AUDIO|AUDIO))?[_\s]*PROMPT\s*:\s*/i,
+      type === 'image'
+        ? `SCENE_1_IMAGE_PROMPT:\n${prependDNAIfMissing('', d, character, type)}\n`
+        : `SCENE_1_VIDEO_PROMPT:\n${prependDNAIfMissing('', d, character, type)}\n`
+    );
+    const header = type === 'image' ? 'SCENE_1_IMAGE_PROMPT:' : 'SCENE_1_VIDEO_PROMPT:';
+    return `${header}\n${prependDNAIfMissing(src, d, character, type)}`;
+  }
 
   const blocks = splitBySceneMarkers(src);
   const hasAllScenes = blocks.length >= count && Array.from({length:count}, (_,i)=>i+1).every(no => blocks.some(b => b.sceneNo === no));
@@ -665,6 +679,55 @@ function renderSceneWorkspace(sceneCount, imagePrompt='', videoPrompt=''){
 
 
 function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('promptStrategy')) $('promptStrategy').value='viral'; localStorage.setItem(LS_PROMPT_STRATEGY,'viral'); populateGemModeOptions('signboard'); if($('gemMode')) $('gemMode').value='signboard'; if($('providerMode')) $('providerMode').value='gemini'; if($('voiceType')) $('voiceType').value='thai_female'; populateViralToneOptions('signboard','ล้างสต๊อก'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; if($('textOverlayEnabled')) $('textOverlayEnabled').checked=false; if($('textOverlayStyle')) $('textOverlayStyle').value='auto'; if($('textOverlayScene')) $('textOverlayScene').value='all'; if($('textOverlayHook')) $('textOverlayHook').value=''; if($('textOverlayPosition')) $('textOverlayPosition').value='center'; if($('textOverlaySize')) $('textOverlaySize').value='medium'; if($('h2OverlayEnabled')) $('h2OverlayEnabled').checked=false; if($('h2OverlayStyle')) $('h2OverlayStyle').value='auto'; if($('h2OverlayScene')) $('h2OverlayScene').value='all'; if($('h2OverlayHook')) $('h2OverlayHook').value=''; updateOverlayBodies(); updateOverlayPreview(); resetSceneWorkspace(); if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
+
+function buildSceneTimeRange(sceneNo = 1, sceneCount = 1, duration = 10){
+  const count = Math.max(1, Number(sceneCount || 1));
+  const total = Math.max(1, Number(duration || 10));
+  const start = ((sceneNo - 1) * total / count);
+  const end = (sceneNo * total / count);
+  const fmt = (v) => Number.isInteger(v) ? String(v) : v.toFixed(1).replace(/\.0$/,'');
+  return `[${fmt(start)}-${fmt(end)}s]`;
+}
+
+function buildSceneTimeLipSyncContract(d = {}){
+  const count = Math.max(1, Number(d.sceneCount || 1));
+  const duration = Math.max(1, Number(d.duration || 10));
+  const sceneBlocks = Array.from({length: count}, (_,idx)=>{
+    const no = idx + 1;
+    return `SCENE_${no}_VIDEO_PROMPT:
+${buildSceneTimeRange(no, count, duration)}
+VISUAL:
+[final visible action + product interaction + camera movement for scene ${no}]
+DIALOGUE_TH:
+"[exact Thai spoken line for scene ${no}, natural and ready for voiceover/lip-sync]"
+LIP_SYNC:
+[Thai lip-sync timing fits ${buildSceneTimeRange(no, count, duration)}, clear mouth movement, no silent scene]`;
+  }).join('\n\n');
+
+  return `
+
+OPENAI SCENE 100% + SCENE TIME + LIP SYNC PRO:
+- This rule applies to Gemini and OpenAI, but especially OpenAI.
+- video_prompt MUST use exact scene headers. Do not write one paragraph.
+- If Scene count is ${count}, output exactly ${count} VIDEO scene block(s), no more and no less.
+- If Scene count is 1, still output exactly SCENE_1_VIDEO_PROMPT and complete the full video inside that one scene.
+- Every SCENE_n_VIDEO_PROMPT must be complete and must never be empty.
+- Every video scene must include:
+  1) time range, e.g. ${buildSceneTimeRange(1, count, duration)}
+  2) VISUAL
+  3) DIALOGUE_TH
+  4) LIP_SYNC
+- Dialogue must be Thai only, natural spoken Thai, ready for narration/lip-sync.
+- The combined scenes must complete the whole story within ${duration} seconds.
+- Use this exact target video_prompt format:
+
+${sceneBlocks}
+
+IMAGE PROMPT SCENE RULE:
+- If Scene count is more than 1, image_prompt must use SCENE_1_IMAGE_PROMPT:, SCENE_2_IMAGE_PROMPT:, ... exactly until Scene ${count}.
+- If Scene count is 1, image_prompt may be one complete prompt or SCENE_1_IMAGE_PROMPT, but must not be empty.`;
+}
+
 function buildSystemInstruction(d = getPreparedFormData(getFormData())){
   const gem = getModeSource().getGemModeConfig(d.gemMode);
   const character = buildCharacterFactoryProfile(d);
@@ -712,7 +775,7 @@ SCENE_1_VIDEO_PROMPT:
 ...
 SCENE_2_VIDEO_PROMPT:
 ...
-Continue the same pattern for all scenes.`;
+Continue the same pattern for all scenes.${buildSceneTimeLipSyncContract(d)}`;
 }
 function buildUserPrompt(d){
   const gem = getModeSource().getGemModeConfig(d.gemMode);
@@ -752,7 +815,8 @@ Requirements:
 - If scene count is greater than 1, split both image_prompt and video_prompt into clear scene blocks using these exact headers only: SCENE_1_IMAGE_PROMPT:, SCENE_2_IMAGE_PROMPT:, ... and SCENE_1_VIDEO_PROMPT:, SCENE_2_VIDEO_PROMPT:, ...
 - Also return caption_hashtags: one Thai caption line plus exactly 5 hashtags, where 3 hashtags are product-related and 2 hashtags are trending Thai commerce/social hashtags.
 - If TEXT OVERLAY or H2 overlay are enabled, preserve those overlay instructions naturally inside the image prompt output for the selected scenes.
-- Final only.`;
+- Final only.
+${buildSceneTimeLipSyncContract(d)}`;
 }
 function buildResponseSchema(){ return {type:'OBJECT',properties:{image_prompt:{type:'STRING'},video_prompt:{type:'STRING'},caption_hashtags:{type:'STRING'}},required:['image_prompt','video_prompt','caption_hashtags'],propertyOrdering:['image_prompt','video_prompt','caption_hashtags']}; }
 async function callSelectedProvider(d){ return await callAI(d.providerMode, { systemPrompt: buildSystemInstruction(d), userPrompt: buildUserPrompt(d) }); }
