@@ -4,42 +4,6 @@ import { buildPromptBundleSchema } from './openai-schema.js';
 function getOpenAIKey(){ return localStorage.getItem('userOpenAIApiKey') || ''; }
 function getGeminiKey(){ return localStorage.getItem('userGeminiApiKey') || ''; }
 
-const OPENAI_SCENE_LOCK_PROMPT = `
-OPENAI SCENE OUTPUT LOCK — REQUIRED:
-You MUST return valid JSON only with exactly these keys:
-{
-  "image_prompt": "...",
-  "video_prompt": "...",
-  "caption_hashtags": "..."
-}
-
-VIDEO PROMPT FORMAT — STRICT:
-- video_prompt MUST always contain scene headers.
-- Always start video_prompt with exactly:
-SCENE_1_VIDEO_PROMPT:
-- If the user requested more than 1 scene, continue:
-SCENE_2_VIDEO_PROMPT:
-SCENE_3_VIDEO_PROMPT:
-...until every requested scene is included.
-- NEVER return video_prompt as one paragraph without SCENE headers.
-- NEVER leave SCENE_1_VIDEO_PROMPT: empty.
-- Every SCENE_*_VIDEO_PROMPT block must include:
-  1) visual action and product interaction,
-  2) camera movement,
-  3) Thai spoken dialogue / voiceover,
-  4) continuity details,
-  5) CTA or payoff when appropriate.
-
-IMAGE PROMPT FORMAT:
-- If multiple scenes are requested, image_prompt should also use:
-SCENE_1_IMAGE_PROMPT:
-SCENE_2_IMAGE_PROMPT:
-...until every requested scene is included.
-- Do not skip scene labels when multi-scene is requested.
-
-Return final prompts only. No markdown. No explanation.
-`;
-
 function normalizeRawText(text = ''){
   return String(text || '')
     .replace(/^```(?:json|javascript|js)?\s*/i, '')
@@ -102,53 +66,13 @@ function normalizeParsedObject(parsed = {}){
 function tryParseJson(text = ''){
   const cleaned = normalizeRawText(text);
   if(!cleaned) return null;
-
   try{ return normalizeParsedObject(JSON.parse(cleaned)); }catch{}
 
   const balanced = findBalancedJsonObject(cleaned);
   if(balanced){
     try{ return normalizeParsedObject(JSON.parse(balanced)); }catch{}
   }
-
-  const m = cleaned.match(/\{[\s\S]*\}/);
-  if(m){
-    try{ return normalizeParsedObject(JSON.parse(m[0])); }catch{}
-  }
-
   return null;
-}
-
-function extractJsonStringFieldLoose(text = '', key = ''){
-  const src = normalizeRawText(text);
-  const re = new RegExp('"' + escapeRegExp(key) + '"\\s*:\\s*"', 'i');
-  const m = re.exec(src);
-  if(!m) return '';
-  let i = m.index + m[0].length;
-  let out = '';
-  let escaped = false;
-  for(; i < src.length; i++){
-    const ch = src[i];
-    if(escaped){ out += ch; escaped = false; continue; }
-    if(ch === '\\'){ escaped = true; continue; }
-    if(ch === '"'){
-      const tail = src.slice(i + 1, i + 100);
-      if(/^\s*(?:,\s*"[A-Za-z_][\w]*"\s*:|}|$)/.test(tail)) break;
-    }
-    out += ch;
-  }
-  return out
-    .replace(/\\n/g, '\n')
-    .replace(/\\t/g, '\t')
-    .replace(/\\"/g, '"')
-    .trim();
-}
-
-function recoverPartialJsonObject(text = ''){
-  const image = extractJsonStringFieldLoose(text, 'image_prompt') || extractJsonStringFieldLoose(text, 'imagePrompt');
-  const video = extractJsonStringFieldLoose(text, 'video_prompt') || extractJsonStringFieldLoose(text, 'videoPrompt') || extractJsonStringFieldLoose(text, 'vdo_prompt');
-  const caption = extractJsonStringFieldLoose(text, 'caption_hashtags') || extractJsonStringFieldLoose(text, 'captionHashtags') || extractJsonStringFieldLoose(text, 'caption');
-  if(!image && !video && !caption) return null;
-  return normalizeParsedObject({ image_prompt: image, video_prompt: video, caption_hashtags: caption });
 }
 
 function getSectionByLabel(text = '', startLabels = [], stopLabels = []){
@@ -165,67 +89,72 @@ function extractScenePromptGroup(text = '', group = 'IMAGE'){
   const headerRe = /(?:^|\n)\s*SCENE[_\s]*(\d+)[_\s]*(IMAGE|VIDEO|VDO)(?:[_\s]*(?:\+\s*AUDIO|AUDIO))?[_\s]*PROMPT\s*:/gim;
   const matches = [...src.matchAll(headerRe)];
   if(!matches.length) return '';
-  const target = group.toUpperCase();
   const blocks = [];
   for(let i = 0; i < matches.length; i++){
     const m = matches[i];
-    const sceneNo = Number(m[1] || i + 1);
     const kind = String(m[2] || '').toUpperCase();
+    const isWanted = group === 'IMAGE' ? kind === 'IMAGE' : (kind === 'VIDEO' || kind === 'VDO');
+    if(!isWanted) continue;
     const start = m.index;
     const end = i + 1 < matches.length ? matches[i + 1].index : src.length;
-    const isImage = target === 'IMAGE' && kind === 'IMAGE';
-    const isVideo = target === 'VIDEO' && (kind === 'VIDEO' || kind === 'VDO');
-    if(isImage || isVideo){
-      blocks.push(src.slice(start, end).trim());
-    }
+    const block = src.slice(start, end).trim();
+    if(block) blocks.push(block);
   }
   return blocks.join('\n\n').trim();
 }
 
-function parseStructuredText(text, providerLabel){
-  if(!text) throw new Error(`${providerLabel} ไม่ได้ส่งข้อความกลับมา`);
+function parseLoosePromptText(text = ''){
+  const src = normalizeRawText(text);
+  const imageFromScene = extractScenePromptGroup(src, 'IMAGE');
+  const videoFromScene = extractScenePromptGroup(src, 'VIDEO');
 
-  const raw = normalizeRawText(text);
-  let parsed = tryParseJson(raw) || recoverPartialJsonObject(raw);
-
-  if(!parsed){
-    const image = getSectionByLabel(raw, ['IMAGE PROMPT', 'IMAGE_PROMPT', 'image_prompt'], ['VIDEO PROMPT', 'VIDEO + AUDIO PROMPT', 'VIDEO_PROMPT', 'video_prompt', 'CAPTION', 'CAPTION HASHTAGS']);
-    const video = getSectionByLabel(raw, ['VIDEO PROMPT', 'VIDEO + AUDIO PROMPT', 'VIDEO_PROMPT', 'video_prompt'], ['CAPTION', 'CAPTION HASHTAGS', 'caption_hashtags']);
-    const caption = getSectionByLabel(raw, ['CAPTION', 'CAPTION HASHTAGS', 'caption_hashtags'], []);
-    parsed = normalizeParsedObject({
-      image_prompt: image || extractScenePromptGroup(raw, 'IMAGE'),
-      video_prompt: video || extractScenePromptGroup(raw, 'VIDEO'),
-      caption_hashtags: caption
-    });
-  }
-
-  if(!parsed || (!parsed.image_prompt && !parsed.video_prompt && !parsed.caption_hashtags)){
-    const sample = raw.slice(0, 260);
-    throw new Error(`ไม่สามารถแปลงผลลัพธ์ ${providerLabel} เป็น Final Prompt ได้ • ตัวอย่างคำตอบ: ${sample}`);
-  }
+  const imageByLabel = getSectionByLabel(src,
+    ['image_prompt','image prompt','final image prompt','IMAGE PROMPT','ภาพ prompt','พรอมต์ภาพ'],
+    ['video_prompt','video prompt','vdo prompt','VIDEO PROMPT','VDO PROMPT','caption_hashtags','caption hashtags','caption','hashtags','CAPTION']
+  );
+  const videoByLabel = getSectionByLabel(src,
+    ['video_prompt','video prompt','vdo prompt','final video prompt','VIDEO PROMPT','VDO PROMPT','วิดีโอ prompt','พรอมต์วิดีโอ'],
+    ['caption_hashtags','caption hashtags','caption','hashtags','CAPTION','image_prompt','image prompt','IMAGE PROMPT']
+  );
+  const captionByLabel = getSectionByLabel(src,
+    ['caption_hashtags','caption hashtags','caption and hashtags','caption','hashtags','CAPTION'],
+    ['image_prompt','image prompt','video_prompt','video prompt','vdo prompt','IMAGE PROMPT','VIDEO PROMPT','VDO PROMPT']
+  );
 
   return {
-    image_prompt: String(parsed.image_prompt || '').trim(),
-    video_prompt: ensureVideoScenePrompt(String(parsed.video_prompt || '').trim()),
-    caption_hashtags: String(parsed.caption_hashtags || '').trim()
+    image_prompt: pickFirst(imageFromScene, imageByLabel),
+    video_prompt: pickFirst(videoFromScene, videoByLabel),
+    caption_hashtags: captionByLabel
   };
 }
 
-function isHeaderOnlyScenePrompt(text = ''){
+function parseStructuredText(text, providerLabel, rawDebug){
   const src = normalizeRawText(text);
-  return /^SCENE[_\s]*1[_\s]*(?:VIDEO|VDO)(?:[_\s]*(?:\+\s*AUDIO|AUDIO))?[_\s]*PROMPT\s*:\s*$/i.test(src);
+  if(!src){
+    const finishReason = rawDebug?.candidates?.[0]?.finishReason;
+    const blockReason = rawDebug?.promptFeedback?.blockReason;
+    const reason = finishReason || blockReason;
+    throw new Error(`${providerLabel} ไม่ได้ส่งข้อความกลับมา${reason ? ` (${reason})` : ''}`);
+  }
+
+  const jsonResult = tryParseJson(src);
+  const looseResult = jsonResult || parseLoosePromptText(src);
+  const result = normalizeParsedObject(looseResult);
+
+  if(!result.image_prompt && !result.video_prompt){
+    const snippet = src.slice(0, 260).replace(/\s+/g, ' ').trim();
+    throw new Error(`ไม่สามารถแปลงผลลัพธ์ ${providerLabel} เป็น Final Prompt ได้ • ตัวอย่างคำตอบ: ${snippet}`);
+  }
+  return result;
 }
 
-function hasSceneVideoHeader(text = ''){
-  return /(?:^|\n)\s*SCENE[_\s]*1[_\s]*(?:VIDEO|VDO)(?:[_\s]*(?:\+\s*AUDIO|AUDIO))?[_\s]*PROMPT\s*:/i.test(text || '');
+function extractGeminiText(raw = {}){
+  const parts = raw?.candidates?.[0]?.content?.parts || [];
+  return parts.map(p => p?.text || '').filter(Boolean).join('').trim();
 }
 
-function ensureVideoScenePrompt(video = ''){
-  const src = normalizeRawText(video);
-  if(!src) return '';
-  if(isHeaderOnlyScenePrompt(src)) return src; // surface true empty output instead of hiding it
-  if(hasSceneVideoHeader(src)) return src;
-  return `SCENE_1_VIDEO_PROMPT:\n${src}`;
+function buildGeminiJsonContract(userPrompt = ''){
+  return `${userPrompt}\n\nSTRICT JSON OUTPUT CONTRACT FOR GEMINI:\nReturn ONLY one valid JSON object. No markdown. No code fence. No explanation.\nRequired keys exactly:\n{\n  "image_prompt": "final image prompt text",\n  "video_prompt": "final video/audio prompt text",\n  "caption_hashtags": "one Thai caption line plus exactly 5 hashtags"\n}\nIf multiple scenes are requested, keep SCENE_1_IMAGE_PROMPT / SCENE_1_VIDEO_PROMPT headers inside the string values only.`;
 }
 
 export async function callGemini({ systemPrompt, userPrompt }){
@@ -235,10 +164,10 @@ export async function callGemini({ systemPrompt, userPrompt }){
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(cfg.model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
   const payload = {
     systemInstruction: { parts: [{ text: systemPrompt }] },
-    contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+    contents: [{ role: 'user', parts: [{ text: buildGeminiJsonContract(userPrompt) }] }],
     generationConfig: {
-      temperature: 0.85,
-      maxOutputTokens: 4096,
+      temperature: 0.65,
+      maxOutputTokens: 8192,
       responseMimeType: 'application/json',
       responseSchema: {
         type: 'OBJECT',
@@ -255,23 +184,19 @@ export async function callGemini({ systemPrompt, userPrompt }){
   const res = await fetch(endpoint, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
   const raw = await res.json().catch(()=>({}));
   if(!res.ok) throw new Error(raw?.error?.message || `Gemini API Error ${res.status}`);
-  const text = raw?.candidates?.[0]?.content?.parts?.map(p=>p.text || '').join('').trim();
-  return parseStructuredText(text, 'Gemini');
+  const text = extractGeminiText(raw);
+  return parseStructuredText(text, 'Gemini', raw);
 }
 
 export async function callOpenAI({ systemPrompt, userPrompt }){
   const cfg = getProviderConfig('openai');
   const apiKey = getOpenAIKey();
   if(!apiKey) throw new Error('ยังไม่มี OpenAI API Key');
-
-  const lockedSystemPrompt = `${systemPrompt}\n\n${OPENAI_SCENE_LOCK_PROMPT}`;
-  const lockedUserPrompt = `${userPrompt}\n\nREMINDER FOR OPENAI: video_prompt must start with SCENE_1_VIDEO_PROMPT: and every scene header must contain a full non-empty prompt.`;
-
   const payload = {
     model: cfg.model,
     input: [
-      { role: 'system', content: lockedSystemPrompt },
-      { role: 'user', content: lockedUserPrompt }
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
     ],
     text: {
       format: {
@@ -281,7 +206,6 @@ export async function callOpenAI({ systemPrompt, userPrompt }){
         schema: buildPromptBundleSchema()
       }
     },
-    max_output_tokens: 6000,
     store: false
   };
   const res = await fetch('https://api.openai.com/v1/responses', {
@@ -294,18 +218,8 @@ export async function callOpenAI({ systemPrompt, userPrompt }){
   });
   const raw = await res.json().catch(()=>({}));
   if(!res.ok) throw new Error(raw?.error?.message || `OpenAI API Error ${res.status}`);
-
-  const text = raw?.output_text
-    || raw?.output?.flatMap(item => item?.content || []).map(part => part?.text || '').join('').trim();
-
-  const parsed = parseStructuredText(text, 'OpenAI');
-
-  if(!parsed.video_prompt || isHeaderOnlyScenePrompt(parsed.video_prompt)){
-    const sample = String(text || '').slice(0, 300);
-    throw new Error(`OpenAI ส่ง VIDEO PROMPT ไม่ครบหรือมีแต่หัวข้อ SCENE_1_VIDEO_PROMPT • กรุณากดสร้างใหม่ หรือเพิ่ม max_output_tokens • ตัวอย่างคำตอบ: ${sample}`);
-  }
-
-  return parsed;
+  const text = raw?.output_text || raw?.output?.flatMap(item => item?.content || []).map(part => part?.text || '').join('').trim();
+  return parseStructuredText(text, 'OpenAI', raw);
 }
 
 export async function callAI(providerId, args){

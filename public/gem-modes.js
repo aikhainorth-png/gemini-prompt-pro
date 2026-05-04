@@ -1,4 +1,95 @@
 export const GEM_MODES = {
+  'tiktok_live': {
+    id: 'tiktok_live',
+    label: 'TikTok Live',
+    description: 'สร้างทั้ง IMAGE PROMPT และ VIDEO + AUDIO PROMPT สำหรับภาพ/คลิปไลฟ์สด TikTok แบบสมจริง มี UI Live คอมเมนต์ หัวใจ Gift ตะกร้า และ CTA กดซื้อ',
+    keywords: ['tiktok live', 'live', 'ไลฟ์', 'ไลฟ์สด', 'ขายไลฟ์', 'แม่ค้าไลฟ์', 'พ่อค้าไลฟ์', 'คอมเมนต์ไลฟ์', 'gift', 'ของขวัญไลฟ์', 'ตะกร้าไลฟ์'],
+    viralTones: [
+      'คนดูทะลุแสน',
+      'คอมเมนต์ถามรัว',
+      'โปรเฉพาะไลฟ์',
+      'ของใกล้หมด',
+      'Gift เด้งไม่หยุด',
+      'กดตะกร้าด่วน',
+      'ยอดวิวพุ่ง',
+      'แม่ค้าเอนเตอร์เทน',
+      'คนแห่แชร์ไลฟ์',
+      'รีวิวสดเห็นผลจริง'
+    ],
+    randomLocations: [
+      'ห้องนอนโทนอุ่นพร้อมไฟไลฟ์และโต๊ะวางสินค้า',
+      'โต๊ะเครื่องแป้ง beauty live setup พร้อม ring light',
+      'มุมร้านค้า/โกดังแพ็กของจริง มีสินค้าเรียงหลังไลฟ์',
+      'ห้องนั่งเล่นบ้านไทยแสงอบอุ่น เหมือนไลฟ์ขายของจริง',
+      'มุมครัวหรือโต๊ะอาหารสำหรับไลฟ์ชิมสินค้า',
+      'ระเบียงหรือสวนบ้านสำหรับไลฟ์สินค้า outdoor'
+    ],
+    randomViews: [
+      'โฮสต์ไทยถือสินค้าเข้ากล้อง เห็น TikTok Live UI คอมเมนต์เด้ง หัวใจลอย และปุ่มตะกร้าเด่น',
+      'มุมจอมือถือ 9:16 เหมือนแคปหน้าจอไลฟ์จริง โฮสต์พูดกับกล้องและโชว์สินค้าใกล้เลนส์',
+      'โฮสต์สาธิตสินค้าแบบสด ตอบคอมเมนต์ถามราคา พร้อม Gift notification และยอดคนดูสูง',
+      'กล้องเหมือน screen capture จากมือถือจริง มีโปรเฉพาะไลฟ์ แบนเนอร์และปุ่มติดตาม',
+      'โฮสต์ยกสินค้าเทียบกับมือ/โต๊ะให้เห็นขนาดจริง คอมเมนต์ถามรัวและหัวใจลอยด้านขวา'
+    ],
+    examples: [
+      {
+        title: 'Beauty Live',
+        location: 'โต๊ะเครื่องแป้ง beauty live setup แสง ring light นุ่ม ๆ เครื่องสำอางเรียงด้านหลัง',
+        view: 'สาวไทยไลฟ์ขายครีมกันแดด ถือหลอดสินค้าใกล้กล้อง มีคอมเมนต์ถามราคา เนื้อครีม และปุ่มตะกร้าเด่นบนหน้าจอ'
+      },
+      {
+        title: 'Fashion Live',
+        location: 'ห้องนอนโทนอุ่น เตียงผ้าซาตินและราวแขวนเสื้อผ้าอยู่ด้านหลัง',
+        view: 'สาวไทยไลฟ์ขายชุดนอน ถือชุดบนไม้แขวนโชว์หน้ากล้อง มีโปรเฉพาะไลฟ์ คนดูหลักแสน และหัวใจลอยต่อเนื่อง'
+      },
+      {
+        title: 'Home Product Live',
+        location: 'มุมบ้านหรือระเบียงสวน แสงธรรมชาติ มีสินค้าใช้งานจริงวางใกล้ตัว',
+        view: 'ผู้ชายไทยไลฟ์ขายเก้าอี้พับ ยกเก้าอี้โชว์ความแข็งแรง ตอบคอมเมนต์เรื่องรับน้ำหนักและจัดส่งไว'
+      }
+    ],
+    systemPrompt: `You are a TikTok Live commerce prompt director for Thai market.
+Create FINAL READY IMAGE PROMPT and VIDEO + AUDIO PROMPT for a realistic TikTok Live selling scene.
+
+CORE OUTPUT:
+- image_prompt must be an ultra-realistic TikTok Live smartphone screenshot style prompt, vertical 9:16, photographic, real phone screen capture feeling, not mockup, not illustration.
+- video_prompt must be an ultra-realistic TikTok Live video scene prompt with visible host movement, product demo, Thai spoken live dialogue, comment reactions, floating hearts, gift notification, cart CTA, and live-commerce urgency.
+
+IMAGE PROMPT MUST INCLUDE:
+- Realistic phone screenshot look, 9:16 portrait.
+- TikTok Live UI top profile area, username, follow button, viewer count, close button.
+- Thai host holding or demonstrating the product naturally.
+- Comment bubbles on the left with Thai usernames and Thai messages.
+- Floating red hearts and share icon on the right.
+- Bottom comment bar and gift/share/cart elements.
+- Optional gift notification if the selected viral tone implies gifts.
+- Thai language text must be readable and realistic.
+- Product must be clear and central.
+
+VIDEO + AUDIO PROMPT MUST INCLUDE:
+- Live host speaking Thai naturally to camera.
+- Product shown within first 3 seconds.
+- Host reads or answers live comments.
+- Visible TikTok Live UI motion: comments popping, hearts floating, gift animation, basket/cart CTA.
+- Clear demo or usage proof depending on product category.
+- Thai voiceover/live dialogue lines ready for lip sync.
+- Strong CTA: tap cart / promo only in live / order now.
+
+CATEGORY ADAPTATION:
+- Beauty/skincare/cosmetics: beauty room, texture demo, skin/finish payoff, compliant beauty wording.
+- Fashion/lingerie: try-on, fabric/fit, confidence, tasteful framing.
+- Food/snack: live tasting, texture, appetite reaction, freshness.
+- Home/appliance/tools: practical demo, before-after, use proof.
+- Mom/baby/health-adjacent: soft safe wording, no medical guarantees.
+
+STRICT NEGATIVE RULES:
+- no 3D, no cartoon, no chibi, no mascot, no illustration, no painting, no fake-looking UI.
+- no broken Thai text, no unreadable random text, no watermark.
+- no unrealistic body proportions, no distorted hands, no extra limbs.
+- no prohibited medical guarantees or exaggerated claims.
+- Must feel like real Thai TikTok Live commerce content.`
+  },
+
   'signboard': {
     id: 'signboard',
     label: 'สินค้าติดป้าย',
@@ -1211,6 +1302,7 @@ Output quality:
 };
 
 const EXTRA_VIRAL_TONES = {
+  tiktok_live: ['คนดูทะลุแสน','คอมเมนต์ถามรัว','โปรเฉพาะไลฟ์','ของใกล้หมด','Gift เด้งไม่หยุด','กดตะกร้าด่วน','ยอดวิวพุ่ง','แม่ค้าเอนเตอร์เทน','คนแห่แชร์ไลฟ์','รีวิวสดเห็นผลจริง'],
   "signboard": [
     "ช็อตแรกก็ต้องหยุดดู",
     "โปรนี้คนถามเยอะ",
@@ -1406,4 +1498,307 @@ export function autoDetectGemMode(productName = '') {
   });
 
   return bestMode || 'signboard';
+}
+
+
+export const TEXT_STYLE_LIBRARY = {
+  'S-01': { id:'S-01', label:'S-01 — Rainbow Bubble', prompt:`"[HOOK TEXT]" in large rounded bubble Thai font, each character different pastel color cycling pink, sky blue, soft yellow, mint green, lavender — thick white outline on every letter, soft grey drop shadow 2px. Sparkle 4-pointed stars scattered, purple and pink hearts floating beside text.` },
+  'S-02': { id:'S-02', label:'S-02 — Neon Candy Glow', prompt:`"[HOOK TEXT]" in bold rounded Thai font, hot pink fill with cyan neon outer glow, subtle purple inner glow, glossy finish. Floating sparkles and candy stars around text.` },
+  'S-03': { id:'S-03', label:'S-03 — Gold Luxury Shine', prompt:`"[HOOK TEXT]" in premium Thai serif font, metallic gold foil texture, soft bevel shine, elegant shadow beneath. Tiny golden sparkles around letters.` },
+  'S-04': { id:'S-04', label:'S-04 — Soft Cream Pop', prompt:`"[HOOK TEXT]" in cute rounded Thai font, vanilla cream fill, caramel outline, soft drop shadow. Cookie crumbs and tiny hearts around text.` },
+  'S-05': { id:'S-05', label:'S-05 — Fire Sale Red', prompt:`"[HOOK TEXT]" in extra bold Thai font, vivid red fill, bright yellow outline, black shadow impact style. Motion burst lines behind text.` },
+  'S-06': { id:'S-06', label:'S-06 — Aqua Fresh Splash', prompt:`"[HOOK TEXT]" in rounded Thai font, turquoise water gradient fill, white glossy highlights, splash droplets around letters.` },
+  'S-07': { id:'S-07', label:'S-07 — Cotton Candy Dream', prompt:`"[HOOK TEXT]" in fluffy rounded Thai font, pink to baby blue soft gradient, white outline, dreamy cloud sparkles.` },
+  'S-08': { id:'S-08', label:'S-08 — Emerald Luxe Glow', prompt:`"[HOOK TEXT]" in bold Thai font, emerald green metallic fill, subtle gold edges, luxury shimmer effect.` },
+  'S-09': { id:'S-09', label:'S-09 — Ice Crystal Shine', prompt:`"[HOOK TEXT]" in bold Thai font, frosted ice blue fill, crystal transparency highlights, snow sparkle particles.` },
+  'S-10': { id:'S-10', label:'S-10 — Comic Boom Pop', prompt:`"[HOOK TEXT]" in comic style Thai font, yellow fill, red outline, black thick shadow, cartoon burst background.` },
+  'S-11': { id:'S-11', label:'S-11 — Rose Gold Chic', prompt:`"[HOOK TEXT]" in modern Thai font, rose gold metallic fill, glossy reflection, subtle pink sparkle dust.` },
+  'S-12': { id:'S-12', label:'S-12 — Midnight Neon', prompt:`"[HOOK TEXT]" in bold Thai font, electric purple fill with blue neon glow, dark nightclub energy.` },
+  'S-13': { id:'S-13', label:'S-13 — Lemon Fresh Promo', prompt:`"[HOOK TEXT]" in rounded Thai font, lemon yellow fill, white outline, fresh citrus sparkle icons.` },
+  'S-14': { id:'S-14', label:'S-14 — Tri-Color Gradient', prompt:`"[HOOK TEXT]" in bold rounded Thai font, horizontal gradient fill flowing pink (#FF6B9D) to purple (#A855F7) to sky blue (#60A5FA) across entire text. No outline. Sparkle stars in matching colors scattered around. High-end aesthetic gradient finish.` },
+  'S-15': { id:'S-15', label:'S-15 — Matte Black Luxury', prompt:`"[HOOK TEXT]" in bold Thai font, matte black fill, subtle silver edge, elegant shadow, premium minimalist feel.` },
+  'S-16': { id:'S-16', label:'S-16 — Orange Energy Blast', prompt:`"[HOOK TEXT]" in bold Thai font, orange gradient fill, yellow glow, motion streaks behind text.` },
+  'S-17': { id:'S-17', label:'S-17 — Lavender Cute Pop', prompt:`"[HOOK TEXT]" in rounded Thai font, lavender fill, white outline, tiny stars and bows around text.` },
+  'S-18': { id:'S-18', label:'S-18 — Ruby Premium Sale', prompt:`"[HOOK TEXT]" in elegant Thai font, ruby red gemstone texture, subtle shine, gold dust particles.` },
+  'S-19': { id:'S-19', label:'S-19 — Mint Clean Modern', prompt:`"[HOOK TEXT]" in clean Thai sans font, mint green fill, no outline, soft shadow, modern skincare style.` },
+  'S-20': { id:'S-20', label:'S-20 — Blue Tech Pulse', prompt:`"[HOOK TEXT]" in futuristic Thai font, blue gradient fill, glowing circuitry accents around letters.` },
+  'S-21': { id:'S-21', label:'S-21 — Peach Soft Glow', prompt:`"[HOOK TEXT]" in rounded Thai font, peach gradient fill, white shine, subtle warm glow.` },
+  'S-22': { id:'S-22', label:'S-22 — Platinum Premium', prompt:`"[HOOK TEXT]" in luxury Thai font, platinum metallic fill, reflective highlights, premium sparkle.` },
+  'S-23': { id:'S-23', label:'S-23 — Hot Pink Viral', prompt:`"[HOOK TEXT]" in bold Thai font, hot pink fill, white outline, flashy sparkles, TikTok viral style.` },
+  'S-24': { id:'S-24', label:'S-24 — Sky Clean Shine', prompt:`"[HOOK TEXT]" in bold Thai font, sky blue fill, glossy white highlight, fresh clean commercial vibe.` },
+  'S-25': { id:'S-25', label:'S-25 — Jungle Fresh Bold', prompt:`"[HOOK TEXT]" in bold Thai font, leaf green fill, earthy glow, tiny leaf particles around text.` },
+  'S-26': { id:'S-26', label:'S-26 — Sunset Gradient Glow', prompt:`"[HOOK TEXT]" in bold rounded Thai font, sunset gradient orange to pink to purple, warm cinematic glow.` },
+  'S-27': { id:'S-27', label:'S-27 — Candy Chrome', prompt:`"[HOOK TEXT]" in bubble Thai font, reflective candy chrome texture, rainbow shine, playful highlights.` },
+  'S-28': { id:'S-28', label:'S-28 — White Angel Glow', prompt:`"[HOOK TEXT]" in elegant Thai font, pure white fill, soft blue halo glow, dreamy sparkle particles.` },
+  'S-29': { id:'S-29', label:'S-29 — Black Yellow Urgency', prompt:`"[HOOK TEXT]" in bold Thai font, yellow fill, black outline, emergency sale sign style.` },
+  'S-30': { id:'S-30', label:'S-30 — Ultra Viral Premium Mix', prompt:`"[HOOK TEXT]" in bold rounded Thai font, premium pink-purple-blue gradient fill, glossy finish, white micro highlight lines, subtle sparkle stars, luxury viral aesthetic for stop-scroll thumbnails.` },
+  'S-31': { id:'S-31', label:'S-31 — Kawaii Pastel Bubble Max', prompt:`"[HOOK TEXT]" in ultra cute rounded Thai bubble font, each character alternating pastel pink, baby blue, lavender, soft yellow. Thick white outline around every letter, second outer outline in soft purple. Puffy sticker style, subtle drop shadow, kawaii aesthetic. Floating pink hearts, sparkle stars, tiny cat paw icons around text.` },
+  'S-32': { id:'S-32', label:'S-32 — Rounded Capsule Promo', prompt:`"[HOOK TEXT]" inside a soft rounded capsule banner, white to pastel pink gradient background, smooth glossy surface, thin soft purple border. Main Thai text in dark brown rounded font. Second line English text in bold hot pink rounded font. Cute Japanese promo sticker aesthetic.` },
+  'S-33': { id:'S-33', label:'S-33 — Watsons Cute Shelf Pop', prompt:`"[HOOK TEXT]" in rounded Thai font with pastel pink, lavender, and sky-blue playful fill, thick white outline, shelf-promo sticker feeling, floating mini hearts and sale sparkles, Watsons-style cute beauty aisle aesthetic.` },
+  'S-34': { id:'S-34', label:'S-34 — Eveandboy Sweet Sale', prompt:`"[HOOK TEXT]" in candy rounded Thai font, pink to peach glossy fill, thick white outline and soft purple shadow, cute sale-badge look, floating stars and hearts, beauty retail promo mood.` },
+  'S-35': { id:'S-35', label:'S-35 — Sephora Luxe Header', prompt:`"[HOOK TEXT]" in premium Thai headline font, black to charcoal fill with glossy white highlight, elegant white edge light, luxury cosmetic-counter style, clean high-end sparkle accents.` },
+  'S-36': { id:'S-36', label:'S-36 — Donki Japan Pop', prompt:`"[HOOK TEXT]" in bold playful Thai font, yellow-red-blue multi-color pop style, sticker-store Japanese promo energy, thick white outline, handwritten sale-card feeling, dense sparkle doodles around.` },
+  'S-37': { id:'S-37', label:'S-37 — Miniso Soft Pastel', prompt:`"[HOOK TEXT]" in soft rounded Thai font, blush pink and cream pastel fill, white outline, toy-store cute lifestyle aesthetic, tiny stars and soft glow.` },
+  'S-38': { id:'S-38', label:'S-38 — Boots Clean Pharmacy', prompt:`"[HOOK TEXT]" in clean rounded Thai font, white and soft blue gradient fill, neat pharmacy-sale style, subtle outline, minimal sparkle elements, trusted beauty retail look.` },
+  'S-39': { id:'S-39', label:'S-39 — Night Market Handmade Pop', prompt:`"[HOOK TEXT]" in hand-drawn Thai rounded font, pastel chalk marker colors with white outline, playful handwritten market-sign vibe, doodle hearts and stars.` },
+  'S-40': { id:'S-40', label:'S-40 — TikTok Beauty Viral Pop', prompt:`"[HOOK TEXT]" in large rounded Thai viral font, hyper glossy pink-purple-blue fill, white outline, floating sparkles and social hearts, premium stop-scroll TikTok beauty aesthetic.` },
+  'S-41': { id:'S-41', label:'S-41 — Korean Beauty Shelf Glow', prompt:`"[HOOK TEXT]" in elegant rounded Thai font, mint-pink-lavender gradient fill, white clean outline, pastel K-beauty shelf style, soft sparkles and luxury cute finish.` },
+  'S-42': { id:'S-42', label:'S-42 — Discount Sticker Header', prompt:`"[HOOK TEXT]" in bold Thai promo font, yellow with red outline and extra white outer stroke, sale sticker energy, impact retail promotion style with small stars and urgency marks.` },
+  'S-43': { id:'S-43', label:'S-43 — Sweet Store Shock Yellow', prompt:`"[HOOK TEXT]" in extra bold Thai promo font, bright yellow fill, red outline, white outer stroke, urgent retail sticker energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-44': { id:'S-44', label:'S-44 — Ultra Luxury Black Gold', prompt:`"[HOOK TEXT]" in premium Thai headline font, matte black fill with brushed gold edge, elegant shine, high-end luxury counter aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-45': { id:'S-45', label:'S-45 — Bold K Beauty Pastel', prompt:`"[HOOK TEXT]" in rounded Thai font, mint pink lavender gradient fill, white clean outline, soft K-beauty shelf glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-46': { id:'S-46', label:'S-46 — Deluxe Pharmacy Clean Blue', prompt:`"[HOOK TEXT]" in clean Thai sans font, white to soft blue gradient fill, minimal outline, trusted pharmacy promo aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-47': { id:'S-47', label:'S-47 — Sweet Night Market Handmade', prompt:`"[HOOK TEXT]" in playful handwritten Thai font, chalk pastel fills, white outline, doodle stars and market sign vibe, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-48': { id:'S-48', label:'S-48 — Ultra TikTok Viral Gloss', prompt:`"[HOOK TEXT]" in large rounded Thai font, hyper glossy pink purple blue gradient fill, white outline, floating sparkles and social hearts, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-49': { id:'S-49', label:'S-49 — Bold Minimal White Glow', prompt:`"[HOOK TEXT]" in modern Thai font, pure white fill, soft halo glow, clean premium finish, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-50': { id:'S-50', label:'S-50 — Deluxe Red Price Shock', prompt:`"[HOOK TEXT]" in extra bold Thai font, vivid red fill, yellow outline, black impact shadow, explosive sale badge energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-51': { id:'S-51', label:'S-51 — Sweet Candy Pop', prompt:`"[HOOK TEXT]" in cute rounded Thai bubble font, candy pink and sky blue fills, thick white outline, sticker-like sparkle aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-52': { id:'S-52', label:'S-52 — Ultra Fresh Food Steam', prompt:`"[HOOK TEXT]" in bold Thai font, warm orange to gold gradient fill, steam-like glow, tasty restaurant promo feel, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-53': { id:'S-53', label:'S-53 — Bold Tech Neon Cyan', prompt:`"[HOOK TEXT]" in futuristic Thai font, cyan blue neon fill, subtle circuitry glow, tech gadget commercial mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-54': { id:'S-54', label:'S-54 — Deluxe Green Eco Leaf', prompt:`"[HOOK TEXT]" in bold Thai font, leaf green fill, natural earthy glow, tiny leaf particles and organic lifestyle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-55': { id:'S-55', label:'S-55 — Sweet Rose Quartz', prompt:`"[HOOK TEXT]" in elegant rounded Thai font, rose pink glossy fill, white micro highlights, premium beauty glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-56': { id:'S-56', label:'S-56 — Ultra Street Fashion Silver', prompt:`"[HOOK TEXT]" in stylish Thai font, silver chrome fill, dark shadow, cool streetwear campaign aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-57': { id:'S-57', label:'S-57 — Bold Kids Soft Cloud', prompt:`"[HOOK TEXT]" in fluffy rounded Thai font, baby pastel fill, white outline, tiny stars and cloud sparkle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-58': { id:'S-58', label:'S-58 — Deluxe Japanese Pop Sticker', prompt:`"[HOOK TEXT]" in bold rounded Thai font, red yellow blue sticker-store fill, thick white outline, Japanese retail pop energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-59': { id:'S-59', label:'S-59 — Sweet Store Shock Yellow', prompt:`"[HOOK TEXT]" in extra bold Thai promo font, bright yellow fill, red outline, white outer stroke, urgent retail sticker energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-60': { id:'S-60', label:'S-60 — Ultra Luxury Black Gold', prompt:`"[HOOK TEXT]" in premium Thai headline font, matte black fill with brushed gold edge, elegant shine, high-end luxury counter aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-61': { id:'S-61', label:'S-61 — Bold K Beauty Pastel', prompt:`"[HOOK TEXT]" in rounded Thai font, mint pink lavender gradient fill, white clean outline, soft K-beauty shelf glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-62': { id:'S-62', label:'S-62 — Deluxe Pharmacy Clean Blue', prompt:`"[HOOK TEXT]" in clean Thai sans font, white to soft blue gradient fill, minimal outline, trusted pharmacy promo aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-63': { id:'S-63', label:'S-63 — Sweet Night Market Handmade', prompt:`"[HOOK TEXT]" in playful handwritten Thai font, chalk pastel fills, white outline, doodle stars and market sign vibe, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-64': { id:'S-64', label:'S-64 — Ultra TikTok Viral Gloss', prompt:`"[HOOK TEXT]" in large rounded Thai font, hyper glossy pink purple blue gradient fill, white outline, floating sparkles and social hearts, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-65': { id:'S-65', label:'S-65 — Bold Minimal White Glow', prompt:`"[HOOK TEXT]" in modern Thai font, pure white fill, soft halo glow, clean premium finish, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-66': { id:'S-66', label:'S-66 — Deluxe Red Price Shock', prompt:`"[HOOK TEXT]" in extra bold Thai font, vivid red fill, yellow outline, black impact shadow, explosive sale badge energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-67': { id:'S-67', label:'S-67 — Sweet Candy Pop', prompt:`"[HOOK TEXT]" in cute rounded Thai bubble font, candy pink and sky blue fills, thick white outline, sticker-like sparkle aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-68': { id:'S-68', label:'S-68 — Ultra Fresh Food Steam', prompt:`"[HOOK TEXT]" in bold Thai font, warm orange to gold gradient fill, steam-like glow, tasty restaurant promo feel, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-69': { id:'S-69', label:'S-69 — Bold Tech Neon Cyan', prompt:`"[HOOK TEXT]" in futuristic Thai font, cyan blue neon fill, subtle circuitry glow, tech gadget commercial mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-70': { id:'S-70', label:'S-70 — Deluxe Green Eco Leaf', prompt:`"[HOOK TEXT]" in bold Thai font, leaf green fill, natural earthy glow, tiny leaf particles and organic lifestyle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-71': { id:'S-71', label:'S-71 — Sweet Rose Quartz', prompt:`"[HOOK TEXT]" in elegant rounded Thai font, rose pink glossy fill, white micro highlights, premium beauty glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-72': { id:'S-72', label:'S-72 — Ultra Street Fashion Silver', prompt:`"[HOOK TEXT]" in stylish Thai font, silver chrome fill, dark shadow, cool streetwear campaign aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-73': { id:'S-73', label:'S-73 — Bold Kids Soft Cloud', prompt:`"[HOOK TEXT]" in fluffy rounded Thai font, baby pastel fill, white outline, tiny stars and cloud sparkle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-74': { id:'S-74', label:'S-74 — Deluxe Japanese Pop Sticker', prompt:`"[HOOK TEXT]" in bold rounded Thai font, red yellow blue sticker-store fill, thick white outline, Japanese retail pop energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-75': { id:'S-75', label:'S-75 — Sweet Store Shock Yellow', prompt:`"[HOOK TEXT]" in extra bold Thai promo font, bright yellow fill, red outline, white outer stroke, urgent retail sticker energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-76': { id:'S-76', label:'S-76 — Ultra Luxury Black Gold', prompt:`"[HOOK TEXT]" in premium Thai headline font, matte black fill with brushed gold edge, elegant shine, high-end luxury counter aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-77': { id:'S-77', label:'S-77 — Bold K Beauty Pastel', prompt:`"[HOOK TEXT]" in rounded Thai font, mint pink lavender gradient fill, white clean outline, soft K-beauty shelf glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-78': { id:'S-78', label:'S-78 — Deluxe Pharmacy Clean Blue', prompt:`"[HOOK TEXT]" in clean Thai sans font, white to soft blue gradient fill, minimal outline, trusted pharmacy promo aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-79': { id:'S-79', label:'S-79 — Sweet Night Market Handmade', prompt:`"[HOOK TEXT]" in playful handwritten Thai font, chalk pastel fills, white outline, doodle stars and market sign vibe, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-80': { id:'S-80', label:'S-80 — Ultra TikTok Viral Gloss', prompt:`"[HOOK TEXT]" in large rounded Thai font, hyper glossy pink purple blue gradient fill, white outline, floating sparkles and social hearts, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-81': { id:'S-81', label:'S-81 — Bold Minimal White Glow', prompt:`"[HOOK TEXT]" in modern Thai font, pure white fill, soft halo glow, clean premium finish, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-82': { id:'S-82', label:'S-82 — Deluxe Red Price Shock', prompt:`"[HOOK TEXT]" in extra bold Thai font, vivid red fill, yellow outline, black impact shadow, explosive sale badge energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-83': { id:'S-83', label:'S-83 — Sweet Candy Pop', prompt:`"[HOOK TEXT]" in cute rounded Thai bubble font, candy pink and sky blue fills, thick white outline, sticker-like sparkle aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-84': { id:'S-84', label:'S-84 — Ultra Fresh Food Steam', prompt:`"[HOOK TEXT]" in bold Thai font, warm orange to gold gradient fill, steam-like glow, tasty restaurant promo feel, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-85': { id:'S-85', label:'S-85 — Bold Tech Neon Cyan', prompt:`"[HOOK TEXT]" in futuristic Thai font, cyan blue neon fill, subtle circuitry glow, tech gadget commercial mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-86': { id:'S-86', label:'S-86 — Deluxe Green Eco Leaf', prompt:`"[HOOK TEXT]" in bold Thai font, leaf green fill, natural earthy glow, tiny leaf particles and organic lifestyle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-87': { id:'S-87', label:'S-87 — Sweet Rose Quartz', prompt:`"[HOOK TEXT]" in elegant rounded Thai font, rose pink glossy fill, white micro highlights, premium beauty glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-88': { id:'S-88', label:'S-88 — Ultra Street Fashion Silver', prompt:`"[HOOK TEXT]" in stylish Thai font, silver chrome fill, dark shadow, cool streetwear campaign aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-89': { id:'S-89', label:'S-89 — Bold Kids Soft Cloud', prompt:`"[HOOK TEXT]" in fluffy rounded Thai font, baby pastel fill, white outline, tiny stars and cloud sparkle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-90': { id:'S-90', label:'S-90 — Deluxe Japanese Pop Sticker', prompt:`"[HOOK TEXT]" in bold rounded Thai font, red yellow blue sticker-store fill, thick white outline, Japanese retail pop energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-91': { id:'S-91', label:'S-91 — Sweet Store Shock Yellow', prompt:`"[HOOK TEXT]" in extra bold Thai promo font, bright yellow fill, red outline, white outer stroke, urgent retail sticker energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-92': { id:'S-92', label:'S-92 — Ultra Luxury Black Gold', prompt:`"[HOOK TEXT]" in premium Thai headline font, matte black fill with brushed gold edge, elegant shine, high-end luxury counter aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-93': { id:'S-93', label:'S-93 — Bold K Beauty Pastel', prompt:`"[HOOK TEXT]" in rounded Thai font, mint pink lavender gradient fill, white clean outline, soft K-beauty shelf glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-94': { id:'S-94', label:'S-94 — Deluxe Pharmacy Clean Blue', prompt:`"[HOOK TEXT]" in clean Thai sans font, white to soft blue gradient fill, minimal outline, trusted pharmacy promo aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-95': { id:'S-95', label:'S-95 — Sweet Night Market Handmade', prompt:`"[HOOK TEXT]" in playful handwritten Thai font, chalk pastel fills, white outline, doodle stars and market sign vibe, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-96': { id:'S-96', label:'S-96 — Ultra TikTok Viral Gloss', prompt:`"[HOOK TEXT]" in large rounded Thai font, hyper glossy pink purple blue gradient fill, white outline, floating sparkles and social hearts, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-97': { id:'S-97', label:'S-97 — Bold Minimal White Glow', prompt:`"[HOOK TEXT]" in modern Thai font, pure white fill, soft halo glow, clean premium finish, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-98': { id:'S-98', label:'S-98 — Deluxe Red Price Shock', prompt:`"[HOOK TEXT]" in extra bold Thai font, vivid red fill, yellow outline, black impact shadow, explosive sale badge energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-99': { id:'S-99', label:'S-99 — Sweet Candy Pop', prompt:`"[HOOK TEXT]" in cute rounded Thai bubble font, candy pink and sky blue fills, thick white outline, sticker-like sparkle aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-100': { id:'S-100', label:'S-100 — Ultra Fresh Food Steam', prompt:`"[HOOK TEXT]" in bold Thai font, warm orange to gold gradient fill, steam-like glow, tasty restaurant promo feel, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-101': { id:'S-101', label:'S-101 — Bold Tech Neon Cyan', prompt:`"[HOOK TEXT]" in futuristic Thai font, cyan blue neon fill, subtle circuitry glow, tech gadget commercial mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-102': { id:'S-102', label:'S-102 — Deluxe Green Eco Leaf', prompt:`"[HOOK TEXT]" in bold Thai font, leaf green fill, natural earthy glow, tiny leaf particles and organic lifestyle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-103': { id:'S-103', label:'S-103 — Sweet Rose Quartz', prompt:`"[HOOK TEXT]" in elegant rounded Thai font, rose pink glossy fill, white micro highlights, premium beauty glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-104': { id:'S-104', label:'S-104 — Ultra Street Fashion Silver', prompt:`"[HOOK TEXT]" in stylish Thai font, silver chrome fill, dark shadow, cool streetwear campaign aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-105': { id:'S-105', label:'S-105 — Bold Kids Soft Cloud', prompt:`"[HOOK TEXT]" in fluffy rounded Thai font, baby pastel fill, white outline, tiny stars and cloud sparkle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-106': { id:'S-106', label:'S-106 — Deluxe Japanese Pop Sticker', prompt:`"[HOOK TEXT]" in bold rounded Thai font, red yellow blue sticker-store fill, thick white outline, Japanese retail pop energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-107': { id:'S-107', label:'S-107 — Sweet Store Shock Yellow', prompt:`"[HOOK TEXT]" in extra bold Thai promo font, bright yellow fill, red outline, white outer stroke, urgent retail sticker energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-108': { id:'S-108', label:'S-108 — Ultra Luxury Black Gold', prompt:`"[HOOK TEXT]" in premium Thai headline font, matte black fill with brushed gold edge, elegant shine, high-end luxury counter aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-109': { id:'S-109', label:'S-109 — Bold K Beauty Pastel', prompt:`"[HOOK TEXT]" in rounded Thai font, mint pink lavender gradient fill, white clean outline, soft K-beauty shelf glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-110': { id:'S-110', label:'S-110 — Deluxe Pharmacy Clean Blue', prompt:`"[HOOK TEXT]" in clean Thai sans font, white to soft blue gradient fill, minimal outline, trusted pharmacy promo aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-111': { id:'S-111', label:'S-111 — Sweet Night Market Handmade', prompt:`"[HOOK TEXT]" in playful handwritten Thai font, chalk pastel fills, white outline, doodle stars and market sign vibe, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-112': { id:'S-112', label:'S-112 — Ultra TikTok Viral Gloss', prompt:`"[HOOK TEXT]" in large rounded Thai font, hyper glossy pink purple blue gradient fill, white outline, floating sparkles and social hearts, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-113': { id:'S-113', label:'S-113 — Bold Minimal White Glow', prompt:`"[HOOK TEXT]" in modern Thai font, pure white fill, soft halo glow, clean premium finish, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-114': { id:'S-114', label:'S-114 — Deluxe Red Price Shock', prompt:`"[HOOK TEXT]" in extra bold Thai font, vivid red fill, yellow outline, black impact shadow, explosive sale badge energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-115': { id:'S-115', label:'S-115 — Sweet Candy Pop', prompt:`"[HOOK TEXT]" in cute rounded Thai bubble font, candy pink and sky blue fills, thick white outline, sticker-like sparkle aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-116': { id:'S-116', label:'S-116 — Ultra Fresh Food Steam', prompt:`"[HOOK TEXT]" in bold Thai font, warm orange to gold gradient fill, steam-like glow, tasty restaurant promo feel, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-117': { id:'S-117', label:'S-117 — Bold Tech Neon Cyan', prompt:`"[HOOK TEXT]" in futuristic Thai font, cyan blue neon fill, subtle circuitry glow, tech gadget commercial mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-118': { id:'S-118', label:'S-118 — Deluxe Green Eco Leaf', prompt:`"[HOOK TEXT]" in bold Thai font, leaf green fill, natural earthy glow, tiny leaf particles and organic lifestyle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-119': { id:'S-119', label:'S-119 — Sweet Rose Quartz', prompt:`"[HOOK TEXT]" in elegant rounded Thai font, rose pink glossy fill, white micro highlights, premium beauty glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-120': { id:'S-120', label:'S-120 — Ultra Street Fashion Silver', prompt:`"[HOOK TEXT]" in stylish Thai font, silver chrome fill, dark shadow, cool streetwear campaign aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-121': { id:'S-121', label:'S-121 — Bold Kids Soft Cloud', prompt:`"[HOOK TEXT]" in fluffy rounded Thai font, baby pastel fill, white outline, tiny stars and cloud sparkle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-122': { id:'S-122', label:'S-122 — Deluxe Japanese Pop Sticker', prompt:`"[HOOK TEXT]" in bold rounded Thai font, red yellow blue sticker-store fill, thick white outline, Japanese retail pop energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-123': { id:'S-123', label:'S-123 — Sweet Store Shock Yellow', prompt:`"[HOOK TEXT]" in extra bold Thai promo font, bright yellow fill, red outline, white outer stroke, urgent retail sticker energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-124': { id:'S-124', label:'S-124 — Ultra Luxury Black Gold', prompt:`"[HOOK TEXT]" in premium Thai headline font, matte black fill with brushed gold edge, elegant shine, high-end luxury counter aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-125': { id:'S-125', label:'S-125 — Bold K Beauty Pastel', prompt:`"[HOOK TEXT]" in rounded Thai font, mint pink lavender gradient fill, white clean outline, soft K-beauty shelf glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-126': { id:'S-126', label:'S-126 — Deluxe Pharmacy Clean Blue', prompt:`"[HOOK TEXT]" in clean Thai sans font, white to soft blue gradient fill, minimal outline, trusted pharmacy promo aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-127': { id:'S-127', label:'S-127 — Sweet Night Market Handmade', prompt:`"[HOOK TEXT]" in playful handwritten Thai font, chalk pastel fills, white outline, doodle stars and market sign vibe, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-128': { id:'S-128', label:'S-128 — Ultra TikTok Viral Gloss', prompt:`"[HOOK TEXT]" in large rounded Thai font, hyper glossy pink purple blue gradient fill, white outline, floating sparkles and social hearts, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-129': { id:'S-129', label:'S-129 — Bold Minimal White Glow', prompt:`"[HOOK TEXT]" in modern Thai font, pure white fill, soft halo glow, clean premium finish, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-130': { id:'S-130', label:'S-130 — Deluxe Red Price Shock', prompt:`"[HOOK TEXT]" in extra bold Thai font, vivid red fill, yellow outline, black impact shadow, explosive sale badge energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-131': { id:'S-131', label:'S-131 — Sweet Candy Pop', prompt:`"[HOOK TEXT]" in cute rounded Thai bubble font, candy pink and sky blue fills, thick white outline, sticker-like sparkle aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-132': { id:'S-132', label:'S-132 — Ultra Fresh Food Steam', prompt:`"[HOOK TEXT]" in bold Thai font, warm orange to gold gradient fill, steam-like glow, tasty restaurant promo feel, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-133': { id:'S-133', label:'S-133 — Bold Tech Neon Cyan', prompt:`"[HOOK TEXT]" in futuristic Thai font, cyan blue neon fill, subtle circuitry glow, tech gadget commercial mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-134': { id:'S-134', label:'S-134 — Deluxe Green Eco Leaf', prompt:`"[HOOK TEXT]" in bold Thai font, leaf green fill, natural earthy glow, tiny leaf particles and organic lifestyle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-135': { id:'S-135', label:'S-135 — Sweet Rose Quartz', prompt:`"[HOOK TEXT]" in elegant rounded Thai font, rose pink glossy fill, white micro highlights, premium beauty glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-136': { id:'S-136', label:'S-136 — Ultra Street Fashion Silver', prompt:`"[HOOK TEXT]" in stylish Thai font, silver chrome fill, dark shadow, cool streetwear campaign aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-137': { id:'S-137', label:'S-137 — Bold Kids Soft Cloud', prompt:`"[HOOK TEXT]" in fluffy rounded Thai font, baby pastel fill, white outline, tiny stars and cloud sparkle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-138': { id:'S-138', label:'S-138 — Deluxe Japanese Pop Sticker', prompt:`"[HOOK TEXT]" in bold rounded Thai font, red yellow blue sticker-store fill, thick white outline, Japanese retail pop energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-139': { id:'S-139', label:'S-139 — Sweet Store Shock Yellow', prompt:`"[HOOK TEXT]" in extra bold Thai promo font, bright yellow fill, red outline, white outer stroke, urgent retail sticker energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-140': { id:'S-140', label:'S-140 — Ultra Luxury Black Gold', prompt:`"[HOOK TEXT]" in premium Thai headline font, matte black fill with brushed gold edge, elegant shine, high-end luxury counter aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-141': { id:'S-141', label:'S-141 — Bold K Beauty Pastel', prompt:`"[HOOK TEXT]" in rounded Thai font, mint pink lavender gradient fill, white clean outline, soft K-beauty shelf glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-142': { id:'S-142', label:'S-142 — Deluxe Pharmacy Clean Blue', prompt:`"[HOOK TEXT]" in clean Thai sans font, white to soft blue gradient fill, minimal outline, trusted pharmacy promo aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-143': { id:'S-143', label:'S-143 — Sweet Night Market Handmade', prompt:`"[HOOK TEXT]" in playful handwritten Thai font, chalk pastel fills, white outline, doodle stars and market sign vibe, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-144': { id:'S-144', label:'S-144 — Ultra TikTok Viral Gloss', prompt:`"[HOOK TEXT]" in large rounded Thai font, hyper glossy pink purple blue gradient fill, white outline, floating sparkles and social hearts, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-145': { id:'S-145', label:'S-145 — Bold Minimal White Glow', prompt:`"[HOOK TEXT]" in modern Thai font, pure white fill, soft halo glow, clean premium finish, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-146': { id:'S-146', label:'S-146 — Deluxe Red Price Shock', prompt:`"[HOOK TEXT]" in extra bold Thai font, vivid red fill, yellow outline, black impact shadow, explosive sale badge energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-147': { id:'S-147', label:'S-147 — Sweet Candy Pop', prompt:`"[HOOK TEXT]" in cute rounded Thai bubble font, candy pink and sky blue fills, thick white outline, sticker-like sparkle aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-148': { id:'S-148', label:'S-148 — Ultra Fresh Food Steam', prompt:`"[HOOK TEXT]" in bold Thai font, warm orange to gold gradient fill, steam-like glow, tasty restaurant promo feel, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-149': { id:'S-149', label:'S-149 — Bold Tech Neon Cyan', prompt:`"[HOOK TEXT]" in futuristic Thai font, cyan blue neon fill, subtle circuitry glow, tech gadget commercial mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-150': { id:'S-150', label:'S-150 — Deluxe Green Eco Leaf', prompt:`"[HOOK TEXT]" in bold Thai font, leaf green fill, natural earthy glow, tiny leaf particles and organic lifestyle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-151': { id:'S-151', label:'S-151 — Sweet Rose Quartz', prompt:`"[HOOK TEXT]" in elegant rounded Thai font, rose pink glossy fill, white micro highlights, premium beauty glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-152': { id:'S-152', label:'S-152 — Ultra Street Fashion Silver', prompt:`"[HOOK TEXT]" in stylish Thai font, silver chrome fill, dark shadow, cool streetwear campaign aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-153': { id:'S-153', label:'S-153 — Bold Kids Soft Cloud', prompt:`"[HOOK TEXT]" in fluffy rounded Thai font, baby pastel fill, white outline, tiny stars and cloud sparkle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-154': { id:'S-154', label:'S-154 — Deluxe Japanese Pop Sticker', prompt:`"[HOOK TEXT]" in bold rounded Thai font, red yellow blue sticker-store fill, thick white outline, Japanese retail pop energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-155': { id:'S-155', label:'S-155 — Sweet Store Shock Yellow', prompt:`"[HOOK TEXT]" in extra bold Thai promo font, bright yellow fill, red outline, white outer stroke, urgent retail sticker energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-156': { id:'S-156', label:'S-156 — Ultra Luxury Black Gold', prompt:`"[HOOK TEXT]" in premium Thai headline font, matte black fill with brushed gold edge, elegant shine, high-end luxury counter aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-157': { id:'S-157', label:'S-157 — Bold K Beauty Pastel', prompt:`"[HOOK TEXT]" in rounded Thai font, mint pink lavender gradient fill, white clean outline, soft K-beauty shelf glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-158': { id:'S-158', label:'S-158 — Deluxe Pharmacy Clean Blue', prompt:`"[HOOK TEXT]" in clean Thai sans font, white to soft blue gradient fill, minimal outline, trusted pharmacy promo aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-159': { id:'S-159', label:'S-159 — Sweet Night Market Handmade', prompt:`"[HOOK TEXT]" in playful handwritten Thai font, chalk pastel fills, white outline, doodle stars and market sign vibe, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-160': { id:'S-160', label:'S-160 — Ultra TikTok Viral Gloss', prompt:`"[HOOK TEXT]" in large rounded Thai font, hyper glossy pink purple blue gradient fill, white outline, floating sparkles and social hearts, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-161': { id:'S-161', label:'S-161 — Bold Minimal White Glow', prompt:`"[HOOK TEXT]" in modern Thai font, pure white fill, soft halo glow, clean premium finish, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-162': { id:'S-162', label:'S-162 — Deluxe Red Price Shock', prompt:`"[HOOK TEXT]" in extra bold Thai font, vivid red fill, yellow outline, black impact shadow, explosive sale badge energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-163': { id:'S-163', label:'S-163 — Sweet Candy Pop', prompt:`"[HOOK TEXT]" in cute rounded Thai bubble font, candy pink and sky blue fills, thick white outline, sticker-like sparkle aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-164': { id:'S-164', label:'S-164 — Ultra Fresh Food Steam', prompt:`"[HOOK TEXT]" in bold Thai font, warm orange to gold gradient fill, steam-like glow, tasty restaurant promo feel, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-165': { id:'S-165', label:'S-165 — Bold Tech Neon Cyan', prompt:`"[HOOK TEXT]" in futuristic Thai font, cyan blue neon fill, subtle circuitry glow, tech gadget commercial mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-166': { id:'S-166', label:'S-166 — Deluxe Green Eco Leaf', prompt:`"[HOOK TEXT]" in bold Thai font, leaf green fill, natural earthy glow, tiny leaf particles and organic lifestyle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-167': { id:'S-167', label:'S-167 — Sweet Rose Quartz', prompt:`"[HOOK TEXT]" in elegant rounded Thai font, rose pink glossy fill, white micro highlights, premium beauty glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-168': { id:'S-168', label:'S-168 — Ultra Street Fashion Silver', prompt:`"[HOOK TEXT]" in stylish Thai font, silver chrome fill, dark shadow, cool streetwear campaign aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-169': { id:'S-169', label:'S-169 — Bold Kids Soft Cloud', prompt:`"[HOOK TEXT]" in fluffy rounded Thai font, baby pastel fill, white outline, tiny stars and cloud sparkle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-170': { id:'S-170', label:'S-170 — Deluxe Japanese Pop Sticker', prompt:`"[HOOK TEXT]" in bold rounded Thai font, red yellow blue sticker-store fill, thick white outline, Japanese retail pop energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-171': { id:'S-171', label:'S-171 — Sweet Store Shock Yellow', prompt:`"[HOOK TEXT]" in extra bold Thai promo font, bright yellow fill, red outline, white outer stroke, urgent retail sticker energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-172': { id:'S-172', label:'S-172 — Ultra Luxury Black Gold', prompt:`"[HOOK TEXT]" in premium Thai headline font, matte black fill with brushed gold edge, elegant shine, high-end luxury counter aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-173': { id:'S-173', label:'S-173 — Bold K Beauty Pastel', prompt:`"[HOOK TEXT]" in rounded Thai font, mint pink lavender gradient fill, white clean outline, soft K-beauty shelf glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-174': { id:'S-174', label:'S-174 — Deluxe Pharmacy Clean Blue', prompt:`"[HOOK TEXT]" in clean Thai sans font, white to soft blue gradient fill, minimal outline, trusted pharmacy promo aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-175': { id:'S-175', label:'S-175 — Sweet Night Market Handmade', prompt:`"[HOOK TEXT]" in playful handwritten Thai font, chalk pastel fills, white outline, doodle stars and market sign vibe, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-176': { id:'S-176', label:'S-176 — Ultra TikTok Viral Gloss', prompt:`"[HOOK TEXT]" in large rounded Thai font, hyper glossy pink purple blue gradient fill, white outline, floating sparkles and social hearts, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-177': { id:'S-177', label:'S-177 — Bold Minimal White Glow', prompt:`"[HOOK TEXT]" in modern Thai font, pure white fill, soft halo glow, clean premium finish, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-178': { id:'S-178', label:'S-178 — Deluxe Red Price Shock', prompt:`"[HOOK TEXT]" in extra bold Thai font, vivid red fill, yellow outline, black impact shadow, explosive sale badge energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-179': { id:'S-179', label:'S-179 — Sweet Candy Pop', prompt:`"[HOOK TEXT]" in cute rounded Thai bubble font, candy pink and sky blue fills, thick white outline, sticker-like sparkle aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-180': { id:'S-180', label:'S-180 — Ultra Fresh Food Steam', prompt:`"[HOOK TEXT]" in bold Thai font, warm orange to gold gradient fill, steam-like glow, tasty restaurant promo feel, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-181': { id:'S-181', label:'S-181 — Bold Tech Neon Cyan', prompt:`"[HOOK TEXT]" in futuristic Thai font, cyan blue neon fill, subtle circuitry glow, tech gadget commercial mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-182': { id:'S-182', label:'S-182 — Deluxe Green Eco Leaf', prompt:`"[HOOK TEXT]" in bold Thai font, leaf green fill, natural earthy glow, tiny leaf particles and organic lifestyle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-183': { id:'S-183', label:'S-183 — Sweet Rose Quartz', prompt:`"[HOOK TEXT]" in elegant rounded Thai font, rose pink glossy fill, white micro highlights, premium beauty glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-184': { id:'S-184', label:'S-184 — Ultra Street Fashion Silver', prompt:`"[HOOK TEXT]" in stylish Thai font, silver chrome fill, dark shadow, cool streetwear campaign aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-185': { id:'S-185', label:'S-185 — Bold Kids Soft Cloud', prompt:`"[HOOK TEXT]" in fluffy rounded Thai font, baby pastel fill, white outline, tiny stars and cloud sparkle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-186': { id:'S-186', label:'S-186 — Deluxe Japanese Pop Sticker', prompt:`"[HOOK TEXT]" in bold rounded Thai font, red yellow blue sticker-store fill, thick white outline, Japanese retail pop energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-187': { id:'S-187', label:'S-187 — Sweet Store Shock Yellow', prompt:`"[HOOK TEXT]" in extra bold Thai promo font, bright yellow fill, red outline, white outer stroke, urgent retail sticker energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-188': { id:'S-188', label:'S-188 — Ultra Luxury Black Gold', prompt:`"[HOOK TEXT]" in premium Thai headline font, matte black fill with brushed gold edge, elegant shine, high-end luxury counter aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-189': { id:'S-189', label:'S-189 — Bold K Beauty Pastel', prompt:`"[HOOK TEXT]" in rounded Thai font, mint pink lavender gradient fill, white clean outline, soft K-beauty shelf glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-190': { id:'S-190', label:'S-190 — Deluxe Pharmacy Clean Blue', prompt:`"[HOOK TEXT]" in clean Thai sans font, white to soft blue gradient fill, minimal outline, trusted pharmacy promo aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-191': { id:'S-191', label:'S-191 — Sweet Night Market Handmade', prompt:`"[HOOK TEXT]" in playful handwritten Thai font, chalk pastel fills, white outline, doodle stars and market sign vibe, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-192': { id:'S-192', label:'S-192 — Ultra TikTok Viral Gloss', prompt:`"[HOOK TEXT]" in large rounded Thai font, hyper glossy pink purple blue gradient fill, white outline, floating sparkles and social hearts, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-193': { id:'S-193', label:'S-193 — Bold Minimal White Glow', prompt:`"[HOOK TEXT]" in modern Thai font, pure white fill, soft halo glow, clean premium finish, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-194': { id:'S-194', label:'S-194 — Deluxe Red Price Shock', prompt:`"[HOOK TEXT]" in extra bold Thai font, vivid red fill, yellow outline, black impact shadow, explosive sale badge energy, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-195': { id:'S-195', label:'S-195 — Sweet Candy Pop', prompt:`"[HOOK TEXT]" in cute rounded Thai bubble font, candy pink and sky blue fills, thick white outline, sticker-like sparkle aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-196': { id:'S-196', label:'S-196 — Ultra Fresh Food Steam', prompt:`"[HOOK TEXT]" in bold Thai font, warm orange to gold gradient fill, steam-like glow, tasty restaurant promo feel, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-197': { id:'S-197', label:'S-197 — Bold Tech Neon Cyan', prompt:`"[HOOK TEXT]" in futuristic Thai font, cyan blue neon fill, subtle circuitry glow, tech gadget commercial mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-198': { id:'S-198', label:'S-198 — Deluxe Green Eco Leaf', prompt:`"[HOOK TEXT]" in bold Thai font, leaf green fill, natural earthy glow, tiny leaf particles and organic lifestyle mood, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-199': { id:'S-199', label:'S-199 — Sweet Rose Quartz', prompt:`"[HOOK TEXT]" in elegant rounded Thai font, rose pink glossy fill, white micro highlights, premium beauty glow, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` },
+  'S-200': { id:'S-200', label:'S-200 — Ultra Street Fashion Silver', prompt:`"[HOOK TEXT]" in stylish Thai font, silver chrome fill, dark shadow, cool streetwear campaign aesthetic, premium stop-scroll thumbnail composition, balanced contrast, soft depth, retail campaign finish.` }
+};
+
+export const H2_STYLE_LIBRARY = {
+  'H2-01': { id:'H2-01', label:'H2-01 — Rounded Capsule Promo', prompt:`"[H2 TEXT]" inside a rounded capsule banner, white to pastel pink gradient background, glossy finish, thin lavender border, cute promo subtitle style.` },
+  'H2-02': { id:'H2-02', label:'H2-02 — Mini Sale Ribbon', prompt:`"[H2 TEXT]" inside a soft ribbon banner with white and pastel gradient fill, rounded edges, premium cute store subtitle aesthetic.` },
+  'H2-03': { id:'H2-03', label:'H2-03 — Clean Beauty Subtitle', prompt:`"[H2 TEXT]" inside a minimalist rounded subtitle bar, white base with soft pink glow, elegant K-beauty promo style.` },
+  'H2-04': { id:'H2-04', label:'H2-04 — Japanese Promo Bar', prompt:`"[H2 TEXT]" inside a soft rounded Japanese promo banner, white and pink gradient fill, cute lifestyle retail sticker style.` },
+  'H2-05': { id:'H2-05', label:'H2-05 — Premium Capsule Glow', prompt:`"[H2 TEXT]" inside a premium glossy capsule banner, clean white base, subtle blush glow, luxury retail subtitle finish.` },
+  'H2-06': { id:'H2-06', label:'H2-06 — Rounded Capsule Promo', prompt:`"[H2 TEXT]" inside a rounded capsule banner, white to pastel pink gradient background, glossy finish, thin lavender border, cute promo subtitle style.` },
+  'H2-07': { id:'H2-07', label:'H2-07 — Mini Sale Ribbon', prompt:`"[H2 TEXT]" inside a soft ribbon banner with white and pastel gradient fill, rounded edges, premium cute store subtitle aesthetic.` },
+  'H2-08': { id:'H2-08', label:'H2-08 — Clean Beauty Subtitle', prompt:`"[H2 TEXT]" inside a minimalist rounded subtitle bar, white base with soft pink glow, elegant K-beauty promo style.` },
+  'H2-09': { id:'H2-09', label:'H2-09 — Japanese Promo Bar', prompt:`"[H2 TEXT]" inside a soft rounded Japanese promo banner, white and pink gradient fill, cute lifestyle retail sticker style.` },
+  'H2-10': { id:'H2-10', label:'H2-10 — Premium Capsule Glow', prompt:`"[H2 TEXT]" inside a premium glossy capsule banner, clean white base, subtle blush glow, luxury retail subtitle finish.` },
+  'H2-11': { id:'H2-11', label:'H2-11 — Watsons Shelf Tag', prompt:`"[H2 TEXT]" inside a pastel shelf-tag banner, white pink teal palette, rounded corners, beauty aisle promo look.` },
+  'H2-12': { id:'H2-12', label:'H2-12 — Sephora Luxe Plate', prompt:`"[H2 TEXT]" inside a sleek black and white luxury subtitle plate, elegant polished finish.` },
+  'H2-13': { id:'H2-13', label:'H2-13 — Night Market Card', prompt:`"[H2 TEXT]" inside a handwritten market-card banner, warm colors, soft doodles, handmade promo vibe.` },
+  'H2-14': { id:'H2-14', label:'H2-14 — Rounded Capsule Promo', prompt:`"[H2 TEXT]" inside a rounded capsule banner, white to pastel pink gradient background, glossy finish, thin lavender border, cute promo subtitle style.` },
+  'H2-15': { id:'H2-15', label:'H2-15 — Mini Sale Ribbon', prompt:`"[H2 TEXT]" inside a soft ribbon banner with white and pastel gradient fill, rounded edges, premium cute store subtitle aesthetic.` },
+  'H2-16': { id:'H2-16', label:'H2-16 — Clean Beauty Subtitle', prompt:`"[H2 TEXT]" inside a minimalist rounded subtitle bar, white base with soft pink glow, elegant K-beauty promo style.` },
+  'H2-17': { id:'H2-17', label:'H2-17 — Japanese Promo Bar', prompt:`"[H2 TEXT]" inside a soft rounded Japanese promo banner, white and pink gradient fill, cute lifestyle retail sticker style.` },
+  'H2-18': { id:'H2-18', label:'H2-18 — Premium Capsule Glow', prompt:`"[H2 TEXT]" inside a premium glossy capsule banner, clean white base, subtle blush glow, luxury retail subtitle finish.` },
+  'H2-19': { id:'H2-19', label:'H2-19 — Watsons Shelf Tag', prompt:`"[H2 TEXT]" inside a pastel shelf-tag banner, white pink teal palette, rounded corners, beauty aisle promo look.` },
+  'H2-20': { id:'H2-20', label:'H2-20 — Sephora Luxe Plate', prompt:`"[H2 TEXT]" inside a sleek black and white luxury subtitle plate, elegant polished finish.` },
+  'H2-21': { id:'H2-21', label:'H2-21 — Night Market Card', prompt:`"[H2 TEXT]" inside a handwritten market-card banner, warm colors, soft doodles, handmade promo vibe.` },
+  'H2-22': { id:'H2-22', label:'H2-22 — Rounded Capsule Promo', prompt:`"[H2 TEXT]" inside a rounded capsule banner, white to pastel pink gradient background, glossy finish, thin lavender border, cute promo subtitle style.` },
+  'H2-23': { id:'H2-23', label:'H2-23 — Mini Sale Ribbon', prompt:`"[H2 TEXT]" inside a soft ribbon banner with white and pastel gradient fill, rounded edges, premium cute store subtitle aesthetic.` },
+  'H2-24': { id:'H2-24', label:'H2-24 — Clean Beauty Subtitle', prompt:`"[H2 TEXT]" inside a minimalist rounded subtitle bar, white base with soft pink glow, elegant K-beauty promo style.` },
+  'H2-25': { id:'H2-25', label:'H2-25 — Japanese Promo Bar', prompt:`"[H2 TEXT]" inside a soft rounded Japanese promo banner, white and pink gradient fill, cute lifestyle retail sticker style.` },
+  'H2-26': { id:'H2-26', label:'H2-26 — Premium Capsule Glow', prompt:`"[H2 TEXT]" inside a premium glossy capsule banner, clean white base, subtle blush glow, luxury retail subtitle finish.` },
+  'H2-27': { id:'H2-27', label:'H2-27 — Watsons Shelf Tag', prompt:`"[H2 TEXT]" inside a pastel shelf-tag banner, white pink teal palette, rounded corners, beauty aisle promo look.` },
+  'H2-28': { id:'H2-28', label:'H2-28 — Sephora Luxe Plate', prompt:`"[H2 TEXT]" inside a sleek black and white luxury subtitle plate, elegant polished finish.` },
+  'H2-29': { id:'H2-29', label:'H2-29 — Night Market Card', prompt:`"[H2 TEXT]" inside a handwritten market-card banner, warm colors, soft doodles, handmade promo vibe.` },
+  'H2-30': { id:'H2-30', label:'H2-30 — Rounded Capsule Promo', prompt:`"[H2 TEXT]" inside a rounded capsule banner, white to pastel pink gradient background, glossy finish, thin lavender border, cute promo subtitle style.` },
+  'H2-31': { id:'H2-31', label:'H2-31 — Mini Sale Ribbon', prompt:`"[H2 TEXT]" inside a soft ribbon banner with white and pastel gradient fill, rounded edges, premium cute store subtitle aesthetic.` },
+  'H2-32': { id:'H2-32', label:'H2-32 — Clean Beauty Subtitle', prompt:`"[H2 TEXT]" inside a minimalist rounded subtitle bar, white base with soft pink glow, elegant K-beauty promo style.` },
+  'H2-33': { id:'H2-33', label:'H2-33 — Japanese Promo Bar', prompt:`"[H2 TEXT]" inside a soft rounded Japanese promo banner, white and pink gradient fill, cute lifestyle retail sticker style.` },
+  'H2-34': { id:'H2-34', label:'H2-34 — Premium Capsule Glow', prompt:`"[H2 TEXT]" inside a premium glossy capsule banner, clean white base, subtle blush glow, luxury retail subtitle finish.` },
+  'H2-35': { id:'H2-35', label:'H2-35 — Watsons Shelf Tag', prompt:`"[H2 TEXT]" inside a pastel shelf-tag banner, white pink teal palette, rounded corners, beauty aisle promo look.` },
+  'H2-36': { id:'H2-36', label:'H2-36 — Sephora Luxe Plate', prompt:`"[H2 TEXT]" inside a sleek black and white luxury subtitle plate, elegant polished finish.` },
+  'H2-37': { id:'H2-37', label:'H2-37 — Night Market Card', prompt:`"[H2 TEXT]" inside a handwritten market-card banner, warm colors, soft doodles, handmade promo vibe.` },
+  'H2-38': { id:'H2-38', label:'H2-38 — Rounded Capsule Promo', prompt:`"[H2 TEXT]" inside a rounded capsule banner, white to pastel pink gradient background, glossy finish, thin lavender border, cute promo subtitle style.` },
+  'H2-39': { id:'H2-39', label:'H2-39 — Mini Sale Ribbon', prompt:`"[H2 TEXT]" inside a soft ribbon banner with white and pastel gradient fill, rounded edges, premium cute store subtitle aesthetic.` },
+  'H2-40': { id:'H2-40', label:'H2-40 — Clean Beauty Subtitle', prompt:`"[H2 TEXT]" inside a minimalist rounded subtitle bar, white base with soft pink glow, elegant K-beauty promo style.` }
+};
+
+const MODE_TEXT_STYLE_MAP = {
+  tiktok_live: { text:'S-142', h2:'H2-22' },
+  signboard: { text:'S-142', h2:'H2-22' },
+  supplement_stop_scroll: { text:'S-151', h2:'H2-13' },
+  food: { text:'S-138', h2:'H2-20' },
+  snack: { text:'S-135', h2:'H2-12' },
+  mom_baby: { text:'S-117', h2:'H2-09' },
+  fashion: { text:'S-154', h2:'H2-25' },
+  shoes: { text:'S-164', h2:'H2-26' },
+  lingerie: { text:'S-111', h2:'H2-10' },
+  skincare: { text:'S-143', h2:'H2-08' },
+  home: { text:'S-104', h2:'H2-05' },
+  bedding: { text:'S-115', h2:'H2-11' },
+  kitchen: { text:'S-150', h2:'H2-18' },
+  bathroom: { text:'S-148', h2:'H2-16' },
+  laundry: { text:'S-147', h2:'H2-15' },
+  electronics: { text:'S-170', h2:'H2-27' },
+  appliances: { text:'S-170', h2:'H2-27' },
+  garden: { text:'S-156', h2:'H2-21' },
+  fruits: { text:'S-139', h2:'H2-19' },
+  produce: { text:'S-139', h2:'H2-19' },
+  hardware: { text:'S-129', h2:'H2-24' },
+  tools: { text:'S-129', h2:'H2-24' },
+  stationery: { text:'S-137', h2:'H2-14' },
+  books: { text:'S-132', h2:'H2-17' },
+  cosmetics: { text:'S-131', h2:'H2-06' },
+};
+
+export function getTextStyleOptions(){
+  return Object.values(TEXT_STYLE_LIBRARY).map(({id,label}) => ({id,label}));
+}
+export function getH2StyleOptions(){
+  return Object.values(H2_STYLE_LIBRARY).map(({id,label}) => ({id,label}));
+}
+export function getTextStyleConfig(id){
+  return TEXT_STYLE_LIBRARY[id] || TEXT_STYLE_LIBRARY['S-01'];
+}
+export function getH2StyleConfig(id){
+  return H2_STYLE_LIBRARY[id] || H2_STYLE_LIBRARY['H2-01'];
+}
+export function getRecommendedTextStyles(mode='signboard', productName=''){
+  const base = MODE_TEXT_STYLE_MAP[mode] || MODE_TEXT_STYLE_MAP.signboard;
+  const name = String(productName || '').toLowerCase();
+  const rules = [
+    { test: /(lip|ลิป|makeup|เมคอัพ|cosmetic|เครื่องสำอาง|serum|เซรั่ม|ครีม|skincare|beauty)/, pick:{ text:'S-131', h2:'H2-06' } },
+    { test: /(watsons|eveandboy|sephora|boots)/, pick:{ text:'S-133', h2:'H2-06' } },
+    { test: /(food|อาหาร|ข้าว|หมู|น้ำพริก|snack|ขนม|ผลไม้|fruit|veggie|ผัก)/, pick:{ text:'S-138', h2:'H2-20' } },
+    { test: /(mattress|ที่นอน|bed|หมอน|pillow|bedding)/, pick:{ text:'S-115', h2:'H2-11' } },
+    { test: /(shoe|รองเท้า|sneaker|sandals)/, pick:{ text:'S-164', h2:'H2-26' } },
+    { test: /(phone|มือถือ|gadget|tech|ไฟฟ้า|appliance|electronic)/, pick:{ text:'S-170', h2:'H2-27' } },
+    { test: /(sale|ลดราคา|โปร|stock|clearance|ป้าย)/, pick:{ text:'S-142', h2:'H2-22' } }
+  ];
+  const hit = rules.find(rule => rule.test.test(name));
+  return hit ? hit.pick : base;
 }
