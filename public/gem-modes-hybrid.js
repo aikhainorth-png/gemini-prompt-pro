@@ -55,5 +55,3 @@ export function autoDetectGemMode(productName = ''){
 }
 
 export { pickRandomFrom };
-
-export { getTextStyleOptions, getH2StyleOptions, getTextStyleConfig, getH2StyleConfig, getRecommendedTextStyles } from './gem-modes.js';
