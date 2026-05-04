@@ -5,7 +5,14 @@ export function buildPromptBundleSchema(){
     properties: {
       image_prompt: {
         type: 'string',
-        description: `Final image generation prompt ready to use. If sceneCount is more than 1, use exact scene headers inside this string: SCENE_1_IMAGE_PROMPT:, SCENE_2_IMAGE_PROMPT:, ... until the requested scene count.`
+        description: `Final image generation prompt ready to use.
+
+Strict image scene rules:
+- Every requested image scene must use exact scene headers inside this string: SCENE_1_IMAGE_PROMPT:, SCENE_2_IMAGE_PROMPT:, ... until the requested scene count.
+- Every SCENE_n_IMAGE_PROMPT must include VISUAL: with main subject, product, character/hand interaction, environment/background, lighting, and camera composition.
+- AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1: SCENE_1_IMAGE_PROMPT must show the main product clearly in the first frame and must not be text-only.
+- [TEXT OVERLAY] and [H2 OVERLAY] are optional add-ons only; they can never replace VISUAL.
+- Do not include Voice Profile, dialogue, lip-sync, or audio instructions inside image_prompt.`
       },
       video_prompt: {
         type: 'string',

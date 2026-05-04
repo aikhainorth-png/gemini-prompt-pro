@@ -426,6 +426,111 @@ function applyOverlayToSceneStructuredPrompt(imagePrompt, sceneCount, overlayCfg
   return rebuilt.join('\n\n');
 }
 
+
+function getModeHookVisualDirective(d={}){
+  const strategy = String(d.promptStrategy || getCurrentStrategy() || 'viral').toLowerCase();
+  const modeLabel = (() => { try { return getModeSource().getGemModeConfig(d.gemMode).label; } catch(e){ return d.gemMode || 'สินค้า'; } })();
+  const map = {
+    viral: 'Viral hook: make the first frame feel stop-scroll, surprising, high curiosity, product visible immediately.',
+    conversion: 'Conversion hook: show the product as the solution immediately, clear problem-solution selling angle, strong basket-click reason.',
+    hybrid: 'Hybrid hook: combine viral stop-scroll energy with fast product reveal and clear demo value.',
+    pro_max: 'Pro Max hook: master prompt level hero composition, cinematic product-first selling image, premium conversion-focused thumbnail.'
+  };
+  return `${map[strategy] || map.viral} Selected clip direction: ${modeLabel}.`;
+}
+
+function buildAutoHookVisualScene1Block(d={}){
+  const product = sanitizePolicyText(d.product || 'สินค้านี้');
+  const location = sanitizePolicyText(d.location || 'สถานที่ใช้งานจริงที่เหมาะกับสินค้า');
+  const view = sanitizePolicyText(d.view || 'มุมกล้องมือถือแบบใช้งานจริง เห็นสินค้าเด่นชัด');
+  const tone = sanitizePolicyText(d.viralTone || 'โปรแรง');
+  const characterProfile = getThaiCharacterVoiceProfile(d.voiceType);
+  return `VISUAL:\nAUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1:\nPhotorealistic live-action vertical 9:16 still image only. Use any attached/uploaded image as the strict product reference only. Main product must be clearly visible and central: ${product}. Scene 1 must never be text-only; show the product in the first frame with a Thai / Asian presenter (${characterProfile.image}) naturally holding, pointing to, touching, or demonstrating the product. Environment/background: ${location}. Hook visual direction: ${view}. Selling tone: ${tone}. ${getModeHookVisualDirective(d)} Product-first hero composition, clean readable foreground, strong commercial lighting, realistic hands, natural Thai retail/UGC mood, no watermark, no random background text except real product label and intended overlay blocks.`;
+}
+
+function stripOverlayBlocksForVisualCheck(text=''){
+  return String(text || '')
+    .replace(/\[TEXT\s+OVERLAY\][\s\S]*?(?=\n\s*\[(?:H2|TEXT)\s+OVERLAY\]|\n\s*SCENE[_\s]*\d+|$)/ig, '\n')
+    .replace(/\[H2\s+OVERLAY\][\s\S]*?(?=\n\s*\[(?:H2|TEXT)\s+OVERLAY\]|\n\s*SCENE[_\s]*\d+|$)/ig, '\n')
+    .replace(/Character\s*ID\s*:[^\n]*(?:\n|$)/ig, '\n')
+    .replace(/Character\s*DNA\s*Block\s*:[\s\S]*?(?=\n\s*(?:Continuity\s*Lock\s*:|VISUAL\s*:|\[TEXT\s+OVERLAY\]|\[H2\s+OVERLAY\]|$))/ig, '\n')
+    .replace(/Continuity\s*Lock\s*:[\s\S]*?(?=\n\s*(?:VISUAL\s*:|\[TEXT\s+OVERLAY\]|\[H2\s+OVERLAY\]|$))/ig, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+function containsProductName(text='', product=''){
+  const p = String(product || '').trim();
+  if(!p) return true;
+  const src = String(text || '').toLowerCase();
+  if(src.includes(p.toLowerCase())) return true;
+  const tokens = p.split(/[\s,|/()\[\]{}:;.!?"'“”‘’]+/).map(t=>t.trim()).filter(t=>t.length >= 2).slice(0, 4);
+  return tokens.length ? tokens.some(t => src.includes(t.toLowerCase())) : true;
+}
+
+function sceneNeedsAutoHookVisual(body='', d={}){
+  if(/AUTO\s+PRODUCT\s+INSERT\s*\+\s*AUTO\s+HOOK\s+VISUAL\s+SCENE\s+1/i.test(body)) return false;
+  const hasVisual = /(?:^|\n)\s*VISUAL\s*:/i.test(body);
+  const nonOverlay = stripOverlayBlocksForVisualCheck(body);
+  const hasEnoughMainVisual = nonOverlay.length >= 90;
+  const hasProduct = containsProductName(body, d.product);
+  return !hasVisual || !hasEnoughMainVisual || !hasProduct;
+}
+
+function insertAutoHookVisualIntoSceneBody(body='', d={}){
+  const visualBlock = buildAutoHookVisualScene1Block(d);
+  const src = String(body || '').trim();
+  if(!src) return visualBlock;
+
+  if(/(?:^|\n)\s*VISUAL\s*:/i.test(src)){
+    const product = sanitizePolicyText(d.product || 'สินค้านี้');
+    const productLine = `PRODUCT FOCUS:\nAUTO PRODUCT INSERT: Main product must be clearly visible and central: ${product}. Use any attached/uploaded image as strict product reference only. Scene 1 must not become overlay-only.`;
+    if(/PRODUCT\s+FOCUS\s*:/i.test(src) || containsProductName(src, d.product)) return src;
+    return src.replace(/((?:^|\n)\s*VISUAL\s*:\s*)/i, `$1\n${productLine}\n`);
+  }
+
+  const overlayIndex = (() => {
+    const a = src.search(/\n?\s*\[TEXT\s+OVERLAY\]/i);
+    const b = src.search(/\n?\s*\[H2\s+OVERLAY\]/i);
+    const vals = [a,b].filter(v => v >= 0);
+    return vals.length ? Math.min(...vals) : -1;
+  })();
+
+  if(overlayIndex >= 0){
+    const before = src.slice(0, overlayIndex).trim();
+    const after = src.slice(overlayIndex).trim();
+    return [before, visualBlock, after].filter(Boolean).join('\n\n');
+  }
+
+  return `${src}\n\n${visualBlock}`.trim();
+}
+
+function ensureAutoProductHookVisualScene1(imagePrompt='', d={}){
+  const count = Math.max(1, Number(d.sceneCount || 1));
+  const src = normalizeTextBlock(imagePrompt);
+  if(!src) return buildAutoHookVisualScene1Block(d);
+
+  const blocks = splitBySceneMarkers(src);
+  const hasSceneOne = blocks.some(b => Number(b.sceneNo) === 1);
+
+  if(!hasSceneOne){
+    if(count <= 1){
+      const body = sceneNeedsAutoHookVisual(src, d) ? insertAutoHookVisualIntoSceneBody(src, d) : src;
+      return `SCENE_1_IMAGE_PROMPT:\n${body}`;
+    }
+    return src;
+  }
+
+  return blocks.map(block => {
+    const no = Number(block.sceneNo || 0);
+    const body = cleanSceneBlock(block.raw, 'image', no);
+    const header = `SCENE_${no}_IMAGE_PROMPT:`;
+    if(no !== 1) return `${header}\n${body}`;
+    const nextBody = sceneNeedsAutoHookVisual(body, d) ? insertAutoHookVisualIntoSceneBody(body, d) : body;
+    return `${header}\n${nextBody}`;
+  }).join('\n\n');
+}
+
 function applyTextOverlayToImagePrompt(imagePrompt, d){
   const cfgs = [];
   if(d.textOverlayEnabled){
@@ -755,6 +860,7 @@ GLOBAL OUTPUT RULES:
 1) image_prompt: a single final image generation prompt for a vertical 9:16 promotional image
 2) video_prompt: a single final video generation prompt containing all scenes in sequence
 - For the image prompt, explicitly state that any uploaded or attached image must be used as the product reference only.
+- AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1: SCENE_1_IMAGE_PROMPT must always include a VISUAL section before any [TEXT OVERLAY] or [H2 OVERLAY]. Scene 1 must show the main product clearly, a Thai / Asian presenter or realistic hand interaction, a real environment/background, lighting, and camera composition. TEXT OVERLAY or H2 OVERLAY alone is forbidden. This rule improves only Image Prompt Scene 1 and must not change the selected Viral / Conversion / Hybrid / Pro Max video structure, scene count, timing, or dialogue.
 - The default visual style must be photorealistic live-action cinematic advertising.
 - Absolutely no 3D animated style, no cartoon style, no chibi style, no mascot style, and no CGI-stylized character unless the user explicitly asks for that.
 - No subtitles in video prompt.
@@ -814,6 +920,7 @@ Requirements:
 - For multi-scene outputs, keep the same main character identity across all scenes with no redesign or reinterpretation.
 - If scene count is greater than 1, split both image_prompt and video_prompt into clear scene blocks using these exact headers only: SCENE_1_IMAGE_PROMPT:, SCENE_2_IMAGE_PROMPT:, ... and SCENE_1_VIDEO_PROMPT:, SCENE_2_VIDEO_PROMPT:, ...
 - Also return caption_hashtags: one Thai caption line plus exactly 5 hashtags, where 3 hashtags are product-related and 2 hashtags are trending Thai commerce/social hashtags.
+- AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1: Before any overlay blocks, SCENE_1_IMAGE_PROMPT must contain VISUAL: with product, character/hand interaction, environment/background, lighting, and camera composition. Do not return overlay-only Scene 1.
 - If TEXT OVERLAY or H2 overlay are enabled, preserve those overlay instructions naturally inside the image prompt output for the selected scenes.
 - Final only.
 ${buildSceneTimeLipSyncContract(d)}`;
@@ -962,6 +1069,7 @@ const result = await callSelectedProvider(d);
 // ห้าม sanitize ก่อน parse / overlay / DNA เพราะจะทำให้ Scene header เพี้ยน
 result.image_prompt = applyTextOverlayToImagePrompt(result.image_prompt || '', d);
 result.image_prompt = injectDNAIntoStructuredPrompt(result.image_prompt, 'image', d, character);
+result.image_prompt = ensureAutoProductHookVisualScene1(result.image_prompt, d);
 
 result.video_prompt = injectDNAIntoStructuredPrompt(result.video_prompt || '', 'video', d, character);
 
