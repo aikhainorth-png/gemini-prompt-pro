@@ -16,6 +16,7 @@ const LS_FORM = 'GEMINI_FINAL_PROMPT_PRO_FORM_SPARK_V1';
 const LS_KEY = 'userGeminiApiKey';
 const LS_OPENAI_KEY = 'userOpenAIApiKey';
 const DEFAULT_MODEL = 'gemini-2.5-flash';
+const DEFAULT_GEM_MODE = 'factory_conveyor';
 const LS_PROMPT_STRATEGY = 'GEMINI_FINAL_PROMPT_PRO_PROMPT_STRATEGY_V1';
 const $ = (id) => document.getElementById(id);
 const app = initializeApp(firebaseConfig);
@@ -251,14 +252,14 @@ function deleteKeyNow(){
  closeDeleteModal();
  showToast('ลบ Gemini Key แล้ว');
 }
-function getFormData(){ return { product:$('product')?.value.trim()||'', location:$('location')?.value.trim()||'', view:$('view')?.value.trim()||'', promptStrategy:$('promptStrategy')?.value||localStorage.getItem(LS_PROMPT_STRATEGY)||'viral', gemMode:$('gemMode')?.value||'signboard', providerMode:$('providerMode')?.value||'gemini', voiceType:$('voiceType')?.value||'thai_female', viralTone:$('viralTone')?.value||'ล้างสต๊อก', sceneCount:Number($('sceneCount')?.value||1), duration:Number($('duration')?.value||10), textOverlayEnabled: !!$('textOverlayEnabled')?.checked, textOverlayStyle:$('textOverlayStyle')?.value||'', textOverlayScene:$('textOverlayScene')?.value||'all', textOverlayHook:$('textOverlayHook')?.value.trim()||'', textOverlayPosition:$('textOverlayPosition')?.value||'center', textOverlaySize:$('textOverlaySize')?.value||'medium', h2OverlayEnabled: !!$('h2OverlayEnabled')?.checked, h2OverlayStyle:$('h2OverlayStyle')?.value||'', h2OverlayScene:$('h2OverlayScene')?.value||'all', h2OverlayHook:$('h2OverlayHook')?.value.trim()||'' }; }
+function getFormData(){ return { product:$('product')?.value.trim()||'', location:$('location')?.value.trim()||'', view:$('view')?.value.trim()||'', promptStrategy:$('promptStrategy')?.value||localStorage.getItem(LS_PROMPT_STRATEGY)||'viral', gemMode:$('gemMode')?.value||DEFAULT_GEM_MODE, providerMode:$('providerMode')?.value||'gemini', voiceType:$('voiceType')?.value||'thai_female', viralTone:$('viralTone')?.value||'ล้างสต๊อก', sceneCount:Number($('sceneCount')?.value||1), duration:Number($('duration')?.value||10), textOverlayEnabled: !!$('textOverlayEnabled')?.checked, textOverlayStyle:$('textOverlayStyle')?.value||'', textOverlayScene:$('textOverlayScene')?.value||'all', textOverlayHook:$('textOverlayHook')?.value.trim()||'', textOverlayPosition:$('textOverlayPosition')?.value||'center', textOverlaySize:$('textOverlaySize')?.value||'medium', h2OverlayEnabled: !!$('h2OverlayEnabled')?.checked, h2OverlayStyle:$('h2OverlayStyle')?.value||'', h2OverlayScene:$('h2OverlayScene')?.value||'all', h2OverlayHook:$('h2OverlayHook')?.value.trim()||'' }; }
 function saveForm(){ const data = getFormData(); localStorage.setItem(LS_FORM, JSON.stringify(data)); localStorage.setItem(LS_PROMPT_STRATEGY, data.promptStrategy || 'viral'); }
-function loadForm(){ const raw=localStorage.getItem(LS_FORM); if(!raw) return; try{ const d=JSON.parse(raw); if($('product')) $('product').value=d.product||''; if($('location')) $('location').value=d.location||''; if($('view')) $('view').value=d.view||''; if($('promptStrategy')) $('promptStrategy').value=d.promptStrategy || localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral'; if($('gemMode')) $('gemMode').value=d.gemMode||'signboard'; if($('providerMode')) $('providerMode').value=d.providerMode||'gemini'; if($('voiceType')) $('voiceType').value=d.voiceType||'thai_female'; if($('viralTone')) $('viralTone').value=d.viralTone||'ล้างสต๊อก'; if($('sceneCount')) $('sceneCount').value=String(d.sceneCount||1); if($('duration')) $('duration').value=String(d.duration||10); if($('textOverlayEnabled')) $('textOverlayEnabled').checked=!!d.textOverlayEnabled; if($('textOverlayStyle')) $('textOverlayStyle').value=d.textOverlayStyle||''; if($('textOverlayScene')) $('textOverlayScene').value=d.textOverlayScene||'all'; if($('textOverlayHook')) $('textOverlayHook').value=d.textOverlayHook||''; if($('textOverlayPosition')) $('textOverlayPosition').value=d.textOverlayPosition||'center'; if($('textOverlaySize')) $('textOverlaySize').value=d.textOverlaySize||'medium'; if($('h2OverlayEnabled')) $('h2OverlayEnabled').checked=!!d.h2OverlayEnabled; if($('h2OverlayStyle')) $('h2OverlayStyle').value=d.h2OverlayStyle||''; if($('h2OverlayScene')) $('h2OverlayScene').value=d.h2OverlayScene||'all'; if($('h2OverlayHook')) $('h2OverlayHook').value=d.h2OverlayHook||''; }catch{} }
+function loadForm(){ const raw=localStorage.getItem(LS_FORM); if(!raw) return; try{ const d=JSON.parse(raw); if($('product')) $('product').value=d.product||''; if($('location')) $('location').value=d.location||''; if($('view')) $('view').value=d.view||''; if($('promptStrategy')) $('promptStrategy').value=d.promptStrategy || localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral'; if($('gemMode')) $('gemMode').value=d.gemMode||DEFAULT_GEM_MODE; if($('providerMode')) $('providerMode').value=d.providerMode||'gemini'; if($('voiceType')) $('voiceType').value=d.voiceType||'thai_female'; if($('viralTone')) $('viralTone').value=d.viralTone||'ล้างสต๊อก'; if($('sceneCount')) $('sceneCount').value=String(d.sceneCount||1); if($('duration')) $('duration').value=String(d.duration||10); if($('textOverlayEnabled')) $('textOverlayEnabled').checked=!!d.textOverlayEnabled; if($('textOverlayStyle')) $('textOverlayStyle').value=d.textOverlayStyle||''; if($('textOverlayScene')) $('textOverlayScene').value=d.textOverlayScene||'all'; if($('textOverlayHook')) $('textOverlayHook').value=d.textOverlayHook||''; if($('textOverlayPosition')) $('textOverlayPosition').value=d.textOverlayPosition||'center'; if($('textOverlaySize')) $('textOverlaySize').value=d.textOverlaySize||'medium'; if($('h2OverlayEnabled')) $('h2OverlayEnabled').checked=!!d.h2OverlayEnabled; if($('h2OverlayStyle')) $('h2OverlayStyle').value=d.h2OverlayStyle||''; if($('h2OverlayScene')) $('h2OverlayScene').value=d.h2OverlayScene||'all'; if($('h2OverlayHook')) $('h2OverlayHook').value=d.h2OverlayHook||''; }catch{} }
 
 function populateGemModeOptions(selectedMode){
   const select = $('gemMode');
   if(!select) return;
-  const current = selectedMode || select.value || 'signboard';
+  const current = selectedMode || select.value || DEFAULT_GEM_MODE;
   const options = getModeSource().getGemModeOptions();
   select.innerHTML = options.map(opt => `<option value="${opt.id}">${opt.label}</option>`).join('');
   select.value = current;
@@ -303,8 +304,11 @@ function applyGemMode(modeId, opts = {}){
 function maybeAutoDetectGemMode(){
   const product = $('product')?.value || '';
   if(!product.trim()) return;
+  const current = $('gemMode')?.value || DEFAULT_GEM_MODE;
+  // Keep the new Factory Conveyor mode as the default working mode.
+  // Factory subtype F01-F20 is selected inside the factory system prompt from product name.
+  if(current === DEFAULT_GEM_MODE) return;
   const detected = getModeSource().autoDetectGemMode(product);
-  const current = $('gemMode')?.value || 'signboard';
   if(detected && detected !== current){
     applyGemMode(detected, { toast: true });
   }
@@ -343,7 +347,7 @@ function updateOverlayBodies(){
   $('h2OverlayBody')?.classList.toggle('show', !!$('h2OverlayEnabled')?.checked);
 }
 function getRecommendedOverlayConfig(){
-  const mode = $('gemMode')?.value || 'signboard';
+  const mode = $('gemMode')?.value || DEFAULT_GEM_MODE;
   const productName = $('product')?.value || '';
   return getModeSource().getRecommendedTextStyles ? getModeSource().getRecommendedTextStyles(mode, productName) : { text:'S-01', h2:'H2-01' };
 }
@@ -372,7 +376,7 @@ function getResolvedH2StyleId(){
 function getAutoHookText(){
   const product = $('product')?.value?.trim() || 'สินค้านี้';
   const tone = $('viralTone')?.value || 'ล้างสต๊อก';
-  const modeLabel = getModeSource().getGemModeConfig(($('gemMode')?.value || 'signboard')).label;
+  const modeLabel = getModeSource().getGemModeConfig(($('gemMode')?.value || DEFAULT_GEM_MODE)).label;
   const templates = [
     `หยุดดู ${product}!`,
     `${tone} ${product}`,
@@ -573,7 +577,7 @@ async function savePromptEdit(type){ const map={image:'imagePrompt',video:'video
 
 
 function loadExample(slot){
-  const mode = getModeSource().getGemModeConfig($('gemMode')?.value || 'signboard');
+  const mode = getModeSource().getGemModeConfig($('gemMode')?.value || DEFAULT_GEM_MODE);
   const examples = Array.isArray(mode.examples) ? mode.examples : [];
   const ex = normalizeExampleItem(examples[slot] || examples[0], slot);
   if(!ex.title) return;
@@ -783,7 +787,7 @@ function renderSceneWorkspace(sceneCount, imagePrompt='', videoPrompt=''){
 }
 
 
-function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('promptStrategy')) $('promptStrategy').value='viral'; localStorage.setItem(LS_PROMPT_STRATEGY,'viral'); populateGemModeOptions('signboard'); if($('gemMode')) $('gemMode').value='signboard'; if($('providerMode')) $('providerMode').value='gemini'; if($('voiceType')) $('voiceType').value='thai_female'; populateViralToneOptions('signboard','ล้างสต๊อก'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; if($('textOverlayEnabled')) $('textOverlayEnabled').checked=false; if($('textOverlayStyle')) $('textOverlayStyle').value='auto'; if($('textOverlayScene')) $('textOverlayScene').value='all'; if($('textOverlayHook')) $('textOverlayHook').value=''; if($('textOverlayPosition')) $('textOverlayPosition').value='center'; if($('textOverlaySize')) $('textOverlaySize').value='medium'; if($('h2OverlayEnabled')) $('h2OverlayEnabled').checked=false; if($('h2OverlayStyle')) $('h2OverlayStyle').value='auto'; if($('h2OverlayScene')) $('h2OverlayScene').value='all'; if($('h2OverlayHook')) $('h2OverlayHook').value=''; updateOverlayBodies(); updateOverlayPreview(); resetSceneWorkspace(); if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
+function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('promptStrategy')) $('promptStrategy').value='viral'; localStorage.setItem(LS_PROMPT_STRATEGY,'viral'); populateGemModeOptions(DEFAULT_GEM_MODE); if($('gemMode')) $('gemMode').value=DEFAULT_GEM_MODE; if($('providerMode')) $('providerMode').value='gemini'; if($('voiceType')) $('voiceType').value='thai_female'; populateViralToneOptions(DEFAULT_GEM_MODE,'โรงงานจริงดูเพลินมาก'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; if($('textOverlayEnabled')) $('textOverlayEnabled').checked=false; if($('textOverlayStyle')) $('textOverlayStyle').value='auto'; if($('textOverlayScene')) $('textOverlayScene').value='all'; if($('textOverlayHook')) $('textOverlayHook').value=''; if($('textOverlayPosition')) $('textOverlayPosition').value='center'; if($('textOverlaySize')) $('textOverlaySize').value='medium'; if($('h2OverlayEnabled')) $('h2OverlayEnabled').checked=false; if($('h2OverlayStyle')) $('h2OverlayStyle').value='auto'; if($('h2OverlayScene')) $('h2OverlayScene').value='all'; if($('h2OverlayHook')) $('h2OverlayHook').value=''; updateOverlayBodies(); updateOverlayPreview(); resetSceneWorkspace(); if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
 
 function buildSceneTimeRange(sceneNo = 1, sceneCount = 1, duration = 10){
   const count = Math.max(1, Number(sceneCount || 1));
@@ -1093,7 +1097,7 @@ function renderHistoryList(items){
     const when=d?d.toLocaleString('th-TH'):'ล่าสุด';
     return `<div class="history-item">
       <h4>${escapeHtml(item.product||'Untitled')}</h4>
-      <div class="meta">${when} • ${escapeHtml(item.location||'-')} • ${item.sceneCount||1} scene • ${item.duration||10}s • ${escapeHtml(getModeSource().getGemModeConfig(item.gemMode||'signboard').label)} • ${escapeHtml(item.providerMode||'gemini')}</div>
+      <div class="meta">${when} • ${escapeHtml(item.location||'-')} • ${item.sceneCount||1} scene • ${item.duration||10}s • ${escapeHtml(getModeSource().getGemModeConfig(item.gemMode||DEFAULT_GEM_MODE).label)} • ${escapeHtml(item.providerMode||'gemini')}</div>
       <div class="preview"><strong>IMAGE:</strong> ${escapeHtml(item.imagePrompt||'')}</div>
       <div class="preview" style="margin-top:8px"><strong>VDO:</strong> ${escapeHtml(item.videoPrompt||'')}</div>
       <div class="preview" style="margin-top:8px"><strong>CAPTION:</strong> ${escapeHtml(item.captionHashtags||'')}</div>
@@ -1115,10 +1119,10 @@ async function useHistoryItem(id){
     if($('product')) $('product').value=item.product||'';
     if($('location')) $('location').value=item.location||'';
     if($('view')) $('view').value=item.view||'';
-    if($('gemMode')) $('gemMode').value=item.gemMode||getModeSource().autoDetectGemMode(item.product||'');
+    if($('gemMode')) $('gemMode').value=item.gemMode||DEFAULT_GEM_MODE;
     if($('providerMode')) $('providerMode').value=item.providerMode||'gemini';
     if($('voiceType')) $('voiceType').value=item.voiceType||'หญิง';
-    applyGemMode($('gemMode')?.value || 'signboard', { selectedTone: item.viralTone || '', skipSave: true });
+    applyGemMode($('gemMode')?.value || DEFAULT_GEM_MODE, { selectedTone: item.viralTone || '', skipSave: true });
     if($('sceneCount')) $('sceneCount').value=String(item.sceneCount||1);
     if($('duration')) $('duration').value=String(item.duration||10);
     if($('imagePrompt')) $('imagePrompt').value=item.imagePrompt||'';
@@ -1174,7 +1178,7 @@ function bindEvents(){ safeBind('deleteModal','click',(e)=>{
 safeBind('promptStrategy','change',()=>{
   localStorage.setItem(LS_PROMPT_STRATEGY, $('promptStrategy')?.value || 'viral');
 
-  const currentMode = $('gemMode')?.value || 'signboard';
+  const currentMode = $('gemMode')?.value || DEFAULT_GEM_MODE;
   populateGemModeOptions(currentMode);
 
   const nextMode = $('gemMode')?.value || currentMode;
@@ -1185,10 +1189,10 @@ safeBind('promptStrategy','change',()=>{
 });
 
 safeBind('gemMode','change',()=>{
-  const modeId = $('gemMode')?.value || 'signboard';
+  const modeId = $('gemMode')?.value || DEFAULT_GEM_MODE;
   applyGemMode(modeId, { toast: true });
 });
-safeBind('textOverlayEnabled','change',()=>{ updateOverlayBodies(); updateOverlayPreview(); saveAndRefresh(); }); safeBind('h2OverlayEnabled','change',()=>{ updateOverlayBodies(); updateOverlayPreview(); saveAndRefresh(); }); ['textOverlayStyle','textOverlayScene','textOverlayHook','textOverlayPosition','textOverlaySize','h2OverlayStyle','h2OverlayScene','h2OverlayHook'].forEach(id=>{ safeBind(id,'input',()=>{ updateOverlayPreview(); saveAndRefresh(); }); safeBind(id,'change',()=>{ updateOverlayPreview(); saveAndRefresh(); }); }); safeBind('sceneCount','change',()=>{ populateOverlaySceneOptions(); updateOverlayPreview(); saveAndRefresh(); }); safeBind('gemMode','change',()=>{ const modeId = $('gemMode')?.value || 'signboard'; applyGemMode(modeId, { toast: true }); populateTextStyleOptions(); populateH2StyleOptions(); updateOverlayPreview(); }); safeBind('product','blur',maybeAutoDetectGemMode); safeBind('product','change',maybeAutoDetectGemMode); ['product','location','view','promptStrategy','gemMode','providerMode','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
+safeBind('textOverlayEnabled','change',()=>{ updateOverlayBodies(); updateOverlayPreview(); saveAndRefresh(); }); safeBind('h2OverlayEnabled','change',()=>{ updateOverlayBodies(); updateOverlayPreview(); saveAndRefresh(); }); ['textOverlayStyle','textOverlayScene','textOverlayHook','textOverlayPosition','textOverlaySize','h2OverlayStyle','h2OverlayScene','h2OverlayHook'].forEach(id=>{ safeBind(id,'input',()=>{ updateOverlayPreview(); saveAndRefresh(); }); safeBind(id,'change',()=>{ updateOverlayPreview(); saveAndRefresh(); }); }); safeBind('sceneCount','change',()=>{ populateOverlaySceneOptions(); updateOverlayPreview(); saveAndRefresh(); }); safeBind('gemMode','change',()=>{ const modeId = $('gemMode')?.value || DEFAULT_GEM_MODE; applyGemMode(modeId, { toast: true }); populateTextStyleOptions(); populateH2StyleOptions(); updateOverlayPreview(); }); safeBind('product','blur',maybeAutoDetectGemMode); safeBind('product','change',maybeAutoDetectGemMode); ['product','location','view','promptStrategy','gemMode','providerMode','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
 
 function rebindOpenAIButtons(){
   const connectBtn = $('connectOpenAIKeyBtn');
@@ -1209,12 +1213,12 @@ function rebindOpenAIButtons(){
 
 async function init(){
   if($('promptStrategy')) $('promptStrategy').value = localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral';
-  populateGemModeOptions('signboard');
+  populateGemModeOptions(DEFAULT_GEM_MODE);
   bindEvents();
   rebindOpenAIButtons();
   loadForm();
-  populateGemModeOptions($('gemMode')?.value || 'signboard');
-  applyGemMode(($('gemMode')?.value || 'signboard'), { keepTone: true, skipSave: true });
+  populateGemModeOptions($('gemMode')?.value || DEFAULT_GEM_MODE);
+  applyGemMode(($('gemMode')?.value || DEFAULT_GEM_MODE), { keepTone: true, skipSave: true });
   populateTextStyleOptions();
   populateH2StyleOptions();
   populateOverlaySceneOptions();

@@ -1,4 +1,105 @@
 export const GEM_MODES = {
+  'factory_conveyor': {
+    id: 'factory_conveyor',
+    label: 'โรงงานสายพาน',
+    description: 'โหมดโรงงานสายพาน F01-F20 เลือกโรงงานอัตโนมัติตามชื่อสินค้า สร้าง IMAGE PROMPT และ VIDEO + AUDIO PROMPT แบบ cinematic industrial conveyor',
+    keywords: [
+      'โรงงาน','สายพาน','ผลิต','ไลน์ผลิต','factory','conveyor','production line','assembly line','packaging line','manufacturing',
+      'ข้าว','rice','หอมมะลิ','ข้าวสาร','ผลไม้','มังคุด','ทุเรียน','ลำไย','ส้ม','fruit','ปลา','กุ้ง','ทะเล','seafood','fish','ยาง','latex',
+      'อาหาร','ขนม','snack','food','น้ำพริก','ซอส','เครื่องดื่ม','น้ำดื่ม','กาแฟ','ชา','drink','beverage',
+      'เสื้อ','ผ้า','แฟชั่น','fashion','รองเท้า','shoe','sneaker','พลาสติก','packaging','ขวด','กล่อง',
+      'เครื่องสำอาง','ครีม','เซรั่ม','skincare','cosmetic','คลัง','warehouse','logistics','พัสดุ',
+      'อาหารเสริม','วิตามิน','supplement','ยา','capsule','electronics','pcb','วงจร','มือถือ','smartphone',
+      'chip','semiconductor','ชิป','รถ','ยนต์','automotive','metal','โลหะ','cnc','แบต','battery','ev','server','data center','เซิร์ฟเวอร์'
+    ],
+    viralTones: [
+      'โรงงานจริงดูเพลินมาก',
+      'สายพานโคตร satisfying',
+      'ผลิตจริงทุกขั้นตอน',
+      'โรงงานระดับโปร',
+      'ดูแล้วหยุดไม่ได้',
+      'ไลน์ผลิตสวยมาก',
+      'ของเรียงเป๊ะเหมือนไวรัล',
+      'industrial ASMR',
+      'เห็นแล้วน่าเชื่อถือ',
+      'ผลิตสดจากโรงงาน'
+    ],
+    factories: {
+      F01: { name:'นาข้าวพื้นบ้าน', useFor:['ข้าวเปลือก','เกษตร','นา','เมล็ดพันธุ์'], visual:'ชาวนาไทย หมวกฟาง ทุ่งนาเขียว รถเกี่ยวข้าวหรือรางลำเลียงกลางนา' },
+      F02: { name:'โรงสีข้าวชุมชน', useFor:['ข้าวสาร','ข้าวหอมมะลิ','rice'], visual:'โรงสีข้าวไทย กระสอบข้าว ฝุ่นแป้งบาง ๆ สายพานถุงข้าว' },
+      F03: { name:'โรงคัดแยกผลไม้', useFor:['ผลไม้','มังคุด','ทุเรียน','ลำไย','ส้ม'], visual:'สายพานคัดผลไม้สด คนงานใส่หมวกและถุงมือ ผลไม้เรียงสีสวย' },
+      F04: { name:'โรงงานแปรรูปปลา', useFor:['ปลา','กุ้ง','อาหารทะเล','seafood'], visual:'ปลา/อาหารทะเลบนสายพานน้ำแข็ง คนงานชุดกันน้ำ ถุงมือ ผ้ากันเปื้อน' },
+      F05: { name:'โรงงานยางพารา', useFor:['ยาง','latex','ถุงมือยาง'], visual:'หม้อต้ม/รีดยาง ไอน้ำร้อน โรงงานยางพาราไทย' },
+      F06: { name:'โรงงานอาหาร/ขนม', useFor:['อาหาร','ขนม','ซอส','น้ำพริก','ของกิน'], visual:'สายพานอาหารหรือขนม แสตนเลสสะอาด คนงานหมวกคลุมผม' },
+      F07: { name:'โรงงานเครื่องดื่ม', useFor:['น้ำดื่ม','เครื่องดื่ม','กาแฟ','ชา','น้ำผลไม้'], visual:'ขวดเครื่องดื่มเรียงบนสายพาน เครื่องบรรจุขวด แสงสะอาด' },
+      F08: { name:'โรงงานเสื้อผ้า', useFor:['เสื้อ','กางเกง','ผ้า','แฟชั่น'], visual:'โต๊ะตัดเย็บ จักรเย็บผ้า แพ็กเสื้อผ้าบนสายพาน' },
+      F09: { name:'โรงงานรองเท้า', useFor:['รองเท้า','sneaker','shoe'], visual:'รองเท้าเรียงสมมาตรบนสายพาน คนงานตรวจ QC สองฝั่ง' },
+      F10: { name:'โรงงานพลาสติก', useFor:['พลาสติก','กล่อง','ขวด','แพ็กเกจ'], visual:'เครื่อง injection molding แพ็กพลาสติก ควันบาง แสงโรงงาน' },
+      F11: { name:'โรงงานเครื่องสำอาง', useFor:['ครีม','เซรั่ม','สกินแคร์','เครื่องสำอาง'], visual:'ขวดครีม/เซรั่มบนสายพาน clean beauty robot arm สีขาวพรีเมียม' },
+      F12: { name:'คลังสินค้า', useFor:['กล่อง','พัสดุ','ส่งของ','warehouse','logistics'], visual:'คลังสินค้าชั้นวางสูง กล่องพัสดุบนสายพาน forklift ด้านหลัง' },
+      F13: { name:'อาหารเสริม/ยา Cleanroom', useFor:['อาหารเสริม','วิตามิน','ยา','capsule','supplement'], visual:'cleanroom lab coat N95 ขวดอาหารเสริม/กล่องบนสายพาน sterile white' },
+      F14: { name:'อิเล็กทรอนิกส์ PCB', useFor:['อิเล็กทรอนิกส์','pcb','วงจร'], visual:'แผงวงจร PCB บนสายพาน ESD anti-static คนงานชุดน้ำเงิน' },
+      F15: { name:'ประกอบ Smartphone', useFor:['มือถือ','smartphone','phone'], visual:'สายพานประกอบสมาร์ตโฟน cleanroom precision assembly' },
+      F16: { name:'Chip / Semiconductor', useFor:['chip','ชิป','semiconductor'], visual:'yellow room full bunny suit wafer semiconductor high-tech' },
+      F17: { name:'รถยนต์ Robotic Welding', useFor:['รถ','รถยนต์','automotive','car'], visual:'หุ่นยนต์เชื่อมประกายไฟ โรงงานรถยนต์ขนาดใหญ่' },
+      F18: { name:'โลหะ / CNC', useFor:['โลหะ','เหล็ก','cnc','metal'], visual:'เครื่อง CNC กัดโลหะ ประกายไฟ น้ำหล่อเย็น เสียงเครื่องจักรหนัก' },
+      F19: { name:'แบตเตอรี่ / EV', useFor:['แบต','battery','ev'], visual:'ไลน์ผลิตแบตเตอรี่ EV precision automated ESD' },
+      F20: { name:'Data Center', useFor:['server','data center','เซิร์ฟเวอร์'], visual:'server rack ไฟสีน้ำเงิน ห้องเย็นจัด data center' }
+    },
+    randomLocations: [
+      'AUTO FACTORY SELECT: เลือก F-code จากชื่อสินค้า ถ้าเป็นข้าวใช้ F02, ผลไม้ใช้ F03, อาหารเสริมใช้ F13, เครื่องสำอางใช้ F11, คลังใช้ F12',
+      'โรงงานสายพานอุตสาหกรรมไทยแบบ cinematic มีคนงานสองฝั่งและสินค้าเรียงสมมาตร',
+      'modern Thai factory production line with centered conveyor belt and strong vanishing point',
+      'clean industrial manufacturing line, stainless steel conveyor, realistic workers, vertical 9:16',
+      'satisfying factory conveyor scene, products aligned perfectly, documentary industrial realism'
+    ],
+    randomViews: [
+      'กล้องอยู่กึ่งกลางสายพาน มุม wide 24mm สินค้าเรียงเข้าหากล้อง คนงานยืนสองฝั่ง',
+      'centered symmetrical conveyor belt composition, deep vanishing point, products moving toward camera',
+      'สายพานเด่นเต็ม foreground เห็นเครื่องจักรและคนงานตรวจ QC แบบสมจริง',
+      'single continuous conveyor shot, industrial ASMR aesthetic, satisfying repetitive motion',
+      'tracking shot along conveyor belt with realistic worker micro-actions and machine movement'
+    ],
+    examples: [
+      { title:'F03 โรงคัดแยกผลไม้', location:'โรงคัดแยกผลไม้ไทย สายพานยาว แสงธรรมชาติในโกดัง', view:'มังคุด/ผลไม้สดเรียงบนสายพาน คนงานคัดแยกสองฝั่ง มุมกล้องกึ่งกลางสายพาน' },
+      { title:'F13 อาหารเสริม/ยา', location:'cleanroom อาหารเสริม sterile white lab coat N95', view:'ขวดอาหารเสริมและกล่องเรียงบนสายพาน คนงานชุดกาวน์ตรวจ QC สองฝั่ง' },
+      { title:'F12 คลังสินค้า', location:'คลังสินค้าชั้นวางสูง forklift และกล่องพัสดุ', view:'กล่องสินค้าบนสายพานยาวพุ่งเข้ากล้อง คนงานเสื้อสะท้อนแสงยืนสองฝั่ง' }
+    ],
+    systemPrompt: `You are an INDUSTRIAL FACTORY CONVEYOR PROMPT DIRECTOR for Thai TikTok commerce, Veo3, Google Flow, Sora, Kling, Runway.
+
+MISSION:
+Create FINAL READY IMAGE PROMPT and VIDEO + AUDIO PROMPT in the factory conveyor style.
+The output must look like a real cinematic production line, not a generic product ad.
+
+AUTO FACTORY SELECTION RULE:
+If the user does not explicitly choose an F-code, automatically select the best factory type from the product name:
+F01 rice field / agriculture, F02 community rice mill, F03 fruit sorting, F04 fish/seafood processing, F05 rubber/latex, F06 food/snack, F07 beverage bottling, F08 garment/textile, F09 shoes, F10 plastic/injection, F11 cosmetics/skincare, F12 warehouse/logistics, F13 supplement/pharmaceutical cleanroom, F14 electronics PCB, F15 smartphone assembly, F16 chip/semiconductor, F17 automotive robotic welding, F18 metal/CNC, F19 battery/EV, F20 data center/server.
+If unclear, default to the closest visual factory; for general products use F12 warehouse/logistics or F06 general packaging line.
+
+MANDATORY IMAGE STYLE:
+- ultra realistic industrial factory conveyor belt scene
+- centered symmetrical composition
+- long conveyor belt leading into deep vanishing point
+- products perfectly aligned in rows
+- workers standing on both sides inspecting/sorting/packing
+- realistic Thai factory or product-specific industrial environment
+- cinematic industrial lighting, documentary realism
+- vertical 9:16, wide lens 24mm, low eye-level or centered conveyor angle
+- conveyor belt must dominate foreground
+- no random background text, no watermark, no cartoon, no CGI
+
+MANDATORY VIDEO STYLE:
+- single continuous centered conveyor shot or smooth tracking shot
+- conveyor continuously moves products toward camera
+- workers perform realistic micro-actions: sorting, inspecting, packing, adjusting, QC checking
+- machines operate naturally with subtle blinking lights, rollers, robot arms, steam, cold mist, or cleanroom motion depending on F-code
+- include camera movement: slow push-in, tracking along conveyor, rack focus from foreground product to deep production line
+- industrial ASMR / satisfying repetitive motion feeling
+- Thai spoken dialogue may be included only in VIDEO + AUDIO PROMPT, natural UGC commercial tone
+
+STRICT OUTPUT:
+Return final prompts only. Do not return strategy notes. Image prompt must be one complete visual prompt. Video prompt must include visible motion, camera movement, worker action, production continuity, and Thai audio/dialogue when needed.`
+  },
   'tiktok_live': {
     id: 'tiktok_live',
     label: 'TikTok Live',
@@ -1748,6 +1849,7 @@ export const H2_STYLE_LIBRARY = {
 };
 
 const MODE_TEXT_STYLE_MAP = {
+  factory_conveyor: { text:'S-142', h2:'H2-22' },
   tiktok_live: { text:'S-142', h2:'H2-22' },
   signboard: { text:'S-142', h2:'H2-22' },
   supplement_stop_scroll: { text:'S-151', h2:'H2-13' },
