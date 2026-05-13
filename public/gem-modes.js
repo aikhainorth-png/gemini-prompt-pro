@@ -2,7 +2,7 @@ export const GEM_MODES = {
 
   'infographic_ai': {
     id: 'infographic_ai',
-    label: 'MODE INFOGRAPHIC AI',
+    label: 'อินโฟกราฟิก AI',
     description: 'สร้างภาพอินโฟกราฟิกสินค้าแนวสุขภาพ/บิวตี้/อาหารเสริม แบบ Bubble รอบสินค้า Timeline Checklist Icon และข้อความอ่านง่ายสำหรับ TikTok, Facebook, LINE OA, Shopee',
     keywords: [
       'infographic','อินโฟกราฟิก','อินโฟ','ข้อมูลสินค้า','benefit','ประโยชน์','วิตามิน','vitamin','ซิงค์','zinc','คอลลาเจน','collagen','กลูต้า','gluta','อาหารเสริม','supplement','บำรุง','สุขภาพ','health','ผิวใส','สิว','รอยดำ','ริ้วรอย','ชุ่มชื้น','beauty','skincare','สกินแคร์','ครีม','เซรั่ม','serum','เบอร์รี่','berry'
