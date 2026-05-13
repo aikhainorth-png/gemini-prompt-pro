@@ -16,7 +16,7 @@ const LS_FORM = 'GEMINI_FINAL_PROMPT_PRO_FORM_SPARK_V1';
 const LS_KEY = 'userGeminiApiKey';
 const LS_OPENAI_KEY = 'userOpenAIApiKey';
 const DEFAULT_MODEL = 'gemini-2.5-flash';
-const DEFAULT_GEM_MODE = 'factory_conveyor';
+const DEFAULT_GEM_MODE = 'infographic_ai';
 const LS_PROMPT_STRATEGY = 'GEMINI_FINAL_PROMPT_PRO_PROMPT_STRATEGY_V1';
 const $ = (id) => document.getElementById(id);
 const app = initializeApp(firebaseConfig);
@@ -90,6 +90,53 @@ function getThaiCharacterVoiceProfile(voiceType='thai_female'){
   const normalized = {'หญิง':'thai_female','ชาย':'thai_male','ผู้หญิง':'thai_female','ผู้ชาย':'thai_male','หญิงชรา':'elder_female','ชายชรา':'elder_male','เด็กผู้หญิง':'thai_girl','เด็กผู้ชาย':'thai_boy'}[voiceType] || voiceType || 'thai_female';
   return THAI_CHARACTER_VOICE_PROFILES[normalized] || THAI_CHARACTER_VOICE_PROFILES.thai_female;
 }
+
+function isProductOnlyMode(d={}){
+  const voiceType = String(d.voiceType || '').toLowerCase();
+  const gemMode = String(d.gemMode || '').toLowerCase();
+  return voiceType === 'product_only' || gemMode === 'infographic_ai';
+}
+
+function getAutoProductVoiceProfile(d={}){
+  const product = `${d.product || ''} ${d.gemMode || ''}`.toLowerCase();
+  if(/เด็ก|baby|mom|แม่และเด็ก|ของใช้เด็ก/.test(product)) return THAI_CHARACTER_VOICE_PROFILES.thai_female;
+  if(/เครื่องสำอาง|ครีม|เซรั่ม|skincare|cosmetic|beauty|gluta|collagen|vitamin|วิตามิน|อาหารเสริม|ผิว/.test(product)) return THAI_CHARACTER_VOICE_PROFILES.thai_female;
+  if(/เครื่องมือ|ช่าง|รถ|แบต|metal|cnc|server|data|electronics|pcb|รองเท้า|กีฬา/.test(product)) return THAI_CHARACTER_VOICE_PROFILES.thai_male;
+  const sum = String(d.product || '').split('').reduce((a,ch)=>a+ch.charCodeAt(0),0);
+  return (sum % 2 === 0) ? THAI_CHARACTER_VOICE_PROFILES.thai_female : THAI_CHARACTER_VOICE_PROFILES.thai_male;
+}
+
+function getActiveVoiceProfile(d={}){
+  return isProductOnlyMode(d) ? getAutoProductVoiceProfile(d) : getThaiCharacterVoiceProfile(d.voiceType);
+}
+
+function getActiveVoiceLabel(d={}){
+  if(isProductOnlyMode(d)) return `โชว์แต่สินค้า + เสียงพากย์สุ่มตามสินค้า (${getAutoProductVoiceProfile(d).label})`;
+  return getThaiCharacterVoiceProfile(d.voiceType).label || d.voiceType || '-';
+}
+
+function enforceProductOnlyPrompt(text = '', type = 'image', d = {}) {
+  let src = stripRepeatedCharacterBlocks(text || '');
+
+  src = src
+    .replace(/Thai\s*\/\s*Asian\s*(?:presenter|host|person|woman|man|identity)[^\n.]*(?:\.|\n|$)/ig, '')
+    .replace(/(?:Thai|Asian)\s+(?:female|male|woman|man|presenter|host)[^\n.]*(?:\.|\n|$)/ig, '')
+    .replace(/\b(?:presenter|host|model|influencer|woman|man|person|people|human|face|faces|hand|hands|arm|arms|body|character)\b[^\n.]*(?:\.|\n|$)/ig, '')
+    .replace(/(?:ผู้หญิง|ผู้ชาย|พรีเซนเตอร์|นางแบบ|นายแบบ|คน|มือ|ใบหน้า|ตัวละคร)[^\n.]*(?:\.|\n|$)/g, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+
+  const productLock = type === 'image'
+    ? 'PRODUCT ONLY LOCK: Show only the product as the hero. No human, no presenter, no face, no hands, no body parts, no character. Use the attached/uploaded image as product reference only. Product must be large, centered, sharp, and clearly visible.'
+    : 'PRODUCT ONLY VIDEO LOCK: Show only the product, packaging, infographic elements, icons, arrows, motion graphics, camera movement, and environment. No human, no presenter, no face, no hands, no body parts, no character. Audio must be off-screen Thai voiceover only.';
+
+  if (!/PRODUCT\s+ONLY\s+(?:LOCK|VIDEO\s+LOCK)/i.test(src)) {
+    src = `${productLock}\n${src}`.trim();
+  }
+
+  return src;
+}
+
 function getCharacterId(d={}, character={}){
   return character?.characterId || character?.shortName || d.characterSessionId || generateCharacterSessionId();
 }
@@ -114,6 +161,7 @@ function stripRepeatedCharacterBlocks(text=''){
 }
 
 function buildCharacterDNAHeader(d, character, type='image'){
+  if(isProductOnlyMode(d)) return '';
   const profile = getThaiCharacterVoiceProfile(d.voiceType);
   const id = getCharacterId(d, character);
   const visualDna = `${profile.dna}; ${character?.summary || ''}`.replace(/\s+/g,' ').trim();
@@ -126,12 +174,14 @@ function buildCharacterDNAHeader(d, character, type='image'){
 }
 
 function prependDNAIfMissing(text='', d, character, type='image'){
+  if(isProductOnlyMode(d)) return enforceProductOnlyPrompt(text, type, d);
   const cleaned = stripRepeatedCharacterBlocks(text);
   const header = buildCharacterDNAHeader(d, character, type);
   return `${header}\n\n${cleaned}`.trim();
 }
 
 function injectDNAIntoStructuredPrompt(prompt='', type='image', d={}, character={}){
+  if(isProductOnlyMode(d)) return enforceProductOnlyPrompt(prompt, type, d);
   const count = Number(d.sceneCount || 1);
   const src = normalizeTextBlock(prompt);
   if(!src) return src;
@@ -252,14 +302,14 @@ function deleteKeyNow(){
  closeDeleteModal();
  showToast('ลบ Gemini Key แล้ว');
 }
-function getFormData(){ return { product:$('product')?.value.trim()||'', location:$('location')?.value.trim()||'', view:$('view')?.value.trim()||'', promptStrategy:$('promptStrategy')?.value||localStorage.getItem(LS_PROMPT_STRATEGY)||'viral', gemMode:$('gemMode')?.value||DEFAULT_GEM_MODE, providerMode:$('providerMode')?.value||'gemini', voiceType:$('voiceType')?.value||'thai_female', viralTone:$('viralTone')?.value||'ล้างสต๊อก', sceneCount:Number($('sceneCount')?.value||1), duration:Number($('duration')?.value||10), textOverlayEnabled: !!$('textOverlayEnabled')?.checked, textOverlayStyle:$('textOverlayStyle')?.value||'', textOverlayScene:$('textOverlayScene')?.value||'all', textOverlayHook:$('textOverlayHook')?.value.trim()||'', textOverlayPosition:$('textOverlayPosition')?.value||'center', textOverlaySize:$('textOverlaySize')?.value||'medium', h2OverlayEnabled: !!$('h2OverlayEnabled')?.checked, h2OverlayStyle:$('h2OverlayStyle')?.value||'', h2OverlayScene:$('h2OverlayScene')?.value||'all', h2OverlayHook:$('h2OverlayHook')?.value.trim()||'' }; }
+function getFormData(){ return { product:$('product')?.value.trim()||'', location:$('location')?.value.trim()||'', view:$('view')?.value.trim()||'', promptStrategy:$('promptStrategy')?.value||localStorage.getItem(LS_PROMPT_STRATEGY)||'viral', gemMode:$('gemMode')?.value||DEFAULT_GEM_MODE, providerMode:$('providerMode')?.value||'gemini', voiceType:$('voiceType')?.value||'product_only', viralTone:$('viralTone')?.value||'ล้างสต๊อก', sceneCount:Number($('sceneCount')?.value||1), duration:Number($('duration')?.value||10), textOverlayEnabled: !!$('textOverlayEnabled')?.checked, textOverlayStyle:$('textOverlayStyle')?.value||'', textOverlayScene:$('textOverlayScene')?.value||'all', textOverlayHook:$('textOverlayHook')?.value.trim()||'', textOverlayPosition:$('textOverlayPosition')?.value||'center', textOverlaySize:$('textOverlaySize')?.value||'medium', h2OverlayEnabled: !!$('h2OverlayEnabled')?.checked, h2OverlayStyle:$('h2OverlayStyle')?.value||'', h2OverlayScene:$('h2OverlayScene')?.value||'all', h2OverlayHook:$('h2OverlayHook')?.value.trim()||'' }; }
 function saveForm(){ const data = getFormData(); localStorage.setItem(LS_FORM, JSON.stringify(data)); localStorage.setItem(LS_PROMPT_STRATEGY, data.promptStrategy || 'viral'); }
-function loadForm(){ const raw=localStorage.getItem(LS_FORM); if(!raw) return; try{ const d=JSON.parse(raw); if($('product')) $('product').value=d.product||''; if($('location')) $('location').value=d.location||''; if($('view')) $('view').value=d.view||''; if($('promptStrategy')) $('promptStrategy').value=d.promptStrategy || localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral'; if($('gemMode')) $('gemMode').value=d.gemMode||DEFAULT_GEM_MODE; if($('providerMode')) $('providerMode').value=d.providerMode||'gemini'; if($('voiceType')) $('voiceType').value=d.voiceType||'thai_female'; if($('viralTone')) $('viralTone').value=d.viralTone||'ล้างสต๊อก'; if($('sceneCount')) $('sceneCount').value=String(d.sceneCount||1); if($('duration')) $('duration').value=String(d.duration||10); if($('textOverlayEnabled')) $('textOverlayEnabled').checked=!!d.textOverlayEnabled; if($('textOverlayStyle')) $('textOverlayStyle').value=d.textOverlayStyle||''; if($('textOverlayScene')) $('textOverlayScene').value=d.textOverlayScene||'all'; if($('textOverlayHook')) $('textOverlayHook').value=d.textOverlayHook||''; if($('textOverlayPosition')) $('textOverlayPosition').value=d.textOverlayPosition||'center'; if($('textOverlaySize')) $('textOverlaySize').value=d.textOverlaySize||'medium'; if($('h2OverlayEnabled')) $('h2OverlayEnabled').checked=!!d.h2OverlayEnabled; if($('h2OverlayStyle')) $('h2OverlayStyle').value=d.h2OverlayStyle||''; if($('h2OverlayScene')) $('h2OverlayScene').value=d.h2OverlayScene||'all'; if($('h2OverlayHook')) $('h2OverlayHook').value=d.h2OverlayHook||''; }catch{} }
+function loadForm(){ const raw=localStorage.getItem(LS_FORM); if(!raw) return; try{ const d=JSON.parse(raw); if($('product')) $('product').value=d.product||''; if($('location')) $('location').value=d.location||''; if($('view')) $('view').value=d.view||''; if($('promptStrategy')) $('promptStrategy').value=d.promptStrategy || localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral'; if($('gemMode')) $('gemMode').value=d.gemMode||DEFAULT_GEM_MODE; if($('providerMode')) $('providerMode').value=d.providerMode||'gemini'; if($('voiceType')) $('voiceType').value=d.voiceType||'product_only'; if($('viralTone')) $('viralTone').value=d.viralTone||'ล้างสต๊อก'; if($('sceneCount')) $('sceneCount').value=String(d.sceneCount||1); if($('duration')) $('duration').value=String(d.duration||10); if($('textOverlayEnabled')) $('textOverlayEnabled').checked=!!d.textOverlayEnabled; if($('textOverlayStyle')) $('textOverlayStyle').value=d.textOverlayStyle||''; if($('textOverlayScene')) $('textOverlayScene').value=d.textOverlayScene||'all'; if($('textOverlayHook')) $('textOverlayHook').value=d.textOverlayHook||''; if($('textOverlayPosition')) $('textOverlayPosition').value=d.textOverlayPosition||'center'; if($('textOverlaySize')) $('textOverlaySize').value=d.textOverlaySize||'medium'; if($('h2OverlayEnabled')) $('h2OverlayEnabled').checked=!!d.h2OverlayEnabled; if($('h2OverlayStyle')) $('h2OverlayStyle').value=d.h2OverlayStyle||''; if($('h2OverlayScene')) $('h2OverlayScene').value=d.h2OverlayScene||'all'; if($('h2OverlayHook')) $('h2OverlayHook').value=d.h2OverlayHook||''; }catch{} }
 
 function populateGemModeOptions(selectedMode){
   const select = $('gemMode');
   if(!select) return;
-  const current = selectedMode || select.value || DEFAULT_GEM_MODE;
+  const current = selectedMode || select.value || 'signboard';
   const options = getModeSource().getGemModeOptions();
   select.innerHTML = options.map(opt => `<option value="${opt.id}">${opt.label}</option>`).join('');
   select.value = current;
@@ -304,11 +354,8 @@ function applyGemMode(modeId, opts = {}){
 function maybeAutoDetectGemMode(){
   const product = $('product')?.value || '';
   if(!product.trim()) return;
-  const current = $('gemMode')?.value || DEFAULT_GEM_MODE;
-  // Keep the new Factory Conveyor mode as the default working mode.
-  // Factory subtype F01-F20 is selected inside the factory system prompt from product name.
-  if(current === DEFAULT_GEM_MODE) return;
   const detected = getModeSource().autoDetectGemMode(product);
+  const current = $('gemMode')?.value || 'signboard';
   if(detected && detected !== current){
     applyGemMode(detected, { toast: true });
   }
@@ -347,7 +394,7 @@ function updateOverlayBodies(){
   $('h2OverlayBody')?.classList.toggle('show', !!$('h2OverlayEnabled')?.checked);
 }
 function getRecommendedOverlayConfig(){
-  const mode = $('gemMode')?.value || DEFAULT_GEM_MODE;
+  const mode = $('gemMode')?.value || 'signboard';
   const productName = $('product')?.value || '';
   return getModeSource().getRecommendedTextStyles ? getModeSource().getRecommendedTextStyles(mode, productName) : { text:'S-01', h2:'H2-01' };
 }
@@ -376,7 +423,7 @@ function getResolvedH2StyleId(){
 function getAutoHookText(){
   const product = $('product')?.value?.trim() || 'สินค้านี้';
   const tone = $('viralTone')?.value || 'ล้างสต๊อก';
-  const modeLabel = getModeSource().getGemModeConfig(($('gemMode')?.value || DEFAULT_GEM_MODE)).label;
+  const modeLabel = getModeSource().getGemModeConfig(($('gemMode')?.value || 'signboard')).label;
   const templates = [
     `หยุดดู ${product}!`,
     `${tone} ${product}`,
@@ -448,8 +495,15 @@ function buildAutoHookVisualScene1Block(d={}){
   const location = sanitizePolicyText(d.location || 'สถานที่ใช้งานจริงที่เหมาะกับสินค้า');
   const view = sanitizePolicyText(d.view || 'มุมกล้องมือถือแบบใช้งานจริง เห็นสินค้าเด่นชัด');
   const tone = sanitizePolicyText(d.viralTone || 'โปรแรง');
+  if(isProductOnlyMode(d)){
+    return `VISUAL:
+AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1:
+PRODUCT ONLY LOCK: Photorealistic vertical 9:16 product-only still image. Use any attached/uploaded image as the strict product reference only. Main product must be clearly visible and central: ${product}. Scene 1 must never be text-only; show only the product, packaging, pedestal, infographic bubbles, icons, arrows, labels, clean environment/background: ${location}. Hook visual direction: ${view}. Selling tone: ${tone}. ${getModeHookVisualDirective(d)} No human, no presenter, no face, no hands, no body parts, no character. Product-first hero composition, clean readable foreground, strong commercial lighting, no watermark, no random background text except real product label and intended overlay blocks.`;
+  }
   const characterProfile = getThaiCharacterVoiceProfile(d.voiceType);
-  return `VISUAL:\nAUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1:\nPhotorealistic live-action vertical 9:16 still image only. Use any attached/uploaded image as the strict product reference only. Main product must be clearly visible and central: ${product}. Scene 1 must never be text-only; show the product in the first frame with a Thai / Asian presenter (${characterProfile.image}) naturally holding, pointing to, touching, or demonstrating the product. Environment/background: ${location}. Hook visual direction: ${view}. Selling tone: ${tone}. ${getModeHookVisualDirective(d)} Product-first hero composition, clean readable foreground, strong commercial lighting, realistic hands, natural Thai retail/UGC mood, no watermark, no random background text except real product label and intended overlay blocks.`;
+  return `VISUAL:
+AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1:
+Photorealistic live-action vertical 9:16 still image only. Use any attached/uploaded image as the strict product reference only. Main product must be clearly visible and central: ${product}. Scene 1 must never be text-only; show the product in the first frame with a Thai / Asian presenter (${characterProfile.image}) naturally holding, pointing to, touching, or demonstrating the product. Environment/background: ${location}. Hook visual direction: ${view}. Selling tone: ${tone}. ${getModeHookVisualDirective(d)} Product-first hero composition, clean readable foreground, strong commercial lighting, realistic hands, natural Thai retail/UGC mood, no watermark, no random background text except real product label and intended overlay blocks.`;
 }
 
 function stripOverlayBlocksForVisualCheck(text=''){
@@ -553,7 +607,7 @@ function applyTextOverlayToImagePrompt(imagePrompt, d){
 }
 
 function formatPerScene(duration,sceneCount){ const v=duration/Math.max(sceneCount,1); return Number.isInteger(v)?`${v}s`:`${v.toFixed(1)}s`; }
-function updateSummary(){ const d=getFormData(); if($('summaryPreview')) $('summaryPreview').textContent=[`สินค้า: ${d.product||'-'}`,`สถานที่: ${d.location||'-'}`,`มุมมองสินค้า: ${d.view||'-'}`,`GEM MODE: ${getModeSource().getGemModeConfig(d.gemMode).label}`,`AI Provider: ${d.providerMode||'gemini'}`,`ตัวละคร + เสียงพากย์: ${getThaiCharacterVoiceProfile(d.voiceType).label||d.voiceType||'-'}`,`โทนไวรัล: ${d.viralTone||'-'}`,`จำนวน Scene: ${d.sceneCount}`,`เวลาทั้งหมด: ${d.duration} วินาที`,`เวลาเฉลี่ยต่อ Scene: ${formatPerScene(d.duration,d.sceneCount)}`,`TEXT OVERLAY: ${d.textOverlayEnabled ? (d.textOverlayStyle || 'auto') : 'ปิด'}`,`H2: ${d.h2OverlayEnabled ? (d.h2OverlayStyle || 'auto') : 'ปิด'}`,`STORE VIRAL PACK V3: 200 TEXT / 40 H2`].join('\n'); if($('statScene')) $('statScene').textContent=String(d.sceneCount); if($('statDuration')) $('statDuration').textContent=`${d.duration}s`; if($('statPerScene')) $('statPerScene').textContent=formatPerScene(d.duration,d.sceneCount); }
+function updateSummary(){ const d=getFormData(); if($('summaryPreview')) $('summaryPreview').textContent=[`สินค้า: ${d.product||'-'}`,`สถานที่: ${d.location||'-'}`,`มุมมองสินค้า: ${d.view||'-'}`,`GEM MODE: ${getModeSource().getGemModeConfig(d.gemMode).label}`,`AI Provider: ${d.providerMode||'gemini'}`,`ตัวละคร + เสียงพากย์: ${getActiveVoiceLabel(d)}`,`โทนไวรัล: ${d.viralTone||'-'}`,`จำนวน Scene: ${d.sceneCount}`,`เวลาทั้งหมด: ${d.duration} วินาที`,`เวลาเฉลี่ยต่อ Scene: ${formatPerScene(d.duration,d.sceneCount)}`,`TEXT OVERLAY: ${d.textOverlayEnabled ? (d.textOverlayStyle || 'auto') : 'ปิด'}`,`H2: ${d.h2OverlayEnabled ? (d.h2OverlayStyle || 'auto') : 'ปิด'}`,`STORE VIRAL PACK V3: 200 TEXT / 40 H2`].join('\n'); if($('statScene')) $('statScene').textContent=String(d.sceneCount); if($('statDuration')) $('statDuration').textContent=`${d.duration}s`; if($('statPerScene')) $('statPerScene').textContent=formatPerScene(d.duration,d.sceneCount); }
 function saveAndRefresh(){ saveForm(); updateSummary(); }
 function validateForm(d){ if(!d.product) return 'กรุณากรอกสินค้า'; return ''; }
 function setPromptEditing(type, editing){
@@ -577,7 +631,7 @@ async function savePromptEdit(type){ const map={image:'imagePrompt',video:'video
 
 
 function loadExample(slot){
-  const mode = getModeSource().getGemModeConfig($('gemMode')?.value || DEFAULT_GEM_MODE);
+  const mode = getModeSource().getGemModeConfig($('gemMode')?.value || 'signboard');
   const examples = Array.isArray(mode.examples) ? mode.examples : [];
   const ex = normalizeExampleItem(examples[slot] || examples[0], slot);
   if(!ex.title) return;
@@ -787,7 +841,7 @@ function renderSceneWorkspace(sceneCount, imagePrompt='', videoPrompt=''){
 }
 
 
-function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('promptStrategy')) $('promptStrategy').value='viral'; localStorage.setItem(LS_PROMPT_STRATEGY,'viral'); populateGemModeOptions(DEFAULT_GEM_MODE); if($('gemMode')) $('gemMode').value=DEFAULT_GEM_MODE; if($('providerMode')) $('providerMode').value='gemini'; if($('voiceType')) $('voiceType').value='thai_female'; populateViralToneOptions(DEFAULT_GEM_MODE,'โรงงานจริงดูเพลินมาก'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; if($('textOverlayEnabled')) $('textOverlayEnabled').checked=false; if($('textOverlayStyle')) $('textOverlayStyle').value='auto'; if($('textOverlayScene')) $('textOverlayScene').value='all'; if($('textOverlayHook')) $('textOverlayHook').value=''; if($('textOverlayPosition')) $('textOverlayPosition').value='center'; if($('textOverlaySize')) $('textOverlaySize').value='medium'; if($('h2OverlayEnabled')) $('h2OverlayEnabled').checked=false; if($('h2OverlayStyle')) $('h2OverlayStyle').value='auto'; if($('h2OverlayScene')) $('h2OverlayScene').value='all'; if($('h2OverlayHook')) $('h2OverlayHook').value=''; updateOverlayBodies(); updateOverlayPreview(); resetSceneWorkspace(); if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
+function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('promptStrategy')) $('promptStrategy').value='viral'; localStorage.setItem(LS_PROMPT_STRATEGY,'viral'); populateGemModeOptions(DEFAULT_GEM_MODE); if($('gemMode')) $('gemMode').value=DEFAULT_GEM_MODE; if($('providerMode')) $('providerMode').value='gemini'; if($('voiceType')) $('voiceType').value='product_only'; populateViralToneOptions(DEFAULT_GEM_MODE,'ประโยชน์ครบจบในภาพเดียว'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; if($('textOverlayEnabled')) $('textOverlayEnabled').checked=false; if($('textOverlayStyle')) $('textOverlayStyle').value='auto'; if($('textOverlayScene')) $('textOverlayScene').value='all'; if($('textOverlayHook')) $('textOverlayHook').value=''; if($('textOverlayPosition')) $('textOverlayPosition').value='center'; if($('textOverlaySize')) $('textOverlaySize').value='medium'; if($('h2OverlayEnabled')) $('h2OverlayEnabled').checked=false; if($('h2OverlayStyle')) $('h2OverlayStyle').value='auto'; if($('h2OverlayScene')) $('h2OverlayScene').value='all'; if($('h2OverlayHook')) $('h2OverlayHook').value=''; updateOverlayBodies(); updateOverlayPreview(); resetSceneWorkspace(); if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
 
 function buildSceneTimeRange(sceneNo = 1, sceneCount = 1, duration = 10){
   const count = Math.max(1, Number(sceneCount || 1));
@@ -839,8 +893,8 @@ IMAGE PROMPT SCENE RULE:
 
 function buildSystemInstruction(d = getPreparedFormData(getFormData())){
   const gem = getModeSource().getGemModeConfig(d.gemMode);
-  const character = buildCharacterFactoryProfile(d);
-  const thaiCharacterProfile = getThaiCharacterVoiceProfile(d.voiceType);
+  const character = isProductOnlyMode(d) ? {enabled:false, profileBlock:'', dnaBlock:'', lockBlock:''} : buildCharacterFactoryProfile(d);
+  const thaiCharacterProfile = getActiveVoiceProfile(d);
   const characterInstruction = character.enabled ? `
 
 CHARACTER FACTORY PRO MAX ACTIVE:
@@ -851,12 +905,17 @@ ${character.dnaBlock}
 ${character.lockBlock}` : '';
   return `${gem.systemPrompt}${characterInstruction}
 
-THAI CHARACTER + VOICE LOCK:
+${isProductOnlyMode(d) ? `PRODUCT ONLY + AUTO VOICE LOCK:
+- Mode: show product only; do not create or mention any visible human, presenter, face, hands, body parts, or character.
+- Image prompt must be product-only.
+- Video prompt must use product-only visuals and off-screen Thai voiceover only.
+- Auto selected voiceover profile from product/category: ${thaiCharacterProfile.label} — ${thaiCharacterProfile.voice}.
+- Default visual style: photorealistic product commercial / infographic cinematic only.` : `THAI CHARACTER + VOICE LOCK:
 - Selected character type: ${thaiCharacterProfile.label}.
 - Main character must be Thai / Asian only: ${thaiCharacterProfile.image}.
 - Voice must match selected character: ${thaiCharacterProfile.voice}.
 - Default visual style: photorealistic live-action cinematic only.
-- Never use 3D, cartoon, chibi, mascot, CGI, animation, Pixar-like, or stylized character unless the user explicitly types those words.
+- Never use 3D, cartoon, chibi, mascot, CGI, animation, Pixar-like, or stylized character unless the user explicitly types those words.`}
 
 GLOBAL OUTPUT RULES:
 - Return FINAL-READY prompts only, not analysis.
@@ -864,14 +923,14 @@ GLOBAL OUTPUT RULES:
 1) image_prompt: a single final image generation prompt for a vertical 9:16 promotional image
 2) video_prompt: a single final video generation prompt containing all scenes in sequence
 - For the image prompt, explicitly state that any uploaded or attached image must be used as the product reference only.
-- AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1: SCENE_1_IMAGE_PROMPT must always include a VISUAL section before any [TEXT OVERLAY] or [H2 OVERLAY]. Scene 1 must show the main product clearly, a Thai / Asian presenter or realistic hand interaction, a real environment/background, lighting, and camera composition. TEXT OVERLAY or H2 OVERLAY alone is forbidden. This rule improves only Image Prompt Scene 1 and must not change the selected Viral / Conversion / Hybrid / Pro Max video structure, scene count, timing, or dialogue.
+- AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1: SCENE_1_IMAGE_PROMPT must always include a VISUAL section before any [TEXT OVERLAY] or [H2 OVERLAY]. Scene 1 must show the main product clearly; if Product Only mode is active, show no human/hand/face/body parts; otherwise use a Thai / Asian presenter or realistic hand interaction; include real environment/background, lighting, and camera composition. TEXT OVERLAY or H2 OVERLAY alone is forbidden. This rule improves only Image Prompt Scene 1 and must not change the selected Viral / Conversion / Hybrid / Pro Max video structure, scene count, timing, or dialogue.
 - The default visual style must be photorealistic live-action cinematic advertising.
 - Absolutely no 3D animated style, no cartoon style, no chibi style, no mascot style, and no CGI-stylized character unless the user explicitly asks for that.
 - No subtitles in video prompt.
 - If people appear, avoid clear faces; prefer hands, arms, backs, or blurred passersby.
 - VOICEOVER PRO MAX: every scene in the video prompt must contain Thai voiceover dialogue.
 - Every scene must include exact Thai spoken lines ready for narration or lip-sync.
-- The selected character + voice type controls the visible character identity and narrator voice.
+- If Product Only mode is active, there is no visible character and the selected/auto voice controls off-screen narration only; otherwise the selected character + voice type controls visible character identity and narrator voice.
 - The selected viral tone controls urgency, emotion, and selling pressure.
 - No silent scenes.
 - Keep both prompts fully final and ready to use.
@@ -889,9 +948,9 @@ Continue the same pattern for all scenes.${buildSceneTimeLipSyncContract(d)}`;
 }
 function buildUserPrompt(d){
   const gem = getModeSource().getGemModeConfig(d.gemMode);
-  const character = buildCharacterFactoryProfile(d);
+  const character = isProductOnlyMode(d) ? {enabled:false, profileBlock:'', dnaBlock:'', lockBlock:''} : buildCharacterFactoryProfile(d);
   const randomNote = d.randomizedFields?.length ? `\nAUTO RANDOM FILLED: ${d.randomizedFields.join(', ')}` : '';
-  const thaiCharacterProfile = getThaiCharacterVoiceProfile(d.voiceType);
+  const thaiCharacterProfile = getActiveVoiceProfile(d);
   const characterNote = character.enabled ? `\n\nCHARACTER FACTORY PRO MAX:\n${character.profileBlock}\n\n${character.dnaBlock}\n\n${character.lockBlock}` : '';
   return `GEM MODE: ${gem.label}
 GEM DESCRIPTION: ${gem.description}${randomNote}${characterNote}
@@ -900,9 +959,9 @@ Create final production-ready prompts using these inputs.
 Product: ${sanitizePolicyText(d.product)}
 Location: ${sanitizePolicyText(d.location)}
 View / shot direction: ${sanitizePolicyText(d.view)}
-Character + voice type: ${thaiCharacterProfile.label}
-Character visual profile: ${thaiCharacterProfile.image}
-Voice profile: ${thaiCharacterProfile.voice}
+Character / product display mode: ${isProductOnlyMode(d) ? 'โชว์แต่สินค้า ไม่ต้องมีตัวละคร' : thaiCharacterProfile.label}
+Character visual profile: ${isProductOnlyMode(d) ? 'PRODUCT ONLY: no human, no presenter, no face, no hands, no body parts, no character' : thaiCharacterProfile.image}
+Voice profile: ${isProductOnlyMode(d) ? 'Off-screen Thai voiceover, auto selected by product/category: ' + thaiCharacterProfile.voice : thaiCharacterProfile.voice}
 Viral tone: ${d.viralTone}
 Scene count: ${d.sceneCount}
 Total duration: ${d.duration} seconds
@@ -915,7 +974,7 @@ Requirements:
 - Do not use 3D animated, cartoon, chibi, mascot, or CGI-stylized character language anywhere in the output unless the user explicitly asks for that style.
 - The video prompt must include Scene 1 to Scene ${d.sceneCount} in sequence.
 - Every scene must include Thai voiceover dialogue, not just visual direction.
-- Visible character and narration voice must follow the selected Thai / Asian character + voice profile: ${thaiCharacterProfile.label}.
+- If Product Only mode is active, do not include visible character/hands/faces anywhere; narration must be off-screen Thai voiceover auto selected by product/category. Otherwise visible character and narration voice must follow the selected Thai / Asian character + voice profile: ${thaiCharacterProfile.label}.
 - The selling psychology and urgency must follow the selected viral tone: ${d.viralTone}.
 - Add exact spoken Thai lines for every scene, ready for voiceover or lip-sync.
 - Follow the selected GEM MODE creative strategy closely.
@@ -924,7 +983,7 @@ Requirements:
 - For multi-scene outputs, keep the same main character identity across all scenes with no redesign or reinterpretation.
 - If scene count is greater than 1, split both image_prompt and video_prompt into clear scene blocks using these exact headers only: SCENE_1_IMAGE_PROMPT:, SCENE_2_IMAGE_PROMPT:, ... and SCENE_1_VIDEO_PROMPT:, SCENE_2_VIDEO_PROMPT:, ...
 - Also return caption_hashtags: one Thai caption line plus exactly 5 hashtags, where 3 hashtags are product-related and 2 hashtags are trending Thai commerce/social hashtags.
-- AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1: Before any overlay blocks, SCENE_1_IMAGE_PROMPT must contain VISUAL: with product, character/hand interaction, environment/background, lighting, and camera composition. Do not return overlay-only Scene 1.
+- AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1: Before any overlay blocks, SCENE_1_IMAGE_PROMPT must contain VISUAL: with product, product-only hero composition when Product Only mode is active, otherwise character/hand interaction, environment/background, lighting, and camera composition. Do not return overlay-only Scene 1.
 - If TEXT OVERLAY or H2 overlay are enabled, preserve those overlay instructions naturally inside the image prompt output for the selected scenes.
 - Final only.
 ${buildSceneTimeLipSyncContract(d)}`;
@@ -1053,7 +1112,7 @@ async function renderAuthState(){
   await renderHistory();
 }
 
-async function savePromptHistoryRecord(d,result){ const character = buildCharacterFactoryProfile(d); const ref=await addDoc(collection(db,'promptHistory'),{ uid:currentUser.uid,email:currentUser.email||'',product:d.product,location:d.location,view:d.view,gemMode:d.gemMode,providerMode:d.providerMode,voiceType:d.voiceType,viralTone:d.viralTone,sceneCount:d.sceneCount,duration:d.duration,characterFactorySummary: character.enabled ? character.summary : '',imagePrompt:result.image_prompt,videoPrompt:result.video_prompt,captionHashtags:result.caption_hashtags,createdAt:serverTimestamp() }); return ref.id; }
+async function savePromptHistoryRecord(d,result){ const character = isProductOnlyMode(d) ? {enabled:false, summary:''} : buildCharacterFactoryProfile(d); const ref=await addDoc(collection(db,'promptHistory'),{ uid:currentUser.uid,email:currentUser.email||'',product:d.product,location:d.location,view:d.view,gemMode:d.gemMode,providerMode:d.providerMode,voiceType:d.voiceType,viralTone:d.viralTone,sceneCount:d.sceneCount,duration:d.duration,characterFactorySummary: character.enabled ? character.summary : '',imagePrompt:result.image_prompt,videoPrompt:result.video_prompt,captionHashtags:result.caption_hashtags,createdAt:serverTimestamp() }); return ref.id; }
 
 function sanitizePolicyStructuredPrompt(text = '') {
   return String(text || '')
@@ -1074,8 +1133,10 @@ const result = await callSelectedProvider(d);
 result.image_prompt = applyTextOverlayToImagePrompt(result.image_prompt || '', d);
 result.image_prompt = injectDNAIntoStructuredPrompt(result.image_prompt, 'image', d, character);
 result.image_prompt = ensureAutoProductHookVisualScene1(result.image_prompt, d);
+if(isProductOnlyMode(d)) result.image_prompt = enforceProductOnlyPrompt(result.image_prompt, 'image', d);
 
 result.video_prompt = injectDNAIntoStructuredPrompt(result.video_prompt || '', 'video', d, character);
+if(isProductOnlyMode(d)) result.video_prompt = enforceProductOnlyPrompt(result.video_prompt, 'video', d);
 
 // sanitize หลังสุดแบบรักษา Scene header
 result.image_prompt = sanitizePolicyStructuredPrompt(result.image_prompt);
@@ -1097,7 +1158,7 @@ function renderHistoryList(items){
     const when=d?d.toLocaleString('th-TH'):'ล่าสุด';
     return `<div class="history-item">
       <h4>${escapeHtml(item.product||'Untitled')}</h4>
-      <div class="meta">${when} • ${escapeHtml(item.location||'-')} • ${item.sceneCount||1} scene • ${item.duration||10}s • ${escapeHtml(getModeSource().getGemModeConfig(item.gemMode||DEFAULT_GEM_MODE).label)} • ${escapeHtml(item.providerMode||'gemini')}</div>
+      <div class="meta">${when} • ${escapeHtml(item.location||'-')} • ${item.sceneCount||1} scene • ${item.duration||10}s • ${escapeHtml(getModeSource().getGemModeConfig(item.gemMode||'signboard').label)} • ${escapeHtml(item.providerMode||'gemini')}</div>
       <div class="preview"><strong>IMAGE:</strong> ${escapeHtml(item.imagePrompt||'')}</div>
       <div class="preview" style="margin-top:8px"><strong>VDO:</strong> ${escapeHtml(item.videoPrompt||'')}</div>
       <div class="preview" style="margin-top:8px"><strong>CAPTION:</strong> ${escapeHtml(item.captionHashtags||'')}</div>
@@ -1119,10 +1180,10 @@ async function useHistoryItem(id){
     if($('product')) $('product').value=item.product||'';
     if($('location')) $('location').value=item.location||'';
     if($('view')) $('view').value=item.view||'';
-    if($('gemMode')) $('gemMode').value=item.gemMode||DEFAULT_GEM_MODE;
+    if($('gemMode')) $('gemMode').value=item.gemMode||getModeSource().autoDetectGemMode(item.product||'');
     if($('providerMode')) $('providerMode').value=item.providerMode||'gemini';
     if($('voiceType')) $('voiceType').value=item.voiceType||'หญิง';
-    applyGemMode($('gemMode')?.value || DEFAULT_GEM_MODE, { selectedTone: item.viralTone || '', skipSave: true });
+    applyGemMode($('gemMode')?.value || 'signboard', { selectedTone: item.viralTone || '', skipSave: true });
     if($('sceneCount')) $('sceneCount').value=String(item.sceneCount||1);
     if($('duration')) $('duration').value=String(item.duration||10);
     if($('imagePrompt')) $('imagePrompt').value=item.imagePrompt||'';
@@ -1178,7 +1239,7 @@ function bindEvents(){ safeBind('deleteModal','click',(e)=>{
 safeBind('promptStrategy','change',()=>{
   localStorage.setItem(LS_PROMPT_STRATEGY, $('promptStrategy')?.value || 'viral');
 
-  const currentMode = $('gemMode')?.value || DEFAULT_GEM_MODE;
+  const currentMode = $('gemMode')?.value || 'signboard';
   populateGemModeOptions(currentMode);
 
   const nextMode = $('gemMode')?.value || currentMode;
@@ -1189,10 +1250,10 @@ safeBind('promptStrategy','change',()=>{
 });
 
 safeBind('gemMode','change',()=>{
-  const modeId = $('gemMode')?.value || DEFAULT_GEM_MODE;
+  const modeId = $('gemMode')?.value || 'signboard';
   applyGemMode(modeId, { toast: true });
 });
-safeBind('textOverlayEnabled','change',()=>{ updateOverlayBodies(); updateOverlayPreview(); saveAndRefresh(); }); safeBind('h2OverlayEnabled','change',()=>{ updateOverlayBodies(); updateOverlayPreview(); saveAndRefresh(); }); ['textOverlayStyle','textOverlayScene','textOverlayHook','textOverlayPosition','textOverlaySize','h2OverlayStyle','h2OverlayScene','h2OverlayHook'].forEach(id=>{ safeBind(id,'input',()=>{ updateOverlayPreview(); saveAndRefresh(); }); safeBind(id,'change',()=>{ updateOverlayPreview(); saveAndRefresh(); }); }); safeBind('sceneCount','change',()=>{ populateOverlaySceneOptions(); updateOverlayPreview(); saveAndRefresh(); }); safeBind('gemMode','change',()=>{ const modeId = $('gemMode')?.value || DEFAULT_GEM_MODE; applyGemMode(modeId, { toast: true }); populateTextStyleOptions(); populateH2StyleOptions(); updateOverlayPreview(); }); safeBind('product','blur',maybeAutoDetectGemMode); safeBind('product','change',maybeAutoDetectGemMode); ['product','location','view','promptStrategy','gemMode','providerMode','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
+safeBind('textOverlayEnabled','change',()=>{ updateOverlayBodies(); updateOverlayPreview(); saveAndRefresh(); }); safeBind('h2OverlayEnabled','change',()=>{ updateOverlayBodies(); updateOverlayPreview(); saveAndRefresh(); }); ['textOverlayStyle','textOverlayScene','textOverlayHook','textOverlayPosition','textOverlaySize','h2OverlayStyle','h2OverlayScene','h2OverlayHook'].forEach(id=>{ safeBind(id,'input',()=>{ updateOverlayPreview(); saveAndRefresh(); }); safeBind(id,'change',()=>{ updateOverlayPreview(); saveAndRefresh(); }); }); safeBind('sceneCount','change',()=>{ populateOverlaySceneOptions(); updateOverlayPreview(); saveAndRefresh(); }); safeBind('gemMode','change',()=>{ const modeId = $('gemMode')?.value || 'signboard'; applyGemMode(modeId, { toast: true }); populateTextStyleOptions(); populateH2StyleOptions(); updateOverlayPreview(); }); safeBind('product','blur',maybeAutoDetectGemMode); safeBind('product','change',maybeAutoDetectGemMode); ['product','location','view','promptStrategy','gemMode','providerMode','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
 
 function rebindOpenAIButtons(){
   const connectBtn = $('connectOpenAIKeyBtn');
@@ -1213,12 +1274,12 @@ function rebindOpenAIButtons(){
 
 async function init(){
   if($('promptStrategy')) $('promptStrategy').value = localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral';
-  populateGemModeOptions(DEFAULT_GEM_MODE);
+  populateGemModeOptions('signboard');
   bindEvents();
   rebindOpenAIButtons();
   loadForm();
-  populateGemModeOptions($('gemMode')?.value || DEFAULT_GEM_MODE);
-  applyGemMode(($('gemMode')?.value || DEFAULT_GEM_MODE), { keepTone: true, skipSave: true });
+  populateGemModeOptions($('gemMode')?.value || 'signboard');
+  applyGemMode(($('gemMode')?.value || 'signboard'), { keepTone: true, skipSave: true });
   populateTextStyleOptions();
   populateH2StyleOptions();
   populateOverlaySceneOptions();

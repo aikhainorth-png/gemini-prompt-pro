@@ -1,104 +1,80 @@
 export const GEM_MODES = {
-  'factory_conveyor': {
-    id: 'factory_conveyor',
-    label: 'โรงงานสายพาน',
-    description: 'โหมดโรงงานสายพาน F01-F20 เลือกโรงงานอัตโนมัติตามชื่อสินค้า สร้าง IMAGE PROMPT และ VIDEO + AUDIO PROMPT แบบ cinematic industrial conveyor',
+
+  'infographic_ai': {
+    id: 'infographic_ai',
+    label: 'MODE INFOGRAPHIC AI',
+    description: 'สร้างภาพอินโฟกราฟิกสินค้าแนวสุขภาพ/บิวตี้/อาหารเสริม แบบ Bubble รอบสินค้า Timeline Checklist Icon และข้อความอ่านง่ายสำหรับ TikTok, Facebook, LINE OA, Shopee',
     keywords: [
-      'โรงงาน','สายพาน','ผลิต','ไลน์ผลิต','factory','conveyor','production line','assembly line','packaging line','manufacturing',
-      'ข้าว','rice','หอมมะลิ','ข้าวสาร','ผลไม้','มังคุด','ทุเรียน','ลำไย','ส้ม','fruit','ปลา','กุ้ง','ทะเล','seafood','fish','ยาง','latex',
-      'อาหาร','ขนม','snack','food','น้ำพริก','ซอส','เครื่องดื่ม','น้ำดื่ม','กาแฟ','ชา','drink','beverage',
-      'เสื้อ','ผ้า','แฟชั่น','fashion','รองเท้า','shoe','sneaker','พลาสติก','packaging','ขวด','กล่อง',
-      'เครื่องสำอาง','ครีม','เซรั่ม','skincare','cosmetic','คลัง','warehouse','logistics','พัสดุ',
-      'อาหารเสริม','วิตามิน','supplement','ยา','capsule','electronics','pcb','วงจร','มือถือ','smartphone',
-      'chip','semiconductor','ชิป','รถ','ยนต์','automotive','metal','โลหะ','cnc','แบต','battery','ev','server','data center','เซิร์ฟเวอร์'
+      'infographic','อินโฟกราฟิก','อินโฟ','ข้อมูลสินค้า','benefit','ประโยชน์','วิตามิน','vitamin','ซิงค์','zinc','คอลลาเจน','collagen','กลูต้า','gluta','อาหารเสริม','supplement','บำรุง','สุขภาพ','health','ผิวใส','สิว','รอยดำ','ริ้วรอย','ชุ่มชื้น','beauty','skincare','สกินแคร์','ครีม','เซรั่ม','serum','เบอร์รี่','berry'
     ],
     viralTones: [
-      'โรงงานจริงดูเพลินมาก',
-      'สายพานโคตร satisfying',
-      'ผลิตจริงทุกขั้นตอน',
-      'โรงงานระดับโปร',
-      'ดูแล้วหยุดไม่ได้',
-      'ไลน์ผลิตสวยมาก',
-      'ของเรียงเป๊ะเหมือนไวรัล',
-      'industrial ASMR',
-      'เห็นแล้วน่าเชื่อถือ',
-      'ผลิตสดจากโรงงาน'
+      'กินต่อเนื่อง 1 เดือนจะเกิดอะไรขึ้น',
+      'ประโยชน์ครบจบในภาพเดียว',
+      'อ่านง่ายหยุดเลื่อนทันที',
+      'บับเบิลสรุปจุดขายชัด',
+      'สายสุขภาพต้องเซฟ',
+      'บิวตี้อินโฟอ่านเพลิน',
+      'เหมาะกับ TikTok Shop',
+      'คอนเทนต์ความรู้ขายได้',
+      'ดูน่าเชื่อถือแต่ไม่แข็ง',
+      'เปลี่ยนสินค้าเป็นอินโฟกราฟิก'
     ],
-    factories: {
-      F01: { name:'นาข้าวพื้นบ้าน', useFor:['ข้าวเปลือก','เกษตร','นา','เมล็ดพันธุ์'], visual:'ชาวนาไทย หมวกฟาง ทุ่งนาเขียว รถเกี่ยวข้าวหรือรางลำเลียงกลางนา' },
-      F02: { name:'โรงสีข้าวชุมชน', useFor:['ข้าวสาร','ข้าวหอมมะลิ','rice'], visual:'โรงสีข้าวไทย กระสอบข้าว ฝุ่นแป้งบาง ๆ สายพานถุงข้าว' },
-      F03: { name:'โรงคัดแยกผลไม้', useFor:['ผลไม้','มังคุด','ทุเรียน','ลำไย','ส้ม'], visual:'สายพานคัดผลไม้สด คนงานใส่หมวกและถุงมือ ผลไม้เรียงสีสวย' },
-      F04: { name:'โรงงานแปรรูปปลา', useFor:['ปลา','กุ้ง','อาหารทะเล','seafood'], visual:'ปลา/อาหารทะเลบนสายพานน้ำแข็ง คนงานชุดกันน้ำ ถุงมือ ผ้ากันเปื้อน' },
-      F05: { name:'โรงงานยางพารา', useFor:['ยาง','latex','ถุงมือยาง'], visual:'หม้อต้ม/รีดยาง ไอน้ำร้อน โรงงานยางพาราไทย' },
-      F06: { name:'โรงงานอาหาร/ขนม', useFor:['อาหาร','ขนม','ซอส','น้ำพริก','ของกิน'], visual:'สายพานอาหารหรือขนม แสตนเลสสะอาด คนงานหมวกคลุมผม' },
-      F07: { name:'โรงงานเครื่องดื่ม', useFor:['น้ำดื่ม','เครื่องดื่ม','กาแฟ','ชา','น้ำผลไม้'], visual:'ขวดเครื่องดื่มเรียงบนสายพาน เครื่องบรรจุขวด แสงสะอาด' },
-      F08: { name:'โรงงานเสื้อผ้า', useFor:['เสื้อ','กางเกง','ผ้า','แฟชั่น'], visual:'โต๊ะตัดเย็บ จักรเย็บผ้า แพ็กเสื้อผ้าบนสายพาน' },
-      F09: { name:'โรงงานรองเท้า', useFor:['รองเท้า','sneaker','shoe'], visual:'รองเท้าเรียงสมมาตรบนสายพาน คนงานตรวจ QC สองฝั่ง' },
-      F10: { name:'โรงงานพลาสติก', useFor:['พลาสติก','กล่อง','ขวด','แพ็กเกจ'], visual:'เครื่อง injection molding แพ็กพลาสติก ควันบาง แสงโรงงาน' },
-      F11: { name:'โรงงานเครื่องสำอาง', useFor:['ครีม','เซรั่ม','สกินแคร์','เครื่องสำอาง'], visual:'ขวดครีม/เซรั่มบนสายพาน clean beauty robot arm สีขาวพรีเมียม' },
-      F12: { name:'คลังสินค้า', useFor:['กล่อง','พัสดุ','ส่งของ','warehouse','logistics'], visual:'คลังสินค้าชั้นวางสูง กล่องพัสดุบนสายพาน forklift ด้านหลัง' },
-      F13: { name:'อาหารเสริม/ยา Cleanroom', useFor:['อาหารเสริม','วิตามิน','ยา','capsule','supplement'], visual:'cleanroom lab coat N95 ขวดอาหารเสริม/กล่องบนสายพาน sterile white' },
-      F14: { name:'อิเล็กทรอนิกส์ PCB', useFor:['อิเล็กทรอนิกส์','pcb','วงจร'], visual:'แผงวงจร PCB บนสายพาน ESD anti-static คนงานชุดน้ำเงิน' },
-      F15: { name:'ประกอบ Smartphone', useFor:['มือถือ','smartphone','phone'], visual:'สายพานประกอบสมาร์ตโฟน cleanroom precision assembly' },
-      F16: { name:'Chip / Semiconductor', useFor:['chip','ชิป','semiconductor'], visual:'yellow room full bunny suit wafer semiconductor high-tech' },
-      F17: { name:'รถยนต์ Robotic Welding', useFor:['รถ','รถยนต์','automotive','car'], visual:'หุ่นยนต์เชื่อมประกายไฟ โรงงานรถยนต์ขนาดใหญ่' },
-      F18: { name:'โลหะ / CNC', useFor:['โลหะ','เหล็ก','cnc','metal'], visual:'เครื่อง CNC กัดโลหะ ประกายไฟ น้ำหล่อเย็น เสียงเครื่องจักรหนัก' },
-      F19: { name:'แบตเตอรี่ / EV', useFor:['แบต','battery','ev'], visual:'ไลน์ผลิตแบตเตอรี่ EV precision automated ESD' },
-      F20: { name:'Data Center', useFor:['server','data center','เซิร์ฟเวอร์'], visual:'server rack ไฟสีน้ำเงิน ห้องเย็นจัด data center' }
-    },
     randomLocations: [
-      'AUTO FACTORY SELECT: เลือก F-code จากชื่อสินค้า ถ้าเป็นข้าวใช้ F02, ผลไม้ใช้ F03, อาหารเสริมใช้ F13, เครื่องสำอางใช้ F11, คลังใช้ F12',
-      'โรงงานสายพานอุตสาหกรรมไทยแบบ cinematic มีคนงานสองฝั่งและสินค้าเรียงสมมาตร',
-      'modern Thai factory production line with centered conveyor belt and strong vanishing point',
-      'clean industrial manufacturing line, stainless steel conveyor, realistic workers, vertical 9:16',
-      'satisfying factory conveyor scene, products aligned perfectly, documentary industrial realism'
+      'clean pastel infographic poster layout, product centered on a soft pedestal, cute benefit bubbles around the product, Thai readable headline and icons, vertical 9:16',
+      'premium health and beauty infographic layout, white/pastel background, product hero in center, circular callout bubbles, arrows, timeline row, checklist section',
+      'cute Korean-style supplement infographic poster, doodle icons, pastel color palette, product bottle centered, benefits arranged around product, TikTok stop-scroll design',
+      'LINE OA rich message friendly infographic layout, large top hero text, product center, two-column benefit cards, bottom CTA strip, clean Thai typography',
+      'medical-safe beauty explainer infographic, soft clean background, product lock center, icons for skin glow, hydration, antioxidant support, routine and suitability sections'
     ],
     randomViews: [
-      'กล้องอยู่กึ่งกลางสายพาน มุม wide 24mm สินค้าเรียงเข้าหากล้อง คนงานยืนสองฝั่ง',
-      'centered symmetrical conveyor belt composition, deep vanishing point, products moving toward camera',
-      'สายพานเด่นเต็ม foreground เห็นเครื่องจักรและคนงานตรวจ QC แบบสมจริง',
-      'single continuous conveyor shot, industrial ASMR aesthetic, satisfying repetitive motion',
-      'tracking shot along conveyor belt with realistic worker micro-actions and machine movement'
+      'สินค้าขนาดใหญ่กลางภาพ มี Bubble รอบสินค้า 6 จุด ลูกศรชี้ประโยชน์ ไอคอนน่ารัก และหัวข้อใหญ่ด้านบน',
+      'ภาพอินโฟกราฟิกแนวตั้ง 9:16 แบ่งส่วนชัดเจน: H1 ด้านบน, product hero กลาง, benefit bubbles ซ้ายขวา, timeline ด้านล่าง',
+      'ใช้โทนสีตามสินค้า อาหารเสริมเป็นฟ้า/ส้ม/ชมพู เครื่องสำอางเป็นชมพู/ม่วง มี icon match ทุก benefit',
+      'ภาพสินค้าอยู่บนแท่นพรีเมียม มี checklist เหมาะกับใคร วิธีใช้ และ CTA ที่ปลอดภัยจากคำกล่าวอ้างเกินจริง',
+      'infographic poster แบบอ่านง่ายสำหรับ TikTok/Facebook มี H1 ใหญ่ H2 capsule และจุดขายแบบ safe claim รอบตัวสินค้า'
     ],
     examples: [
-      { title:'F03 โรงคัดแยกผลไม้', location:'โรงคัดแยกผลไม้ไทย สายพานยาว แสงธรรมชาติในโกดัง', view:'มังคุด/ผลไม้สดเรียงบนสายพาน คนงานคัดแยกสองฝั่ง มุมกล้องกึ่งกลางสายพาน' },
-      { title:'F13 อาหารเสริม/ยา', location:'cleanroom อาหารเสริม sterile white lab coat N95', view:'ขวดอาหารเสริมและกล่องเรียงบนสายพาน คนงานชุดกาวน์ตรวจ QC สองฝั่ง' },
-      { title:'F12 คลังสินค้า', location:'คลังสินค้าชั้นวางสูง forklift และกล่องพัสดุ', view:'กล่องสินค้าบนสายพานยาวพุ่งเข้ากล้อง คนงานเสื้อสะท้อนแสงยืนสองฝั่ง' }
+      { title:'Zinc Infographic', location:'อินโฟกราฟิกโทนฟ้า clean health product center', view:'ขวด Zinc อยู่กลางภาพ มี Bubble รอบสินค้า: ผิวแข็งแรงขึ้น คุมความมัน ลดสิวแบบดูแลผิว ภูมิคุ้มกันดีขึ้น ผมและเล็บแข็งแรง พร้อมไอคอนหยดน้ำ โล่ ผม และ checklist' },
+      { title:'Collagen Infographic', location:'อินโฟกราฟิกโทนชมพูพาสเทล cute beauty explainer', view:'กระปุกคอลลาเจนอยู่กลางภาพ มีข้อความ กินคอลลาเจนต่อเนื่อง 1 เดือน จะเกิดอะไรขึ้น? พร้อม Bubble ผิวดูชุ่มชื้น ผิวดูอิ่มฟู ดูแลตัวเองง่ายขึ้น และ timeline 1-4 สัปดาห์' },
+      { title:'Vitamin C Infographic', location:'อินโฟกราฟิกโทนส้มสดใส vitamin explainer', view:'ขวดวิตามินซีบนแท่นกลางภาพ มีไอคอนส้ม โล่ แสงประกาย Bubble ช่วยดูแลผิวให้ดูกระจ่างใส สนับสนุนภูมิคุ้มกัน และวิธีทานแบบปลอดภัย' }
     ],
-    systemPrompt: `You are an INDUSTRIAL FACTORY CONVEYOR PROMPT DIRECTOR for Thai TikTok commerce, Veo3, Google Flow, Sora, Kling, Runway.
+    systemPrompt: `You are MODE INFOGRAPHIC AI, an expert Thai health/beauty/e-commerce infographic prompt director.
 
 MISSION:
-Create FINAL READY IMAGE PROMPT and VIDEO + AUDIO PROMPT in the factory conveyor style.
-The output must look like a real cinematic production line, not a generic product ad.
+Create FINAL READY IMAGE PROMPTS and VIDEO + AUDIO PROMPTS for infographic-style product content like Thai TikTok Shop, Facebook, LINE OA rich message, Shopee/Lazada product education posters.
 
-AUTO FACTORY SELECTION RULE:
-If the user does not explicitly choose an F-code, automatically select the best factory type from the product name:
-F01 rice field / agriculture, F02 community rice mill, F03 fruit sorting, F04 fish/seafood processing, F05 rubber/latex, F06 food/snack, F07 beverage bottling, F08 garment/textile, F09 shoes, F10 plastic/injection, F11 cosmetics/skincare, F12 warehouse/logistics, F13 supplement/pharmaceutical cleanroom, F14 electronics PCB, F15 smartphone assembly, F16 chip/semiconductor, F17 automotive robotic welding, F18 metal/CNC, F19 battery/EV, F20 data center/server.
-If unclear, default to the closest visual factory; for general products use F12 warehouse/logistics or F06 general packaging line.
+CORE STYLE:
+- vertical 9:16 infographic poster
+- product is the central hero, clearly visible and not overlay-only
+- clean pastel or premium health/beauty background
+- Thai headline H1 at the top, readable and stop-scroll
+- H2 capsule subtitle under headline
+- 5-8 benefit bubbles around the product
+- arrows or dotted lines pointing to benefits
+- cute icons matched to benefits: sparkle, shield, water drop, sun, moon, berry, skin, hair, nail, stomach, capsule
+- lower sections may include: suitable for whom, how to use, timeline, checklist, quality assurance, CTA
+- layout must feel like a finished infographic poster, not plain text notes
 
-MANDATORY IMAGE STYLE:
-- ultra realistic industrial factory conveyor belt scene
-- centered symmetrical composition
-- long conveyor belt leading into deep vanishing point
-- products perfectly aligned in rows
-- workers standing on both sides inspecting/sorting/packing
-- realistic Thai factory or product-specific industrial environment
-- cinematic industrial lighting, documentary realism
-- vertical 9:16, wide lens 24mm, low eye-level or centered conveyor angle
-- conveyor belt must dominate foreground
-- no random background text, no watermark, no cartoon, no CGI
+AUTO CATEGORY THEME:
+- Zinc / blue health: clean blue and white, shield icons, water icons, skin/hair/nail symbols
+- Vitamin C / orange: bright orange, citrus icons, glow and immunity support icons
+- Collagen / pink: soft pink, skin hydration, elasticity, beauty icons
+- Gluta / purple-pink: glossy pastel, skin glow, berry/pomegranate, antioxidant support
+- Berry / fruit: cute doodle style, fruit bowl, heart/sparkle icons
+- Cosmetics/skincare: beauty counter or clean product poster, swatch/texture icon, skin finish bubbles
 
-MANDATORY VIDEO STYLE:
-- single continuous centered conveyor shot or smooth tracking shot
-- conveyor continuously moves products toward camera
-- workers perform realistic micro-actions: sorting, inspecting, packing, adjusting, QC checking
-- machines operate naturally with subtle blinking lights, rollers, robot arms, steam, cold mist, or cleanroom motion depending on F-code
-- include camera movement: slow push-in, tracking along conveyor, rack focus from foreground product to deep production line
-- industrial ASMR / satisfying repetitive motion feeling
-- Thai spoken dialogue may be included only in VIDEO + AUDIO PROMPT, natural UGC commercial tone
+CLAIM-SAFE RULES:
+Never say cure, heal, guaranteed, 100% result, permanently remove acne, whiten skin, medical treatment, disease cure.
+Use safe Thai wording such as: ช่วยบำรุง, ช่วยดูแล, สนับสนุน, ผิวดูสุขภาพดี, ผิวดูกระจ่างใส, ดูชุ่มชื้นขึ้น, เป็นส่วนหนึ่งของรูทีน, ผลลัพธ์ขึ้นอยู่กับแต่ละบุคคล.
+
+IMAGE PROMPT REQUIREMENTS:
+Return one complete polished prompt. Include product lock, layout, colors, Thai text overlay instructions, bubble count, icon style, and safe copy. No random background text, no watermark, no messy unreadable typography.
+
+VIDEO + AUDIO PROMPT REQUIREMENTS:
+Create a short vertical infographic motion video: product appears center, bubbles pop in one by one, icons animate, arrows draw, Thai voiceover explains benefits safely, ending with CTA. Use natural Thai language.
 
 STRICT OUTPUT:
-Return final prompts only. Do not return strategy notes. Image prompt must be one complete visual prompt. Video prompt must include visible motion, camera movement, worker action, production continuity, and Thai audio/dialogue when needed.`
+Final prompts only. No strategy explanation. No placeholder-only output. No JSON unless user specifically asks.`
   },
   'tiktok_live': {
     id: 'tiktok_live',
@@ -1577,9 +1553,9 @@ export function getGemModeOptions(){
 
 export function autoDetectGemMode(productName = '') {
   const name = String(productName || '').toLowerCase().trim();
-  if (!name) return 'signboard';
+  if (!name) return 'infographic_ai';
 
-  let bestMode = 'signboard';
+  let bestMode = 'infographic_ai';
   let bestScore = 0;
 
   Object.values(GEM_MODES).forEach((mode) => {
@@ -1598,7 +1574,7 @@ export function autoDetectGemMode(productName = '') {
     }
   });
 
-  return bestMode || 'signboard';
+  return bestMode || 'infographic_ai';
 }
 
 
@@ -1849,7 +1825,7 @@ export const H2_STYLE_LIBRARY = {
 };
 
 const MODE_TEXT_STYLE_MAP = {
-  factory_conveyor: { text:'S-142', h2:'H2-22' },
+  infographic_ai: { text:'S-151', h2:'H2-13' },
   tiktok_live: { text:'S-142', h2:'H2-22' },
   signboard: { text:'S-142', h2:'H2-22' },
   supplement_stop_scroll: { text:'S-151', h2:'H2-13' },
