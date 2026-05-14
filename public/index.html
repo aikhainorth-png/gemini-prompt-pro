@@ -65,6 +65,91 @@ select option:checked{
     .preview-box{margin-top:10px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px dashed rgba(127,223,242,.18);font-size:14px;line-height:1.5;color:#fff;min-height:52px}
 	@media (max-width:1100px){.layout{grid-template-columns:1fr}.panel{position:relative;top:0}.results{grid-template-columns:1fr}.scene-grid{grid-template-columns:1fr}}
   </style>
+
+<style id="gemmode-popup-style">
+.gemmode-popup-overlay{
+position:fixed;
+inset:0;
+background:rgba(4,14,20,.78);
+backdrop-filter:blur(8px);
+display:none;
+align-items:center;
+justify-content:center;
+padding:18px;
+z-index:9999;
+}
+.gemmode-popup-overlay.show{display:flex;}
+.gemmode-popup{
+width:min(920px,96vw);
+max-height:92vh;
+overflow:auto;
+background:linear-gradient(180deg, rgba(10,33,39,.97), rgba(5,17,22,.98));
+border:1px solid rgba(95,211,198,.22);
+border-radius:28px;
+padding:22px;
+box-shadow:0 24px 80px rgba(0,0,0,.55);
+}
+.gemmode-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px;
+}
+.gemmode-title{
+font-size:30px;
+font-weight:800;
+color:#f2ffff;
+}
+.gemmode-close{
+width:56px;
+height:56px;
+border-radius:50%;
+border:1px solid rgba(127,223,242,.18);
+background:rgba(255,255,255,.05);
+color:#fff;
+font-size:28px;
+cursor:pointer;
+}
+.gemmode-grid{
+display:flex;
+flex-direction:column;
+gap:14px;
+padding-bottom:60px;
+}
+.gemmode-item{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:14px;
+padding:18px;
+border-radius:24px;
+background:rgba(255,255,255,.04);
+border:1px solid rgba(127,223,242,.12);
+cursor:pointer;
+}
+.gemmode-item:hover{
+background:rgba(95,211,198,.08);
+border-color:rgba(95,211,198,.35);
+}
+.gemmode-item.active{
+background:rgba(95,211,198,.12);
+border-color:#7fdff2;
+}
+.gemmode-label{
+display:flex;
+align-items:center;
+gap:16px;
+font-size:24px;
+font-weight:700;
+color:#ecfbfb;
+}
+.gemmode-emoji{font-size:34px;}
+.gemmode-check{
+font-size:24px;
+color:#7fdff2;
+}
+</style>
+
 </head>
 <body>
 <div class="overlay show" id="loginGate">
@@ -241,9 +326,9 @@ select option:checked{
 		<br>
         <div class="section"><h3>Prompt Builder</h3><div class="field"><label class="label" for="product">1. สินค้า</label><input id="product" placeholder="เช่น แบตเตอรี่ GS Tough / เก้าอี้สำนักงาน / ทิชชู่ Scott Extra" /></div><div class="field"><label class="label" for="location">2. สถานที่</label><input id="location" placeholder="เช่น ร้านแบตเตอรี่ / ห้าง / ร้านเฟอร์นิเจอร์ / โกดัง" /></div><div class="field"><label class="label" for="view">3. มุมมองสินค้า</label><textarea id="view" placeholder="เช่น ช่างยกสินค้าโชว์หน้ากล้อง ซูมป้ายเหลืองลดราคา กล้องมือถือแบบเร่งด่วน"></textarea></div><div class="row"><div class="field"><label class="label" for="promptStrategy">4. แนวทางคลิป</label><select id="promptStrategy"><option value="viral">Viral</option><option value="conversion">Conversion</option><option value="hybrid">Hybrid</option><option value="pro_max">🔥Pro Max</option></select></div></div>
         <div class="row"><div class="field"><label class="label" for="gemMode">5. หมวดหมู่</label><select id="gemMode"><option value="infographic_ai" selected>อินโฟกราฟิก AI</option><option value="signboard">สินค้าติดป้าย</option><option value="supplement_stop_scroll">อาหารเสริม คนหยุดดู</option><option value="tiktok_live">TikTok Live</option></select></div>
-        <div class="field"><label class="label" for="providerMode">6. ผู้ให้บริการ AI</label><select id="providerMode"><option value="gemini" selected>Gemini</option><option value="openai">OpenAI</option></select></div></div>
+        <div class="field"><label class="label" for="providerMode">6. ผู้ให้บริการ AI</label><select id="providerMode"><option value="gemini">Gemini</option><option value="openai" selected>OpenAI</option></select></div></div>
 		<div class="row"><button class="btn btn-dark" id="exampleTissueBtn">ตัวอย่างทิชชู่</button><button class="btn btn-dark" id="exampleBatteryBtn">ตัวอย่างแบต</button><button class="btn btn-dark" id="exampleChairBtn">ตัวอย่างเก้าอี้</button></div>
-		<div class="row"><div class="field"><label class="label" for="voiceType">7. ตัวละคร</label><select id="voiceType"><option value="product_only" selected>โชว์แต่สินค้า </option><option value="thai_female">ผู้หญิง</option><option value="thai_male">ผู้ชาย</option><option value="elder_female">หญิงชรา</option><option value="elder_male">ชายชรา</option><option value="thai_girl">เด็กผู้หญิง</option><option value="thai_boy">เด็กผู้ชาย</option></select></div><div class="field"><label class="label" for="viralTone">8. โทนไวรัล</label><select id="viralTone"><option value="ล้างสต๊อก">ล้างสต๊อก</option><option value="ของใกล้หมด">ของใกล้หมด</option><option value="คนรุมซื้อ">คนรุมซื้อ</option><option value="คนดูทะลุแสน">คนดูทะลุแสน</option><option value="คอมเมนต์ถามรัว">คอมเมนต์ถามรัว</option><option value="โปรเฉพาะไลฟ์">โปรเฉพาะไลฟ์</option><option value="Gift เด้งไม่หยุด">Gift เด้งไม่หยุด</option><option value="กดตะกร้าด่วน">กดตะกร้าด่วน</option><option value="ยอดวิวพุ่ง">ยอดวิวพุ่ง</option><option value="แม่ค้าเอนเตอร์เทน">แม่ค้าเอนเตอร์เทน</option><option value="คนแห่แชร์ไลฟ์">คนแห่แชร์ไลฟ์</option><option value="รีวิวสดเห็นผลจริง">รีวิวสดเห็นผลจริง</option></select></div></div><div class="row"><div class="field"><label class="label" for="sceneCount">9. จำนวน Scene</label><select id="sceneCount"><option value="1">1 Scene</option><option value="2">2 Scene</option><option value="3">3 Scene</option></select></div><div class="field"><label class="label" for="duration">10. เวลาทั้งหมด</label><select id="duration"><option value="8">8 วินาที</option><option value="10" selected>10 วินาที</option><option value="16">16 วินาที</option><option value="20">20 วินาที</option><option value="24">24 วินาที</option><option value="30">30 วินาที</option></select></div></div><div class="overlay-card">
+		<div class="row"><div class="field"><label class="label" for="voiceType">7. ตัวละคร</label><select id="voiceType"><option value="product_only" selected>📦 โชว์แต่สินค้า</option><option value="thai_female">ผู้หญิง</option><option value="thai_male">ผู้ชาย</option><option value="elder_female">หญิงชรา</option><option value="elder_male">ชายชรา</option><option value="thai_girl">เด็กผู้หญิง</option><option value="thai_boy">เด็กผู้ชาย</option></select></div><div class="field"><label class="label" for="viralTone">8. โทนไวรัล</label><select id="viralTone"><option value="ล้างสต๊อก">ล้างสต๊อก</option><option value="ของใกล้หมด">ของใกล้หมด</option><option value="คนรุมซื้อ">คนรุมซื้อ</option><option value="คนดูทะลุแสน">คนดูทะลุแสน</option><option value="คอมเมนต์ถามรัว">คอมเมนต์ถามรัว</option><option value="โปรเฉพาะไลฟ์">โปรเฉพาะไลฟ์</option><option value="Gift เด้งไม่หยุด">Gift เด้งไม่หยุด</option><option value="กดตะกร้าด่วน">กดตะกร้าด่วน</option><option value="ยอดวิวพุ่ง">ยอดวิวพุ่ง</option><option value="แม่ค้าเอนเตอร์เทน">แม่ค้าเอนเตอร์เทน</option><option value="คนแห่แชร์ไลฟ์">คนแห่แชร์ไลฟ์</option><option value="รีวิวสดเห็นผลจริง">รีวิวสดเห็นผลจริง</option></select></div></div><div class="row"><div class="field"><label class="label" for="sceneCount">9. จำนวน Scene</label><select id="sceneCount"><option value="1">1 Scene</option><option value="2">2 Scene</option><option value="3">3 Scene</option></select></div><div class="field"><label class="label" for="duration">10. เวลาทั้งหมด</label><select id="duration"><option value="8">8 วินาที</option><option value="10" selected>10 วินาที</option><option value="16">16 วินาที</option><option value="20">20 วินาที</option><option value="24">24 วินาที</option><option value="30">30 วินาที</option></select></div></div><div class="overlay-card">
 <label class="checkline"><input type="checkbox" id="textOverlayEnabled"> เปิดใช้งาน ข้อความพาดหัว (200 Styles)</label>
 <div class="overlay-body" id="textOverlayBody">
   <div class="field"><label class="label" for="textOverlayStyle">รูปแบบข้อความ</label><select id="textOverlayStyle"></select></div>
@@ -321,5 +406,82 @@ select option:checked{
 </div>
   <div class="toast" id="toast"></div>
   <script type="module" src="./app.js"></script>
+
+<div class="gemmode-popup-overlay" id="gemmodePopup">
+  <div class="gemmode-popup">
+    <div class="gemmode-header">
+      <div class="gemmode-title">✨ เลือกหมวดหมู่ / MODE</div>
+      <button class="gemmode-close" id="gemmodeClose">×</button>
+    </div>
+    <div class="gemmode-grid" id="gemmodeGrid"></div>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+const gemMode=document.getElementById('gemMode');
+const popup=document.getElementById('gemmodePopup');
+const grid=document.getElementById('gemmodeGrid');
+const close=document.getElementById('gemmodeClose');
+if(!gemMode||!popup||!grid) return;
+
+const emoji={
+infographic_ai:'📊',
+tiktok_live:'🎥',
+signboard:'🏷️',
+supplement_stop_scroll:'💊',
+food:'🍜',
+snack:'🍟',
+mom_baby:'🍼',
+fashion:'👗',
+shoes:'👟',
+lingerie:'🩲',
+skincare:'🧴',
+cosmetics:'💄',
+home:'🏠',
+bedding:'🛏️',
+kitchen:'🍳',
+bathroom:'🛁',
+laundry:'🧺',
+appliances:'✨',
+garden:'🌿',
+produce:'🥭',
+tools:'🛠️',
+stationery:'✏️',
+books:'📚'
+};
+
+function renderPopup(){
+grid.innerHTML='';
+[...gemMode.options].forEach(opt=>{
+const item=document.createElement('div');
+item.className='gemmode-item'+(opt.selected?' active':'');
+item.innerHTML=`
+<div class="gemmode-label">
+<span class="gemmode-emoji">${emoji[opt.value]||'✨'}</span>
+<span>${opt.textContent}</span>
+</div>
+<div class="gemmode-check">${opt.selected?'✓':''}</div>`;
+item.onclick=()=>{
+gemMode.value=opt.value;
+gemMode.dispatchEvent(new Event('change'));
+popup.classList.remove('show');
+};
+grid.appendChild(item);
+});
+}
+
+gemMode.addEventListener('mousedown',(e)=>{
+e.preventDefault();
+renderPopup();
+popup.classList.add('show');
+});
+
+close.onclick=()=>popup.classList.remove('show');
+popup.onclick=(e)=>{if(e.target===popup) popup.classList.remove('show');};
+});
+</script>
+
 </body>
 </html>
