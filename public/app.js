@@ -91,9 +91,8 @@ function getThaiCharacterVoiceProfile(voiceType='thai_female'){
   return THAI_CHARACTER_VOICE_PROFILES[normalized] || THAI_CHARACTER_VOICE_PROFILES.thai_female;
 }
 
-function isProductOnlyMode(d={}){
-  const voiceType = String(d.voiceType || '').toLowerCase();
-  const gemMode = String(d.gemMode || '').toLowerCase();
+function isProductOnlyMode(d){
+  const voiceType = d.voiceType || $('voiceType')?.value;
   return voiceType === 'product_only';
 }
 
