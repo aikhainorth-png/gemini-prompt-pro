@@ -1,6 +1,7 @@
 
 const TYPE_BY_MODE = {
   product_only: ['product-only display', 'off-screen product narrator'],
+  factory_conveyor: ['factory worker', 'industrial inspector', 'production line operator'],
   signboard: ['store presenter', 'retail sales demonstrator', 'product presenter'],
   supplement_stop_scroll: ['wellness presenter', 'health routine demonstrator', 'trusted lifestyle presenter'],
   food: ['food presenter', 'kitchen demonstrator', 'lifestyle presenter'],
@@ -33,6 +34,7 @@ const HAIR_STYLES = ['straight shoulder-length hair', 'soft side-parted hair', '
 const HAIR_COLORS = ['deep brown', 'chestnut brown', 'dark black', 'warm caramel', 'soft ash brown'];
 const EYE_STYLES = ['warm brown eyes', 'friendly rounded eyes', 'bright lively eyes', 'soft expressive eyes', 'natural dark eyes'];
 const OUTFIT_BASE = {
+  factory_conveyor: ['industrial factory uniform', 'clean production line outfit', 'warehouse worker clothing', 'cleanroom suit depending on factory type'],
   signboard: ['clean retail uniform with promo badge', 'casual store outfit with sale pin', 'real retail presenter clothing with product badge'],
   supplement_stop_scroll: ['clean wellness outfit with minimal badge', 'natural lifestyle outfit in soft neutral tones', 'casual health presenter clothing'],
   food: ['clean casual kitchen outfit', 'simple chef-inspired apron over everyday clothing', 'natural food presenter clothing'],
