@@ -44,6 +44,19 @@ export const CATEGORY_MASTER_DNA = {
     sceneFormula: ['HOOK: large Thai H1 asks a curiosity question or benefit summary', 'PRODUCT HERO: product centered and clearly visible', 'BUBBLES: benefit callouts pop around product with icons and arrows', 'SAFE PROOF: checklist/timeline/how-to with compliant wording', 'CTA: soft commerce action such as save/share/tap cart'],
     negativePrompt: 'medical cure claims, guaranteed results, 100% claims, unreadable Thai text, random background text, watermark, cluttered layout, distorted product, messy typography, fake certifications, before-after medical claims'
   },
+  
+  factory_conveyor: {
+    visualIdentity: 'Factory Conveyor F01-F20 Cinematic Industrial System — Thai manufacturing realism, centered conveyor, deep vanishing point, satisfying production line, product-specific factory auto selection.',
+    characterStyle: 'Thai factory workers, production line operators, QC inspectors, cleanroom staff or warehouse staff depending on selected F-code, realistic uniforms and natural micro-actions.',
+    environmentStyle: 'Auto-select one of 20 factories from product name: rice field, rice mill, fruit sorting, seafood, rubber, food/snack, beverage, garment, shoes, plastic, cosmetics, warehouse, supplement cleanroom, electronics PCB, smartphone assembly, semiconductor, automotive welding, CNC metal, battery EV, data center.',
+    lightingStyle: 'Cinematic industrial lighting, realistic fluorescent factory lights, clean stainless reflections, steam/cold mist/robot light/cleanroom white depending on F-code.',
+    cameraStyle: 'Perfectly centered conveyor belt perspective, symmetrical composition, wide 24mm lens, deep vanishing point, products aligned in rows moving toward camera, vertical 9:16.',
+    psychologyTriggers: ['สายพานโคตร satisfying', 'โรงงานจริงดูเพลินมาก', 'ผลิตจริงทุกขั้นตอน', 'เห็นแล้วน่าเชื่อถือ', 'industrial ASMR'],
+    masterPrompt: `Ultra realistic factory conveyor belt scene for [PRODUCT], automatically select the correct factory F-code from product type, centered symmetrical conveyor composition, long conveyor belt leading into deep vanishing point, products aligned perfectly in rows moving toward camera, Thai factory workers standing on both sides inspecting and packing, realistic product-specific machinery, cinematic industrial lighting, documentary manufacturing realism, stainless steel surfaces, satisfying repetitive production line, vertical 9:16, no watermark, no cartoon, no CGI, no random background text.`,
+    sceneFormula: ['HOOK: conveyor starts immediately with product rows moving toward camera', 'FACTORY SELECT: choose the correct F01-F20 factory type from product name', 'QC ACTION: workers inspect/sort/pack products on both sides', 'MOTION: camera push-in or tracking shot along conveyor with machine activity', 'CTA: final trustworthy factory-direct reveal'],
+    negativePrompt: 'crooked conveyor, asymmetrical composition, distorted products, broken machinery, duplicate humans, floating objects, cartoon, CGI, 3D, unreadable random text, watermark, low quality, warped perspective, empty factory'
+  },
+  
   tiktok_live: {
     visualIdentity: 'TikTok Live Commerce Screenshot + Live Selling Video — real phone screen capture feeling, Thai live host, UI comments, hearts, gift notification, viewer count, basket CTA, urgent live-commerce trust.',
     characterStyle: 'Thai / Asian live host, natural seller energy, friendly expressive face, realistic hands holding or demonstrating the product, live speaking expression.',
