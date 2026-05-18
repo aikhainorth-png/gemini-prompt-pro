@@ -126,7 +126,7 @@ select,input,textarea,button{
 
     <!-- PRESET SORA -->
     <div class="card">
-      <h2>🎬 Preset (ใช้สำหรับเมนูVDO) แนะนำให้ เพิ่ม ค่าว่างไว้ โดยตั้งชื่อ:ไม่ใช้</h2>
+      <h2>🎬 Preset (ใช้สำหรับเมนูVDO) </h2>
       <select id="presetSora" onchange="loadPreset()"></select>
       <input id="presetName" placeholder="ชื่อ Preset">
       <textarea id="presetText" rows="4" placeholder="รายละเอียด Preset"></textarea>
@@ -166,6 +166,11 @@ const result=document.getElementById("result");
 
 let soraPresets = JSON.parse(localStorage.getItem(LS_PRESET)) || {
   ugc: {
+    name: "ไม่ใช่",
+    text: ` `
+  },
+
+  another: {
     name: "โกดัง แตก",
     text: `Ultra photorealistic Thai warehouse liquidation sale scene. Massive inventory density. High-angle smartphone wide shot. Deep warehouse perspective. Crowded shopping atmosphere. Large hanging promotional fabric banner. TikTok viral commercial realism. 8K HDR commercial photography. Authentic Thai wholesale warehouse environment. Realistic industrial LED lighting. Busy customers, carts, pallets, stacked products. Readable Thai promotion typography. Natural documentary retail footage feeling.
 
@@ -175,6 +180,7 @@ AUDIO STYLE: No narration. No voice-over. No presenter talking. No clear dialogu
 
 MOTION CONTROL (STRICT): All customer movement must remain natural and realistic. People walk slowly and casually like normal warehouse shoppers. DO NOT generate: fast walking, sped-up motion, hyperlapse movement, time-lapse effect, chaotic rushing, aggressive crowd motion, shaky fast movement, unnatural speed. Movement style: slow casual walking, relaxed shopping behavior, gentle cart pushing, natural browsing, realistic human pacing, documentary-style motion. The overall scene should feel busy but calm and believable.`
   }
+
 };
 
 function renderPresets(){
