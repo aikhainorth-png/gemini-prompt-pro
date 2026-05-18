@@ -219,7 +219,6 @@ let data=JSON.parse(localStorage.getItem(LS)) || {
   model:{enabled:false,items:["ลูกค้าคนไทยสมจริง คนเดินเลือกสินค้าในโกดัง พนักงานเติมสินค้า แม่ค้าถือมือถือไลฟ์สด ครอบครัวเดินซื้อของ ลูกค้าถือรถเข็น คนต่อคิวจ่ายเงิน พนักงานโกดังเสื้อเซฟตี้ กลุ่มลูกค้ากำลังแย่งโปร คนกำลังหยิบสินค้าโปรแรง"]},
   style:{enabled:false,items:["TikTok Viral Footage Smartphone Commercial Shot Documentary Retail Footage High Angle Warehouse Shot CCTV-like Viral Perspective Retail Promo Cinematic Commercial Warehouse Photography Live Shopping Atmosphere Thai Wholesale Market Style Authentic Retail Documentary"]},
   mood:{enabled:false,items:["ลูกค้าเดินเลือกสินค้าตามปกติ คนเดินเต็มร้านอย่างเป็นธรรมชาติ โกดังขายส่งขนาดใหญ่ ของเยอะมาก ลดล้างสต็อก บรรยากาศขายดี ลูกค้าเลือกซื้อสินค้าอย่างต่อเนื่อง busy but realistic shopping atmosphere natural warehouse shopping flow documentary retail realism"]},
-  voice:{enabled:false,items:["เสียงผู้หญิง"]},
   subtitle:{enabled:false,items:["ช่วยสร้างซัพไตเติลสำหรับปักตระกร้าสินค้าในTikTokโดยให้มีผลในการดันยอดฟีตที่ดีรวมถึง ให้เหมาะกับอัลกอริทึม และรวมแฮชแทคที่เป็นกระแสในtiktokจำนวน2คำ และแฮชแทคที่เกี่ยวกับสินค้า3คำ รวมไปในซัพไตเติล ให้หน่อย"]}
 };
 
@@ -297,7 +296,6 @@ ${line("ซับ","subtitle")}`;
 function resetAll(){Object.keys(data).forEach(k=>data[k].enabled=false);}
 function modeImage(){resetAll();["product","image"].forEach(k=>data[k].enabled=true);save();render();}
 function modeWork(){resetAll();["product","work","model","style","mood"].forEach(k=>data[k].enabled=true);save();render();}
-function modeVoice(){resetAll();["product","voice"].forEach(k=>data[k].enabled=true);save();render();}
 function modeSub(){resetAll();["product","subtitle"].forEach(k=>data[k].enabled=true);save();render();}
 
 function copyText(){
