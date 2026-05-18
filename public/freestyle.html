@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Prompt Builder PRO+</title>
+<style>
+body{
+  margin:0;
+  font-family:system-ui;
+  background:#f2f2f2;
+}
+.container{
+  display:flex;
+  height:100vh;
+}
+
+/* LEFT */
+.left{
+  width:70%;
+  padding:12px;
+  margin-right:30%;
+  overflow:auto;
+}
+
+/* RIGHT */
+.right{
+  width:30%;
+  background:#111;
+  color:#0f0;
+  padding:12px;
+  position:fixed;
+  right:0;
+  top:0;
+  height:100%;
+}
+
+/* TOP BAR */
+.topbar{
+  display:flex;
+  gap:6px;
+  margin-bottom:12px;
+  position:sticky;
+  top:0;
+  background:#f2f2f2;
+  z-index:10;
+}
+
+.btn-blue{background:#007bff;color:#fff}
+.btn-purple{background:#6f42c1;color:#fff}
+.btn-green{background:#28a745;color:#fff}
+.btn-orange{background:#fd7e14;color:#fff}
+
+/* CARD */
+.card{
+  background:#fff;
+  border-radius:10px;
+  padding:12px;
+  margin-bottom:12px;
+  border-left:5px solid #ddd;
+}
+.card.active{
+  border-left:5px solid #28a745;
+  box-shadow:0 0 0 2px #28a74533;
+}
+
+.group{
+  border:2px dashed #bbb;
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:12px;
+}
+
+h2{
+  margin:0 0 6px 0;
+  font-size:16px;
+}
+
+select,input,textarea,button{
+  width:100%;
+  padding:8px;
+  margin-top:6px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+.row{
+  display:flex;
+  gap:6px;
+  margin-top:6px;
+}
+
+.add{background:#28a745;color:#fff;border:none}
+.del{
+  background:#dc3545;
+  color:#fff;
+  border:none;
+  flex:0.5;
+}
+.copy{background:#6c757d;color:#fff;border:none}
+
+.output{
+  height:55%;
+  background:#000;
+  color:#0f0;
+  font-family:monospace;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <!-- LEFT -->
+  <div class="left">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <button class="btn-blue" onclick="modeImage()">🖼 ภาพ</button>
+      <button class="btn-purple" onclick="modeWork()">🧩 VDO</button>
+      <button class="btn-orange" onclick="modeSub()">✍️ ซับ</button>
+      <button class="btn-green" onclick="window.location.href='https://gemini-prompt-pro.web.app/'">
+  หน้าหลัก
+</button>
+    </div>
+
+    <!-- PRESET SORA -->
+    <div class="card">
+      <h2>🎬 Preset (ใช้สำหรับเมนูVDO))</h2>
+      <select id="presetSora" onchange="loadPreset()"></select>
+      <input id="presetName" placeholder="ชื่อ Preset">
+      <textarea id="presetText" rows="4" placeholder="รายละเอียด Preset"></textarea>
+      <div class="row">
+        <button class="add" onclick="savePreset()">💾 บันทึก</button>
+        <button class="del" onclick="deletePreset()">🗑 ลบ</button>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <div id="menu"></div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <h2>📄 Final Prompt</h2>
+    <textarea id="result" class="output" readonly></textarea>
+    <button class="copy" onclick="copyText()">📋 Copy </button>
+  </div>
+
+</div>
+
+<script>
+function getValue(key){
+  if(!data[key] || !data[key].enabled) return "";
+  const s = document.getElementById(key + "_s");
+  return s ? s.value : "";
+}
+
+const LS="PROMPT_BUILDER_DATA";
+const LS_PRESET="SORA_PRESETS";
+
+const presetSora=document.getElementById("presetSora");
+const presetName=document.getElementById("presetName");
+const presetText=document.getElementById("presetText");
+const result=document.getElementById("result");
+
+let soraPresets = JSON.parse(localStorage.getItem(LS_PRESET)) || {
+  ugc: {
+    name: "โกดัง แตก",
+    text: `Ultra photorealistic Thai warehouse liquidation sale scene. Massive inventory density. High-angle smartphone wide shot. Deep warehouse perspective. Crowded shopping atmosphere. Large hanging promotional fabric banner. TikTok viral commercial realism. 8K HDR commercial photography. Authentic Thai wholesale warehouse environment. Realistic industrial LED lighting. Busy customers, carts, pallets, stacked products. Readable Thai promotion typography. Natural documentary retail footage feeling.
+
+CAMERA LOCK (STRICT): The camera angle is permanently fixed in a high elevated viewpoint. DO NOT change camera angle. DO NOT use eye-level view. DO NOT use close-up shots. DO NOT use cinematic rotating camera. DO NOT use handheld face-level perspective. Camera position: upper warehouse balcony viewpoint, high overhead angle, looking downward into the warehouse, wide-angle perspective, deep central aisle composition. The entire scene must remain in a single continuous high-angle warehouse shot. Reference style: CCTV-like warehouse perspective, high-angle TikTok viral footage, overhead commercial warehouse shot.
+
+AUDIO STYLE: No narration. No voice-over. No presenter talking. No clear dialogue. No loud shouting. Background audio only: soft warehouse ambience, distant crowd chatter, subtle shopping mall atmosphere, light movement sounds, shopping cart wheel sounds, soft ambient music, low-volume commercial background music. The audio should feel natural, soft, and documentary-style. Music should remain subtle and not dominate the scene.
+
+MOTION CONTROL (STRICT): All customer movement must remain natural and realistic. People walk slowly and casually like normal warehouse shoppers. DO NOT generate: fast walking, sped-up motion, hyperlapse movement, time-lapse effect, chaotic rushing, aggressive crowd motion, shaky fast movement, unnatural speed. Movement style: slow casual walking, relaxed shopping behavior, gentle cart pushing, natural browsing, realistic human pacing, documentary-style motion. The overall scene should feel busy but calm and believable.`
+  }
+};
+
+function renderPresets(){
+  presetSora.innerHTML="";
+  Object.keys(soraPresets).forEach(k=>{
+    const o=document.createElement("option");
+    o.value=k;
+    o.textContent=soraPresets[k].name;
+    presetSora.appendChild(o);
+  });
+  loadPreset();
+}
+
+function loadPreset(){
+  const p=soraPresets[presetSora.value];
+  if(!p) return;
+  presetName.value=p.name;
+  presetText.value=p.text;
+  update();
+}
+
+function savePreset(){
+  if(!presetName.value) return alert("กรอกชื่อ Preset");
+  const k=presetName.value.toLowerCase().replace(/\s+/g,"_");
+  soraPresets[k]={name:presetName.value,text:presetText.value};
+  localStorage.setItem(LS_PRESET,JSON.stringify(soraPresets));
+  renderPresets();
+  presetSora.value=k;
+}
+
+function deletePreset(){
+  if(!confirm("ยืนยันการลบ Preset นี้ ?")) return;
+  delete soraPresets[presetSora.value];
+  localStorage.setItem(LS_PRESET, JSON.stringify(soraPresets));
+  renderPresets();
+}
+
+let data=JSON.parse(localStorage.getItem(LS)) || {
+  image:{enabled:false,items:["Create 1 ultra photorealistic image. Massive Thai warehouse liquidation sale. High-angle wide shot from upper warehouse viewpoint. Deep central aisle perspective. Huge inventory everywhere. Dense product stacks. Pallets, shelves, cartons, retail bins, shopping carts. Crowded Thai customers shopping aggressively. Busy wholesale market atmosphere. Industrial LED lighting. Realistic polished concrete floor. Viral TikTok screenshot realism. Add a giant hanging fabric promotional banner suspended from the warehouse ceiling using visible hooks and steel cables. Banner style: Thai discount warehouse readable bold Thai text red-yellow promotion colors realistic vinyl texture slight wrinkles soft shadow on warehouse floor The banner must include: “[BANNER_HEADLINE]” “[BANNER_SUBHEADLINE]” “เริ่มต้นเพียง [PRICE] บาท” If uploaded product exists: print the product images INSIDE the banner artwork preserve exact product packaging and branding repeat the same product across shelves and pallets Scene feeling: ของเยอะมาก ลดล้างสต็อก ตลาดแตก โปรแรง ไวรัล TikTok คนแห่ซื้อ ขายส่ง Ultra realistic. Commercial retail realism. Authentic Thai warehouse atmosphere. 8K HDR. Sharp foreground. Deep perspective. No cartoon. No CGI toy look. No floating products. No empty warehouse."]},
+  product:{enabled:false,items:["สินค้าหลากหลายหมวดหมู่"]},
+  work:{enabled:false,items:["TikTok Viral Warehouse Sale TikTok Shop Clearance Live Commerce Warehouse Warehouse Clearance Promo Stock Clearance Event Wholesale Market Promotion Factory Outlet Mega Sale Flash Sale Warehouse Liquidation Warehouse Campaign Retail Discount Event"]},
+  model:{enabled:false,items:["ลูกค้าคนไทยสมจริง คนเดินเลือกสินค้าในโกดัง พนักงานเติมสินค้า แม่ค้าถือมือถือไลฟ์สด ครอบครัวเดินซื้อของ ลูกค้าถือรถเข็น คนต่อคิวจ่ายเงิน พนักงานโกดังเสื้อเซฟตี้ กลุ่มลูกค้ากำลังแย่งโปร คนกำลังหยิบสินค้าโปรแรง"]},
+  style:{enabled:false,items:["TikTok Viral Footage Smartphone Commercial Shot Documentary Retail Footage High Angle Warehouse Shot CCTV-like Viral Perspective Retail Promo Cinematic Commercial Warehouse Photography Live Shopping Atmosphere Thai Wholesale Market Style Authentic Retail Documentary"]},
+  mood:{enabled:false,items:["ลูกค้าเดินเลือกสินค้าตามปกติ คนเดินเต็มร้านอย่างเป็นธรรมชาติ โกดังขายส่งขนาดใหญ่ ของเยอะมาก ลดล้างสต็อก บรรยากาศขายดี ลูกค้าเลือกซื้อสินค้าอย่างต่อเนื่อง busy but realistic shopping atmosphere natural warehouse shopping flow documentary retail realism"]},
+  voice:{enabled:false,items:["เสียงผู้หญิง"]},
+  subtitle:{enabled:false,items:["ช่วยสร้างซัพไตเติลสำหรับปักตระกร้าสินค้าในTikTokโดยให้มีผลในการดันยอดฟีตที่ดีรวมถึง ให้เหมาะกับอัลกอริทึม และรวมแฮชแทคที่เป็นกระแสในtiktokจำนวน2คำ และแฮชแทคที่เกี่ยวกับสินค้า3คำ รวมไปในซัพไตเติล ให้หน่อย"]}
+};
+
+function save(){localStorage.setItem(LS,JSON.stringify(data));}
+
+function section(title,key){
+  const c=data[key];
+  if(!c.enabled) return "";
+  return `
+  <div class="card active" id="sec-${key}">
+    <h2>${title}</h2>
+    <select id="${key}_s" onchange="update()">
+      ${c.items.map(v=>`<option>${v}</option>`).join("")}
+    </select>
+    <input id="${key}_i" placeholder="เพิ่ม / แก้ไข">
+    <div class="row">
+      <button class="add" onclick="add('${key}')">➕ เพิ่ม</button>
+      <button class="del" onclick="delItem('${key}')">🗑 ลบ</button>
+    </div>
+  </div>`;
+}
+
+function render(){
+  document.getElementById("menu").innerHTML=
+    section("🖼 หมวดสร้างภาพ","image")+
+    section("📦 หมวดสินค้า","product")+
+    section("🧠 ประเภทงาน","work")+
+    section("👤 นายแบบ / นางแบบ","model")+
+    section("🎬 สไตล์ VDO","style")+
+    section("🌤 บรรยากาศ","mood")+
+    section("✍️ สร้างซับไตเติล","subtitle");
+  update();
+}
+
+function add(k){
+  const i=document.getElementById(k+"_i");
+  if(!i.value) return;
+  data[k].items.push(i.value);
+  i.value="";
+  save();
+  render();
+}
+
+function delItem(k){
+  const s=document.getElementById(k+"_s");
+  if(!s) return;
+  if(!confirm(`ยืนยันการลบ "${s.value}" ?`)) return;
+  data[k].items.splice(s.selectedIndex,1);
+  save();
+  render();
+}
+
+function line(t,k){
+  if(!data[k].enabled) return "";
+  const s=document.getElementById(k+"_s");
+  return s?`${t}: ${s.value}\n`:"";
+}
+
+function update(){
+  const p=soraPresets[presetSora.value];
+  result.value =
+`######
+${p?p.text:""}
+
+### DETAIL ###
+${line("ช่วยสร้างภาพ จำนวน1ภาพ (Output ออกมาเป็นไฟล์ภาพเลย) รายละเอียดดังนี้","image")}
+${line("สินค้า","product")}
+${line("ประเภทงาน","work")}
+${line("นายแบบ/นางแบบ","model")}
+${line("สไตล์","style")}
+${line("บรรยากาศ","mood")}
+${line("ซับ","subtitle")}`;
+}
+
+function resetAll(){Object.keys(data).forEach(k=>data[k].enabled=false);}
+function modeImage(){resetAll();["product","image"].forEach(k=>data[k].enabled=true);save();render();}
+function modeWork(){resetAll();["product","work","model","style","mood"].forEach(k=>data[k].enabled=true);save();render();}
+function modeVoice(){resetAll();["product","voice"].forEach(k=>data[k].enabled=true);save();render();}
+function modeSub(){resetAll();["product","subtitle"].forEach(k=>data[k].enabled=true);save();render();}
+
+function copyText(){
+  result.select();
+  navigator.clipboard.writeText(result.value);
+  alert("Copy prompt for Sora สำเร็จ");
+}
+
+renderPresets();
+render();
+</script>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+import { firebaseConfig } from './firebase-config.js';
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async(user)=>{
+
+  // ยังไม่ login
+  if(!user){
+    window.location.replace('./index.html');
+    return;
+  }
+
+  try{
+    const ref = doc(db,'users',user.uid);
+    const snap = await getDoc(ref);
+
+    // ไม่มี user doc
+    if(!snap.exists()){
+      window.location.replace('./index.html');
+      return;
+    }
+
+    const data = snap.data();
+
+    // ยังไม่อนุมัติ
+    if(!data.approved){
+      window.location.replace('./index.html');
+      return;
+    }
+
+    // ผ่าน = เข้า finder ได้
+
+  }catch(err){
+    console.error(err);
+    window.location.replace('./index.html');
+  }
+
+});
+</script>
+
+</body>
+</html>
