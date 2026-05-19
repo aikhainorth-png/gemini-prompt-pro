@@ -19,6 +19,7 @@ const DEFAULT_MODEL = 'gemini-2.5-flash';
 const DEFAULT_GEM_MODE = 'infographic_ai';
 const LS_PROMPT_STRATEGY = 'GEMINI_FINAL_PROMPT_PRO_PROMPT_STRATEGY_V1';
 const $ = (id) => document.getElementById(id);
+let userLockedGemMode = false;
 const app = initializeApp(firebaseConfig);
 try { getAnalytics(app); } catch {}
 const auth = getAuth(app);
@@ -353,10 +354,14 @@ function applyGemMode(modeId, opts = {}){
 }
 
 function maybeAutoDetectGemMode(){
+  if(userLockedGemMode) return;   // <- เพิ่มบรรทัดนี้
+
   const product = $('product')?.value || '';
   if(!product.trim()) return;
+
   const detected = getModeSource().autoDetectGemMode(product);
   const current = $('gemMode')?.value || 'signboard';
+
   if(detected && detected !== current){
     applyGemMode(detected, { toast: true });
   }
@@ -1251,10 +1256,11 @@ safeBind('promptStrategy','change',()=>{
 });
 
 safeBind('gemMode','change',()=>{
+  userLockedGemMode = true;
   const modeId = $('gemMode')?.value || 'signboard';
   applyGemMode(modeId, { toast: true });
 });
-safeBind('textOverlayEnabled','change',()=>{ updateOverlayBodies(); updateOverlayPreview(); saveAndRefresh(); }); safeBind('h2OverlayEnabled','change',()=>{ updateOverlayBodies(); updateOverlayPreview(); saveAndRefresh(); }); ['textOverlayStyle','textOverlayScene','textOverlayHook','textOverlayPosition','textOverlaySize','h2OverlayStyle','h2OverlayScene','h2OverlayHook'].forEach(id=>{ safeBind(id,'input',()=>{ updateOverlayPreview(); saveAndRefresh(); }); safeBind(id,'change',()=>{ updateOverlayPreview(); saveAndRefresh(); }); }); safeBind('sceneCount','change',()=>{ populateOverlaySceneOptions(); updateOverlayPreview(); saveAndRefresh(); }); safeBind('gemMode','change',()=>{ const modeId = $('gemMode')?.value || 'signboard'; applyGemMode(modeId, { toast: true }); populateTextStyleOptions(); populateH2StyleOptions(); updateOverlayPreview(); }); safeBind('product','blur',maybeAutoDetectGemMode); safeBind('product','change',maybeAutoDetectGemMode); ['product','location','view','promptStrategy','gemMode','providerMode','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
+safeBind('textOverlayEnabled','change',()=>{ updateOverlayBodies(); updateOverlayPreview(); saveAndRefresh(); }); safeBind('h2OverlayEnabled','change',()=>{ updateOverlayBodies(); updateOverlayPreview(); saveAndRefresh(); }); ['textOverlayStyle','textOverlayScene','textOverlayHook','textOverlayPosition','textOverlaySize','h2OverlayStyle','h2OverlayScene','h2OverlayHook'].forEach(id=>{ safeBind(id,'input',()=>{ updateOverlayPreview(); saveAndRefresh(); }); safeBind(id,'change',()=>{ updateOverlayPreview(); saveAndRefresh(); }); }); safeBind('sceneCount','change',()=>{ populateOverlaySceneOptions(); updateOverlayPreview(); saveAndRefresh(); }); safeBind('gemMode','change',()=>{ userLockedGemMode = true; const modeId = $('gemMode')?.value || 'signboard'; applyGemMode(modeId, { toast: true }); populateTextStyleOptions(); populateH2StyleOptions(); updateOverlayPreview(); }); safeBind('product','blur',maybeAutoDetectGemMode); safeBind('product','change',maybeAutoDetectGemMode); ['product','location','view','promptStrategy','gemMode','providerMode','voiceType','viralTone','sceneCount','duration'].forEach(id=>{ safeBind(id,'input',saveAndRefresh); safeBind(id,'change',saveAndRefresh); }); }
 
 function rebindOpenAIButtons(){
   const connectBtn = $('connectOpenAIKeyBtn');
