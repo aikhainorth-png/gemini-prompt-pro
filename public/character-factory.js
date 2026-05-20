@@ -84,12 +84,15 @@ function getCharacterId(input='') {
 
 function getThaiVoiceProfile(voiceType='thai_female') {
   const normalized = {
-    'หญิง':'thai_female','ชาย':'thai_male','ผู้หญิง':'thai_female','ผู้ชาย':'thai_male',
+    'หญิง':'thai_female','ชาย':'thai_male','วัยรุ่นหญิงเกาหลี':'korean_teen_female',
+  'วัยรุ่นชายเกาหลี':'korean_teen_male','ผู้หญิง':'thai_female','ผู้ชาย':'thai_male',
     'หญิงชรา':'elder_female','ชายชรา':'elder_male','เด็กผู้หญิง':'thai_girl','เด็กผู้ชาย':'thai_boy'
   }[voiceType] || voiceType || 'thai_female';
   const map = {
     thai_female: { gender:'Female', age:'young adult Thai woman appearance', role:'Thai female product presenter', voice:'Thai female natural commercial voice', hair:'long natural dark hair', eyes:'natural dark expressive eyes' },
     thai_male: { gender:'Male', age:'adult Thai man appearance', role:'Thai male product presenter', voice:'Thai male natural commercial voice', hair:'short natural dark hair', eyes:'natural dark confident eyes' },
+    korean_teen_female:{ gender:'Female', age:'young Korean teen girl appearance', role:'Korean teen style female influencer', voice:'Thai teenage female influencer voice', hair:'random Korean hairstyle every generation', eyes:'soft Korean-style expressive eyes' },
+  korean_teen_male:{ gender:'Male', age:'young Korean teen boy appearance', role:'Korean teen style male influencer', voice:'Thai teenage male influencer voice', hair:'random Korean hairstyle every generation', eyes:'calm Korean-style expressive eyes' },
     elder_female: { gender:'Female', age:'elderly Thai woman appearance', role:'elderly Thai female trusted presenter', voice:'Thai elderly female warm wise voice', hair:'grey or silver neatly kept hair', eyes:'kind elder dark eyes' },
     elder_male: { gender:'Male', age:'elderly Thai man appearance', role:'elderly Thai male trusted presenter', voice:'Thai elderly male calm deep voice', hair:'silver neatly kept hair', eyes:'wise elder dark eyes' },
     thai_girl: { gender:'Female', age:'Thai little girl child appearance', role:'Thai little girl child presenter', voice:'Thai little girl cheerful voice', hair:'natural dark child hairstyle', eyes:'bright childlike dark eyes' },
