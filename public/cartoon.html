@@ -131,7 +131,6 @@ const DEFAULT = {
  },
  image:{
   monster:["Ai ช่วยคิดให้"],
-  product:["สินค้า"],
   horrorStyle:[
    "# มาสคอตอนาคต # Ultra cute cartoon advertising style 2D + 3D hybrid animation Chibi proportion character Big expressive eyes Soft pastel color palette Clean modern background High clarity Smooth animation High frame rate Designed to maximize watch time and conversion",
    "# น่ารักแต่หลอน # Ultra cute horror advertising character, angry [product] monster mascot, kawaii scary style, emotional facial expression, exaggerated cartoon proportions, cinematic commercial lighting, premium coffee shop environment, dramatic mood, ultra sharp focus, volumetric lighting, shallow depth of field, hyper detailed textures, 3d octane render, unreal engine quality, cinematic advertising composition, viral tiktok thumbnail, extreme engagement, high contrast lighting, masterpiece",
@@ -185,15 +184,27 @@ function render(){
   menu.innerHTML=
   sec("👹 MONSTER","monster",i.monster)+
   sec("🩸 HORROR STYLE","horrorStyle",i.horrorStyle)+
-  sec("🧪 PRODUCT","iproduct",i.product);
+  sec("🧪 PRODUCT","iproduct",data.universal.product);
  }
  update();
 }
 
 function add(k){
- let arr = mode==="universal"
-  ? data.universal[k]
-  : data.image[k==="iproduct"?"product":k];
+ let arr;
+
+if(mode==="universal"){
+  arr = data.universal[k];
+}
+else{
+
+  // sync product ร่วมกัน
+  if(k==="iproduct"){
+    arr = data.universal.product;
+  }else{
+    arr = data.image[k];
+  }
+
+}
  let i=document.getElementById(k+"_i");
  if(!i.value) return;
  arr.push(i.value);
@@ -202,9 +213,21 @@ function add(k){
 }
 
 function delItem(k){
- let arr = mode==="universal"
-  ? data.universal[k]
-  : data.image[k==="iproduct"?"product":k];
+ let arr;
+
+if(mode==="universal"){
+  arr = data.universal[k];
+}
+else{
+
+  // sync product ร่วมกัน
+  if(k==="iproduct"){
+    arr = data.universal.product;
+  }else{
+    arr = data.image[k];
+  }
+
+}
  let s=document.getElementById(k+"_s");
  if(!confirm("ลบ "+s.value+"?")) return;
  arr.splice(s.selectedIndex,1);
