@@ -1,0 +1,373 @@
+<!DOCTYPE html><html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Horror Prompt Builder</title>
+<style>
+body{
+margin:0;
+font-family:'Comic Sans MS',system-ui,sans-serif;
+background:linear-gradient(135deg,#ffe6f7,#dff6ff);
+color:#333
+}
+.container{display:flex;height:100vh}
+.left{width:70%;padding:12px;margin-right:30%;overflow:auto}
+.right{
+ width:30%;
+ background:#111;
+ color:#0f0;
+ padding:12px;
+ position:fixed;
+ right:0;
+ top:0;
+ height:100%;
+ overflow-y:auto;
+}
+.topbar{display:flex;gap:6px;margin-bottom:12px;position:sticky;top:0;background:#f2f2f2;z-index:10}
+.btn{padding:8px 10px;border:none;border-radius:6px;color:#fff;cursor:pointer}
+.btn-blue{background:#4dabff}.btn-purple{background:#b06cff}.btn-green{background:#52c41a}
+.card{
+background:linear-gradient(180deg,#ffffff,#fff8fd);
+border-radius:22px;
+padding:14px;
+margin-bottom:14px;
+border-left:8px solid #ff77c8;
+box-shadow:0 8px 20px rgba(255,119,200,.15)
+}
+.card.active{border-left:5px solid #28a745;box-shadow:0 0 0 2px #28a74533}
+select,input,textarea,button{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:1px solid #ccc}
+.row{display:flex;gap:6px;margin-top:6px}
+.add{background:#28a745;color:#fff;border:none}
+.del{background:#dc3545;color:#fff;border:none;flex:.5}
+.copy{background:#6c757d;color:#fff;border:none}
+.output{height:38%;background:#000;color:#0f0;font-family:monospace}
+.output2{height:28%;background:#050;color:#aff;font-family:monospace;margin-top:10px}
+.log{margin-top:8px;background:#000;color:#0f0;font-size:12px;padding:6px;height:10%;overflow:auto;border-radius:6px}
+</style>
+</head>
+<body>
+
+<div class="container">
+<div class="left">
+
+<div class="topbar">
+<button class="btn btn-blue" onclick="modeUniversal()">🎬 สร้าง VDO</button>
+<button class="btn btn-purple" onclick="modeImage()">🖼 สร้าง ภาพ</button><button class="btn btn-green" onclick="window.open('https://gemini-prompt-pro.web.app', '_self')">🏠 หน้าหลัก</button>
+</div>
+
+<div id="menu"></div>
+
+</div>
+
+<div class="right">
+<h2>📄 Prompt VDO</h2>
+<textarea id="result" class="output" readonly></textarea>
+<button class="copy" onclick="copyText('result')">📋 Copy</button>
+
+<hr style="border:1px solid #033;margin:12px 0">
+
+<h2>🧟 Prompt รูปภาพ</h2>
+<textarea id="imageResult" class="output2" readonly></textarea>
+
+<div style="position:sticky;bottom:0;background:#111;padding-top:6px">
+<button class="copy" onclick="copyText('imageResult')">📋 Copy Horror Prompt</button>
+</div>
+
+<div class="log" id="log">Ready</div>
+</div>
+</div>
+
+<script>
+const LS="PROMPT_GOD_MODE";
+
+
+const DEFAULT = {
+ universal:{
+  product:["เสื้อกันฝน"],
+  pain:["Ai ช่วยคิดให้"],
+  f1:[
+   "Ai ช่วยคิดให้"
+  ],
+  f2:[
+   "# มาสคอตอนาคต # Ultra cute cartoon advertising style 2D + 3D hybrid animation Chibi proportion character Big expressive eyes Soft pastel color palette Clean modern background High clarity Smooth animation High frame rate Designed to maximize watch time and conversion",
+   "# น่ารักแต่หลอน # Ultra cute horror advertising character, angry [product] monster mascot, kawaii scary style, emotional facial expression, exaggerated cartoon proportions, cinematic commercial lighting, premium coffee shop environment, dramatic mood, ultra sharp focus, volumetric lighting, shallow depth of field, hyper detailed textures, 3d octane render, unreal engine quality, cinematic advertising composition, viral tiktok thumbnail, extreme engagement, high contrast lighting, masterpiece",
+   "# สินค้ามีชีวิต ขี้โมโห แต่ตลก # Pixar-like 3D animated video. Anthropomorphic [product] (has arms/legs/face), angry-but-funny, clean render. Single continuous shot only (no cuts). Camera locked or very slow pan only. No zoom. No text/subtitles/UI/watermarks. Scene: {object-related place}. Lighting: cinematic soft GI + gentle rim light. Style: high-quality 3D, depth of field. Action: subtle idle motion (breathing/bounce/blinks). While speaking, use readable angry gestures (pointing/hand wave). Lip-sync: accurate mouth movement to dialogue. Dialogue (Thai, put in quotes, ~8s): must include “กู” and “มึง”; give a funny but useful tip on how to fix or maintain {Keyword} so it lasts longer; no hate/harassment, no threats, no brand names. Physics/FX: natural bounce, tiny dust motes, mild motion blur. Negative: gore,blood,horror,vomit,feces,violence,weapons,alcohol,cigarettes,drugs,nude,explicit sex,hate symbols,bullying,humiliation,shaky cam,low-res,blurry,subtitles,on-screen text,UI",
+   "# มาสคอตพูดขายของ # Pixar-like 3D animated video. Anthropomorphic [CHARACTER] (has arms/legs/face), angry-but-funny, clean render. Single continuous shot only (no cuts). Holding and presenting the [product]. Cameralocked or very slow pan only. No zoom. No text/subtitles/UI/watermarks. Scene: {object-related place}. Lighting: cinematic soft GI + gentle rim light. Style: high-quality 3D, depth of field. Action: subtle idle motion (breathing/bounce/blinks). While speaking, use readable angry gestures (pointing/hand wave). Lip-sync: accurate mouth movement to dialogue. Dialogue (Thai, put in quotes, ~10s): must include “กู” and “มึง”; give a funny but useful Benefits of the [PRODUCT PRESENTATION]; no hate/harassment, no threats, no brand names. Physics/FX: natural bounce, tiny dust motes, mild motion blur. Negative: gore,blood,horror,vomit,feces,violence,weapons,alcohol,cigarettes,drugs,nude,explicit sex,hate symbols,bullying,humiliation,shaky cam,low-res,blurry,subtitles,on-screen text,UI",
+   "# อวัยวะขี้บ่น # A vertical 9:16 ultra cinematic Pixar-like 3D animated video. 🧍 CHARACTER (REFERENCE LOCK – สำคัญมาก) Use the FIRST attached image as CHARACTER reference only. STRICT CHARACTER RULES: must match 100% appearance from reference same face / structure / style / proportions same outfit / color / texture same identity (no redesign, no randomization) Convert this character into: Pixar-style 3D animated version expressive face soft smooth skin (subsurface scattering) high-end 3D animation quality Character must have arms, legs, and full expressive movement. 🧪 PRODUCT (REFERENCE LOCK – สำคัญมาก) Use the SECOND attached image as PRODUCT reference only STRICT PRODUCT RULES: 100% identical same shape same color same label / logo no redesign / no simplification The character must hold and present the product clearly toward camera. 🎭 CHARACTER MOOD angry-but-funny slightly frustrated but comedic relatable TikTok style expressive gestures (pointing, waving, complaining) 🏭 SCENE (AI AUTO) AI selects a scene that fits the character naturally (e.g. bedroom / office / factory / abstract environment) Environment must feel alive: subtle motion in background cinematic depth no clutter 🎥 CAMERA vertical 9:16 medium close-up camera mostly locked slight natural handheld micro-movement allowed no zoom character occupies ~60–70% 💡 LIGHTING cinematic soft GI soft rim light natural commercial lighting high contrast but clean 🎬 ACTION FLOW (Flexible 8–10s) ⏱️ HOOK (First 2–3 seconds) Character reacts immediately with stress / pain / annoyed expression, leans toward camera dramatically. 👉 Dialogue (AI generate): Thai language, must include “กู / มึง”, funny sarcastic hook, short attention-grabbing opening. ⏱️ PAIN + SOLUTION (Middle section) Character exaggerates relatable problem using expressive gestures, then quickly presents product toward camera. 👉 Dialogue: Explain relatable pain simply, clearly mention product benefit, fast TikTok pacing. ⏱️ CTA (Final 2 seconds) Character points toward viewer / basket area. 👉 Dialogue: Short urgent CTA, energetic emotional delivery. 🗣️ VOICE + LIP SYNC native Thai voice, fast TikTok pacing, clear pronunciation, perfect lip sync, ultra realistic emotional acting. 🎞️ MOTION idle animation (breathing / blinking / slight bounce) expressive hand gestures subtle motion blur cinematic timing 🧠 AI DIALOGUE RULE (สำคัญ) AI must generate Thai dialogue: must include “กู” and “มึง” funny, slightly rude but not offensive must include: problem (pain point) benefit (product) CTA (click basket) ❌ NEGATIVE no text, no subtitles, no watermark, no logo overlay, no UI, no blur, no distortion, no gore, no violence 🚀 OUTPUT 15 seconds vertical 9:16 high CTR TikTok commercial style ultra cinematic 3D Output format: Return all results inside a single Code Block for easy copy-paste. Do not include any explanation outside the block.",
+   "# สมองด่าเจ้าของร่าง # A vertical 9:16 ultra cinematic Pixar-like 3D animated video. 🧍 CHARACTER (REFERENCE LOCK – รูปที่ 1) Use the FIRST attached image as CHARACTER reference only STRICT RULES: must match 100% identity from reference same face / structure / outfit / proportions no redesign, no random face convert into Pixar-style 3D (soft smooth skin, expressive face, high-end animation) Character must have full body (arms, legs) and expressive movement. 🧪 PRODUCT (REFERENCE LOCK – รูปที่ 2) Use the SECOND attached image as PRODUCT reference only STRICT RULES: 100% identical same packaging / label / color / shape no redesign / no simplification The character must hold and present the product clearly to camera. 🎭 CHARACTER MOOD angry-but-funny sarcastic, complaining style relatable TikTok energy expressive gestures (ชี้ / โวย / ด่าแบบขำๆ) 🏭 SCENE (AI AUTO) AI selects environment that matches concept “สมอง/คิดหนัก” เช่น: futuristic brain control room ห้องทำงานรกๆ / คนทำงานหนัก abstract mental space Background must be alive: moving lights / particles / UI glow cinematic depth 🎥 CAMERA vertical 9:16 medium close-up camera mostly locked slight handheld micro movement allowed no zoom subject ~60–70% frame 💡 LIGHTING cinematic soft GI rim light subtle glow from environment clean commercial look 🎬 ACTION FLOW (Flexible 8–10s) ⏱️ HOOK (First 2–3 seconds) Character reacts immediately with stress / headache / frustration, leans aggressively toward camera. 👉 Dialogue (AI generate): Start with funny roast or complaint using “กู / มึง”, strong attention-grabbing opening, sarcastic TikTok tone. ⏱️ ROAST + PAIN + SOLUTION (Middle section) Character exaggerates gestures more aggressively, points at viewer, explains relatable brain exhaustion problem, then suddenly presents product toward camera with glowing highlight. 👉 Dialogue: Explain relatable pain such as overthinking / lack of rest / brain overload, then clearly introduce product benefit in simple emotional language. ⏱️ CTA (Final 2 seconds) Character points toward viewer / basket area / near camera. 👉 Dialogue: Short urgent CTA such as “กดตะกร้า”, “รีบสั่ง”, energetic emotional push. 🧠 AI DIALOGUE RULE (สำคัญมาก) AI must generate Thai dialogue naturally using “กู / มึง”. Tone must be funny, sarcastic, relatable, slightly rude but safe for TikTok. Dialogue must include: Hook (attention grab), Pain (problem), Solution (product), CTA (buy action). 🗣️ VOICE + LIP SYNC Thai native voice, fast TikTok pacing, clear pronunciation, perfect lip sync required, emotional delivery flow (ด่า → แนะนำ → เร่งซื้อ), ultra realistic voice acting. 🎞️ MOTION idle breathing / blinking expressive hand gestures slight bounce subtle motion blur floating particles / ambient motion ❌ NEGATIVE no text, no subtitles, no watermark, no UI, no blur, no distortion, no gore, no violence 🚀 OUTPUT 15 seconds vertical 9:16 Pixar-quality 3D cinematic high CTR TikTok ad style. Output format: Return all results inside a single Code Block for easy copy-paste. Do not include any explanation outside the block."
+  ],
+  f3:[
+   "holding product, glowing divine aura, holy golden light, floating particles, epic hero shot, premium advertising composition.",
+   "holy light vs darkness, glowing divine aura, holy golden light, floating particles, epic hero shot, premium advertising composition.",
+   "presenting bottle, glowing divine aura, holy golden light, floating particles, epic hero shot, premium advertising composition.",
+   "salvation contrast storytelling, glowing divine aura, holy golden light, floating particles, epic hero shot, premium advertising composition."
+  ],
+  character:["Ai ช่วยคิดให้"],
+  voice:[
+   "Deep low whisper female voice, dark seductive tone, mysterious, slow emotional pacing, cinematic horror narration",
+   "Extremely energetic female voice, hyper fast pacing, insane excitement",
+   "Deep cinematic female voice, dramatic storytelling tone",
+   "Cute cheerful female voice at first, then sudden dark horror switch",
+   "Professional authoritative female medical voice"
+  ],
+  script:[
+   "Ai ช่วยคิดให้",
+   "# เต้นร้องเพลงตลก # 0–4 seconds: The character sings a cute nonsense song with no understandable language (gibberish melody), dancing and swaying playfully side to side, bouncing lightly with rhythm, exaggerated cute facial expressions, joyful energy, funny and charming movements. 4–14 seconds: The character stops dancing, faces the camera, holds up the product confidently, uses readable angry-but-funny gestures (pointing at camera, waving hand), presents the product benefits with energetic Thai dialogue."
+  ],
+  onscreen:[
+   "ไม่มีตัวหนังสือ",
+   "ตัวหนังสือขนาดใหญ่",
+   "ตัวหนังสือขนาดกลาง",
+   "ตัวหนังสือขนาดเล็ก"
+  ],
+  camera:[
+   "macro close-up",
+   "shallow depth of field",
+   "volumetric light",
+   "dramatic rim light",
+   "ultra contrast lighting",
+   "anamorphic lens"
+  ]
+ },
+ image:{
+  monster:["Ai ช่วยคิดให้"],
+  product:["สินค้า"],
+  horrorStyle:[
+   "# มาสคอตอนาคต # Ultra cute cartoon advertising style 2D + 3D hybrid animation Chibi proportion character Big expressive eyes Soft pastel color palette Clean modern background High clarity Smooth animation High frame rate Designed to maximize watch time and conversion",
+   "# น่ารักแต่หลอน # Ultra cute horror advertising character, angry [product] monster mascot, kawaii scary style, emotional facial expression, exaggerated cartoon proportions, cinematic commercial lighting, premium coffee shop environment, dramatic mood, ultra sharp focus, volumetric lighting, shallow depth of field, hyper detailed textures, 3d octane render, unreal engine quality, cinematic advertising composition, viral tiktok thumbnail, extreme engagement, high contrast lighting, masterpiece",
+   "# สินค้ามีชีวิต ขี้โมโห แต่ตลก # Pixar-like 3D animated video. Anthropomorphic [product] (has arms/legs/face), angry-but-funny, clean render. Single continuous shot only (no cuts). Camera locked or very slow pan only. No zoom. No text/subtitles/UI/watermarks. Scene: {object-related place}. Lighting: cinematic soft GI + gentle rim light. Style: high-quality 3D, depth of field. Action: subtle idle motion (breathing/bounce/blinks). While speaking, use readable angry gestures (pointing/hand wave). Lip-sync: accurate mouth movement to dialogue. Dialogue (Thai, put in quotes, ~8s): must include “กู” and “มึง”; give a funny but useful tip on how to fix or maintain {Keyword} so it lasts longer; no hate/harassment, no threats, no brand names. Physics/FX: natural bounce, tiny dust motes, mild motion blur. Negative: gore,blood,horror,vomit,feces,violence,weapons,alcohol,cigarettes,drugs,nude,explicit sex,hate symbols,bullying,humiliation,shaky cam,low-res,blurry,subtitles,on-screen text,UI",
+   "# มาสคอตพูดขายของ # Pixar-like 3D animated video. Anthropomorphic [MONSTER] (has arms/legs/face), angry-but-funny, clean render. Single continuous shot only (no cuts). Holding and presenting the [product]. Cameralocked or very slow pan only. No zoom. No text/subtitles/UI/watermarks. Scene: {object-related place}. Lighting: cinematic soft GI + gentle rim light. Style: high-quality 3D, depth of field. Action: subtle idle motion (breathing/bounce/blinks). While speaking, use readable angry gestures (pointing/hand wave). Physics/FX: natural bounce, tiny dust motes, mild motion blur. Negative: gore,blood,horror,vomit,feces,violence,weapons,alcohol,cigarettes,drugs,nude,explicit sex,hate symbols,bullying,humiliation,shaky cam,low-res,blurry,subtitles,on-screen text,UI",
+   "# อวัยวะขี้บ่น # Create an image of: Pixar-like 3D animated cinematic scene. Anthropomorphic [ORGAN CHARACTER] (has arms, legs, expressive face), angry-but-funny, highly engaging, clean premium render. [ORGAN CHARACTER] = AI random internal organ character such as brain, heart, joints (knee joint), nerves, or eyes. Style: cute but expressive, slightly exaggerated Pixar proportions, soft smooth texture, subsurface scattering, emotionally readable face. The character is holding and presenting the product “Tt” clearly toward the camera. PRODUCT RULE (CRITICAL): The product must remain 100% identical to the attached reference image. same shape same color same packaging same label no redesign, no stylization 🎭 CHARACTER BEHAVIOR Expression: stressed, overworked, slightly frustrated but funny (angry-but-funny tone) Pose: using hands to gesture while explaining (pointing, hand wave, slight shake) Idle motion: subtle breathing, blinking, slight bounce for realism 🎬 SCENE Scene: AI chooses a matching internal environment based on the organ brain → futuristic neural control room heart → glowing bloodstream tunnel joints → mechanical joint chamber nerves → electric signal pathways Environment must feel alive, with subtle motion (floating particles, light pulses, energy flow) 🎥 CAMERA camera locked (front view or very slight cinematic pan only) no zoom medium close-up framing 9:16 vertical composition character occupies ~60–70% of frame 💡 LIGHTING cinematic soft global illumination (GI) gentle rim light soft volumetric light high contrast but clean commercial look 🧪 STYLE & QUALITY ultra high-quality 3D 8K resolution ultra sharp focus depth of field (background slightly blurred) physically based rendering (PBR) crystal clear details viral advertising composition high CTR / scroll-stopping ⚡ MOOD AI random mood but optimized for: viral, emotional hook, slightly chaotic “organ complaining” vibe, relatable pain point ❌ NEGATIVE gore, blood, horror, vomit, feces, violence, weapons, alcohol, cigarettes, drugs, nude, explicit sex, hate symbols, bullying, humiliation, shaky cam, low resolution, blur, subtitles, text, UI, watermark 🚀 OUTPUT image only vertical 9:16 ultra cinematic commercial style"
+  ]
+ }
+};
+
+
+let data = JSON.parse(localStorage.getItem(LS)) || DEFAULT;
+// ===== AUTO DATA MIGRATION PATCH =====
+if(!data.image) data.image = DEFAULT.image;
+
+if(!data.image.horrorStyle){
+ data.image.horrorStyle = [...DEFAULT.image.horrorStyle];
+ save();
+}
+// ====================================
+let mode="universal";
+
+function save(){localStorage.setItem(LS,JSON.stringify(data));}
+
+function sec(title,key,list){
+ return `<div class="card active"><h2>${title}</h2>
+ <select id="${key}_s" onchange="update()">${list.map(v=>`<option>${v}</option>`).join("")}</select>
+ <input id="${key}_i" placeholder="เพิ่ม / แก้ไข">
+ <div class="row">
+ <button class="add" onclick="add('${key}')">➕ เพิ่ม</button>
+ <button class="del" onclick="delItem('${key}')">🗑 ลบ</button>
+ </div></div>`;
+}
+
+function render(){
+ if(mode==="universal"){
+  const u=data.universal;
+  menu.innerHTML=
+  sec("📦 สินค้า","product",u.product)+
+  sec("⚠️ ปัญหา","pain",u.pain)+
+  sec("⭐ จุดเด่น","f1",u.f1)+
+  sec("🩸 HORROR STYLE","f2",u.f2)+
+  sec("📦 PRODUCT PRESENTATION","f3",u.f3)+
+  sec("🎨 CHARACTER","character",u.character)+
+  sec("🎤 VOICE","voice",u.voice)+
+  sec("🗣 SCRIPT","script",u.script)+
+  sec("🖥 ONSCREEN","onscreen",u.onscreen)+
+  sec("🎥 CAMERA","camera",u.camera);
+ }else{
+  const i=data.image;
+  menu.innerHTML=
+  sec("👹 MONSTER","monster",i.monster)+
+  sec("🩸 HORROR STYLE","horrorStyle",i.horrorStyle)+
+  sec("🧪 PRODUCT","iproduct",i.product);
+ }
+ update();
+}
+
+function add(k){
+ let arr = mode==="universal"
+  ? data.universal[k]
+  : data.image[k==="iproduct"?"product":k];
+ let i=document.getElementById(k+"_i");
+ if(!i.value) return;
+ arr.push(i.value);
+ i.value="";
+ save();render();
+}
+
+function delItem(k){
+ let arr = mode==="universal"
+  ? data.universal[k]
+  : data.image[k==="iproduct"?"product":k];
+ let s=document.getElementById(k+"_s");
+ if(!confirm("ลบ "+s.value+"?")) return;
+ arr.splice(s.selectedIndex,1);
+ save();render();
+}
+
+function v(k){
+ return document.getElementById(k+"_s")?.value||"";
+}
+
+function update(){
+ if(mode==="universal"){
+  const p=v("product");
+  const pain=v("pain");
+  const f1=v("f1"); // FEATURE
+  const f2=v("f2"); // HORROR STYLE
+  const f3=v("f3"); // PRODUCT PRESENTATION
+  const ch=v("character");
+  const vc=v("voice");
+  const sc=v("script");
+  const os=v("onscreen");
+  const cam=v("camera");
+
+  result.value = `
+Create VDO Prompt a Vertical 9:16 Ultra cinematic ${f2} animated commercial video, .
+(Ai random environment, atmosphere, lighting, ultra contrast, shadows, fog, 
+particles, rim light, camera movement.)
+8–10 seconds.
+
+[CHARACTER]:
+${ch}(ตามรูปแรกที่แนบมา), hyper detailed textures, extreme emotional expression, cinematic animation, horror + cute fusion style, nightmare but viral TikTok friendly design.
+
+[STORYTELLING]:
+Pain → fear → chaos from ${pain} → sudden appearance of ${p} as divine salvation, dramatic emotional contrast, shock marketing narrative, cinematic climax.
+
+[PRODUCT PRESENTATION]:
+${p}(ตามรูปที่2ที่แนบมา โดยรายละเอียดสินค้าคงเดิม100%), ${f3}, glowing divine aura, holy golden light, floating particles, epic hero shot, premium advertising composition.
+
+[CAMERA & MOTION]:
+${cam}, dynamic cinematic movement, speed ramp, dramatic zoom, macro close-ups, smooth cinematic transitions, TikTok viral rhythm.
+
+[QUALITY]:
+Ultra sharp focus, 8K hyper realism, HDR, cinematic lighting, film grain, epic horror commercial style, high frame rate.
+
+[VOICE & DIALOGUE]:
+${vc}, native Thai female voice, ultra energetic, hyper fast pacing, extreme excitement, viral TikTok advertising tone, perfect lip sync, natural Thai accent, cinematic emotional acting.
+
+[SCRIPT]:
+${sc.replace('{product}',p).replace('{pain}',pain).replace('{f1}',f1).replace('{f2}',f2).replace('{f3}',f3)}
+
+[TEXT OVERLAY]:
+${os}, big bold Thai typography, high contrast, kinetic motion text animation, punchy emotional hooks.
+
+[FINAL BOOST]:
+Strong hook in first 1 second, extreme engagement, viral shock factor, maximum watch time retention, high conversion focused TikTok ad The character speaks native Thai language with perfect pronunciation.
+Natural Thai accent.
+Clear articulation.
+Professional female Thai voice actor performance.
+No robotic tone.
+No foreign accent.
+Perfect lip sync matching Thai speech.
+Accurate mouth movement based on Thai phonetics.
+Ultra realistic natural human voice generation.
+Cinematic commercial voice acting.
+High emotional range.
+Extremely strict Thai pronunciation accuracy.
+Perfect Thai intonation.
+
+Extremely similar speaking rhythm, pacing, emotion, energy, and cartoon presentation style to viral TikTok animated product ad
+Fast-paced dialogue
+Strong hook within first 1 second
+Designed for maximum watch time retention.
+
+One single animated vide
+Length 12–15 seconds
+Ultra cute cartoon style
+Perfect lip sync
+Viral TikTok style
+High engagement
+High conversion focused
+Output format: Return all results inside a single Code Block for easy copy-paste. Do not include any explanation outside the block.
+  `.trim();
+ }
+ else {
+  imageResult.value = `Create an image of: ${v("horrorStyle")}, Ai random mood:
+
+[MONSTER]= ${v("monster")}, (Ai random MONSTER style),
+
+[product]= ${v("iproduct")},
+
+Presenting ${v("iproduct")}, The product details remain exactly as shown in the attached image (100%) and Ai random Present Style,
+
+Ratio 9:16, 8K hyper realism, ultra sharp focus, cinematic composition, nightmare fuel, viral advertising, extreme engagement, high conversion. Output: image only`;
+ }
+}
+
+function copyText(id){
+ const r=document.getElementById(id);
+ r.select();navigator.clipboard.writeText(r.value);
+ log("Copy สำเร็จ");
+}
+
+function log(t){
+ logbox.innerHTML+="> "+t+"<br>";
+ logbox.scrollTop=logbox.scrollHeight;
+}
+
+function modeUniversal(){mode="universal";render();}
+function modeImage(){mode="image";render();}
+
+const menu=document.getElementById("menu");
+const result=document.getElementById("result");
+const imageResult=document.getElementById("imageResult");
+const logbox=document.getElementById("log");
+
+render();
+</script>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+import { firebaseConfig } from './firebase-config.js';
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async(user)=>{
+
+  // ยังไม่ login
+  if(!user){
+    window.location.replace('./index.html');
+    return;
+  }
+
+  try{
+    const ref = doc(db,'users',user.uid);
+    const snap = await getDoc(ref);
+
+    // ไม่มี user doc
+    if(!snap.exists()){
+      window.location.replace('./index.html');
+      return;
+    }
+
+    const data = snap.data();
+
+    // ยังไม่อนุมัติ
+    if(!data.approved){
+      window.location.replace('./index.html');
+      return;
+    }
+
+    // ผ่าน = เข้า finder ได้
+
+  }catch(err){
+    console.error(err);
+    window.location.replace('./index.html');
+  }
+
+});
+</script>
+
+</body>
+</html>
