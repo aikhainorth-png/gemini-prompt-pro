@@ -868,11 +868,16 @@ function renderSceneWorkspace(sceneCount, imagePrompt='', videoPrompt=''){
 function clearForm(){ ['product','location','view'].forEach(id=>{if($(id)) $(id).value='';}); if($('promptStrategy')) $('promptStrategy').value='viral'; localStorage.setItem(LS_PROMPT_STRATEGY,'viral'); populateGemModeOptions(DEFAULT_GEM_MODE); if($('gemMode')) $('gemMode').value=DEFAULT_GEM_MODE; if($('providerMode')) $('providerMode').value='gemini'; if($('voiceType')) $('voiceType').value='product_only'; populateViralToneOptions(DEFAULT_GEM_MODE,'ประโยชน์ครบจบในภาพเดียว'); if($('sceneCount')) $('sceneCount').value='1'; if($('duration')) $('duration').value='10'; if($('imagePrompt')) $('imagePrompt').value=''; if($('videoPrompt')) $('videoPrompt').value=''; if($('captionPrompt')) $('captionPrompt').value=''; if($('textOverlayEnabled')) $('textOverlayEnabled').checked=false; if($('textOverlayStyle')) $('textOverlayStyle').value='auto'; if($('textOverlayScene')) $('textOverlayScene').value='all'; if($('textOverlayHook')) $('textOverlayHook').value=''; if($('textOverlayPosition')) $('textOverlayPosition').value='center'; if($('textOverlaySize')) $('textOverlaySize').value='medium'; if($('h2OverlayEnabled')) $('h2OverlayEnabled').checked=false; if($('h2OverlayStyle')) $('h2OverlayStyle').value='auto'; if($('h2OverlayScene')) $('h2OverlayScene').value='all'; if($('h2OverlayHook')) $('h2OverlayHook').value=''; updateOverlayBodies(); updateOverlayPreview(); resetSceneWorkspace(); if($('resultsWrap')) $('resultsWrap').style.display='none'; if($('emptyState')) $('emptyState').style.display='flex'; currentHistoryId=null; resetPromptEditors(); saveAndRefresh(); showToast('ล้างข้อมูลแล้ว'); }
 
 function buildSceneTimeRange(sceneNo = 1, sceneCount = 1, duration = 10){
-  const count = Math.max(1, Number(sceneCount || 1));
-  const total = Math.max(1, Number(duration || 10));
-  const start = ((sceneNo - 1) * total / count);
-  const end = (sceneNo * total / count);
-  const fmt = (v) => Number.isInteger(v) ? String(v) : v.toFixed(1).replace(/\.0$/,'');
+  const perScene = Math.max(1, Number(duration || 10));
+
+  const start = 0;
+  const end = perScene;
+
+  const fmt = (v) =>
+    Number.isInteger(v)
+      ? String(v)
+      : v.toFixed(1).replace(/\.0$/,'');
+
   return `[${fmt(start)}-${fmt(end)}s]`;
 }
 
