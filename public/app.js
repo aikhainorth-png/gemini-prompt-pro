@@ -1155,6 +1155,28 @@ function sanitizePolicyStructuredPrompt(text = '') {
     .trim();
 }
 
+function sanitizePrompt(prompt){
+  return String(prompt || '')
+    .replace(/\bteen\b/gi,'young adult')
+    .replace(/\bsexy\b/gi,'stylish')
+    .replace(/\bseductive\b/gi,'confident')
+    .replace(/爆乳/gi,'fashionable')
+    .replace(/\bnsfw\b/gi,'cinematic')
+    .replace(/school girl/gi,'young woman')
+    .replace(/hot girl/gi,'fashion model')
+    .replace(/underboob/gi,'fashion pose')
+    .replace(/cleavage/gi,'elegant styling')
+    .replace(/bikini/gi,'summer fashion')
+    .replace(/braless/gi,'casual fashion')
+    .replace(/transparent clothing/gi,'fashion styling')
+    .replace(/see-through/gi,'soft fabric')
+    .replace(/revealing outfit/gi,'modern outfit')
+    .replace(/sensual/gi,'cinematic')
+    .replace(/provocative/gi,'dramatic')
+    .replace(/flirty/gi,'playful')
+    .replace(/lingerie/gi,'fashion wear');
+}
+
 async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); d.characterSessionId = generateCharacterSessionId(); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); 
 const result = await callSelectedProvider(d);
 
@@ -1162,10 +1184,19 @@ const result = await callSelectedProvider(d);
 result.image_prompt = applyTextOverlayToImagePrompt(result.image_prompt || '', d);
 result.image_prompt = injectDNAIntoStructuredPrompt(result.image_prompt, 'image', d, character);
 result.image_prompt = ensureAutoProductHookVisualScene1(result.image_prompt, d);
-if(isProductOnlyMode(d)) result.image_prompt = enforceProductOnlyPrompt(result.image_prompt, 'image', d);
+
+if(isProductOnlyMode(d))
+  result.image_prompt = enforceProductOnlyPrompt(result.image_prompt, 'image', d);
 
 result.video_prompt = injectDNAIntoStructuredPrompt(result.video_prompt || '', 'video', d, character);
-if(isProductOnlyMode(d)) result.video_prompt = enforceProductOnlyPrompt(result.video_prompt, 'video', d);
+
+if(isProductOnlyMode(d))
+  result.video_prompt = enforceProductOnlyPrompt(result.video_prompt, 'video', d);
+
+// 🔥 GEMINI SAFETY SANITIZE
+result.image_prompt = sanitizePrompt(result.image_prompt);
+result.video_prompt = sanitizePrompt(result.video_prompt);
+result.caption_hashtags = sanitizePrompt(result.caption_hashtags || '');
 
 // sanitize หลังสุดแบบรักษา Scene header
 result.image_prompt = sanitizePolicyStructuredPrompt(result.image_prompt);
