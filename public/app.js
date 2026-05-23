@@ -85,20 +85,20 @@ const THAI_CHARACTER_VOICE_PROFILES = {
   korean_teen_female:{
   label:'วัยรุ่นหญิงเกาหลี',
 
-  image:'beautiful Korean teen style girl, ultra realistic cinematic Asian appearance, trendy Gen Z Korean aesthetic, youthful Korean street-fashion vibe, soft Korean visual style, randomized face and hairstyle every generation, different facial identity each image, Korean influencer vibe, photorealistic live-action appearance',
+  image:'beautiful young Korean woman, ultra realistic cinematic Asian appearance, trendy Korean fashion aesthetic, modern Korean influencer vibe, randomized face and hairstyle every generation, different facial identity each image, photorealistic live-action appearance',
 
-  voice:'Thai female teenage voice, natural spoken Thai, cute, trendy, energetic, friendly, influencer style, authentic Thai accent',
+  voice:'Thai young adult female voice, natural spoken Thai, trendy, energetic, friendly, influencer style, authentic Thai accent',
 
-  dna:'beautiful Korean teen style girl, trendy Korean street-fashion vibe, youthful Gen Z Korean aesthetic, random face and hairstyle every generation while maintaining Korean teen visual style, soft Korean beauty look, douyin makeup, glass skin, Korean fashion aesthetic, photorealistic live-action proportions'
+  dna:'beautiful young Korean woman, trendy Korean fashion aesthetic, random face and hairstyle every generation while maintaining modern Korean visual style, soft Korean beauty look, natural makeup, Korean fashion aesthetic, photorealistic live-action proportions'
 },
 korean_teen_male:{
   label:'วัยรุ่นชายเกาหลี',
 
-  image:'handsome Korean teen style boy, ultra realistic cinematic Asian appearance, youthful Korean cafe-boy aesthetic, trendy Korean street-fashion vibe, random face and hairstyle every generation, Korean idol-inspired visual, photorealistic live-action appearance',
+  image:'handsome young Korean man, ultra realistic cinematic Asian appearance, modern Korean fashion aesthetic, trendy Korean streetwear vibe, random face and hairstyle every generation, photorealistic live-action appearance',
 
-  voice:'Thai teenage male voice, natural spoken Thai, relaxed, trendy, friendly, influencer vibe, authentic Thai accent',
+  voice:'Thai young adult male voice, natural spoken Thai, relaxed, trendy, friendly, influencer vibe, authentic Thai accent',
 
-  dna:'handsome Korean teen style boy, youthful Korean cafe-boy aesthetic, Korean streetwear vibe, randomized face and hairstyle every generation while maintaining Korean teen visual style, Korean idol-inspired fashion, photorealistic live-action proportions'
+  dna:'handsome young Korean man, modern Korean fashion aesthetic, Korean streetwear vibe, randomized face and hairstyle every generation while maintaining modern Korean visual style, photorealistic live-action proportions'
 },
   elder_female:{label:'หญิงชรา',image:'elderly Thai woman, Asian only, kind face, natural wrinkles, grey or silver hair, warm trustworthy expression, photorealistic live-action appearance',voice:'Thai elderly female voice, calm, warm, wise, trustworthy, natural spoken Thai',dna:'elderly Thai female presenter, realistic Asian elder face, grey hair, kind expression, human live-action proportions'},
   elder_male:{label:'ชายชรา',image:'elderly Thai man, Asian only, wise face, natural wrinkles, silver hair, calm trustworthy expression, photorealistic live-action appearance',voice:'Thai elderly male voice, calm, slightly deep, wise, trustworthy, natural spoken Thai',dna:'elderly Thai male presenter, realistic Asian elder face, silver hair, calm wise expression, human live-action proportions'},
