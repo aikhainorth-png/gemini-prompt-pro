@@ -1240,6 +1240,30 @@ function sanitizePrompt(prompt){
     .replace(/lingerie/gi,'fashion wear');
 }
 
+function injectThaiLipSyncDirectives(prompt){
+
+  const speechRules = `
+IMPORTANT VIDEO SPEECH RULES:
+- Dialogue pacing must be natural Thai conversational rhythm
+- Target speech length: approximately 18-24 Thai words per 5 seconds
+- Include natural pauses using "..." or "[pause]"
+- Prioritize accurate Thai lip sync over cinematic motion
+- Natural speech pacing is mandatory
+- Use close-up camera framing during speaking moments
+- Facial mouth movement must closely match Thai pronunciation timing
+- Avoid overly cinematic fast cuts during dialogue
+- Dialogue scenes should maintain stable framing for lip-sync accuracy
+- Realistic breathing pauses between sentences
+- Minimal camera movement during speaking segments
+- Maintain visible mouth framing during dialogue
+- Avoid side-profile shots while speaking
+- Keep mouth visibility unobstructed during speech
+- Dialogue delivery should prioritize phoneme visibility
+`;
+
+  return speechRules + '\n\n' + String(prompt || '');
+}
+
 async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); d.characterSessionId = generateCharacterSessionId(); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); 
 const result = await callSelectedProvider(d);
 
@@ -1252,6 +1276,10 @@ if(isProductOnlyMode(d))
   result.image_prompt = enforceProductOnlyPrompt(result.image_prompt, 'image', d);
 
 result.video_prompt = injectDNAIntoStructuredPrompt(result.video_prompt || '', 'video', d, character);
+
+result.video_prompt = injectThaiLipSyncDirectives(
+  result.video_prompt
+);
 
 if(isProductOnlyMode(d))
   result.video_prompt = enforceProductOnlyPrompt(result.video_prompt, 'video', d);
