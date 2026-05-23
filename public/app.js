@@ -80,31 +80,78 @@ function safeBind(id, ev, fn){ const el = $(id); if(el) el.addEventListener(ev, 
 function generateCharacterSessionId(){ return String(Math.floor(1000000000000000 + Math.random() * 9000000000000000)); }
 
 const THAI_CHARACTER_VOICE_PROFILES = {
-  thai_female:{label:'ผู้หญิง',image:'Thai woman, Asian only, realistic Thai facial features, natural dark hair, warm friendly expression, photorealistic live-action appearance',voice:'Thai female natural commercial voice, warm, friendly, clear, trustworthy, natural spoken Thai',dna:'Thai female presenter, realistic Asian face, natural dark hair, warm friendly expression, human live-action proportions'},
-  thai_male:{label:'ผู้ชาย',image:'Thai man, Asian only, realistic Thai facial features, natural dark hair, confident friendly expression, photorealistic live-action appearance',voice:'Thai male natural commercial voice, confident, friendly, clear, trustworthy, natural spoken Thai',dna:'Thai male presenter, realistic Asian face, natural dark hair, confident friendly expression, human live-action proportions'},
-  korean_teen_female:{
+  thai_female:{
+  label:'ผู้หญิง',
+
+  image:'real Thai woman photographed naturally in real life, authentic Thai facial structure, natural dark hair, realistic skin texture, subtle asymmetrical facial features, candid everyday expression, ordinary Thai appearance, smartphone camera realism, documentary-style photography feel, natural lighting, slight motion blur, imperfect framing, realistic pores, slightly imperfect skin, casual social media photography aesthetic, authentic human appearance',
+
+  voice:'Thai female natural conversational voice, warm, friendly, realistic spoken Thai rhythm, authentic Thai accent, casual human speaking tone',
+
+  dna:'real Thai woman, authentic Thai facial proportions, completely unique facial identity every generation, natural imperfect beauty, realistic skin texture, subtle asymmetrical facial structure, realistic pores and skin details, candid real-life photography look, ordinary everyday Thai appearance, smartphone camera realism, documentary photography aesthetic, slight motion blur, natural lighting inconsistencies, real smartphone HDR artifacts, slightly noisy low-light details, realistic handheld camera feel, authentic imperfect photography, casual handheld selfie realism, imperfect framing, natural camera angle, authentic social media snapshot aesthetic'
+},
+  thai_male:{
+  label:'ผู้ชาย',
+
+  image:'real Thai man photographed naturally in real life, authentic Thai facial structure, realistic skin texture, natural dark hair, subtle asymmetrical facial features, candid everyday expression, ordinary Thai appearance, smartphone camera realism, documentary-style photography feel, natural lighting, slight motion blur, imperfect framing, realistic pores, casual social media photography aesthetic, authentic human appearance',
+
+  voice:'Thai male natural conversational voice, confident but realistic, friendly spoken Thai rhythm, authentic Thai accent, casual human speaking tone',
+
+  dna:'real Thai man, authentic Thai facial proportions, completely unique facial identity every generation, realistic skin texture, subtle asymmetrical facial structure, realistic pores and natural imperfections, candid real-life photography look, ordinary everyday Thai appearance, smartphone camera realism, documentary photography aesthetic, slight motion blur, natural lighting inconsistencies, real smartphone HDR artifacts, slightly noisy low-light details, realistic handheld camera feel, authentic imperfect photography, casual handheld selfie realism, imperfect framing, natural camera angle, authentic social media snapshot aesthetic'
+},
+korean_teen_female:{
   label:'วัยรุ่นหญิงเกาหลี',
 
-  image:'beautiful young Korean woman, ultra realistic cinematic Asian appearance, trendy Korean fashion aesthetic, modern Korean influencer vibe, randomized face and hairstyle every generation, different facial identity each image, photorealistic live-action appearance',
+  image:'real young Korean woman photographed naturally in real life, authentic human facial proportions, natural skin texture, subtle asymmetry in face, realistic pores, slightly imperfect skin, casual candid photography, natural lighting, non-AI appearance, smartphone camera realism, random ordinary Korean facial features every generation, realistic eyes, realistic nose shape, natural smile, everyday Korean fashion, real human imperfections, documentary photography feel, slight motion blur, natural lighting inconsistencies, real smartphone HDR artifacts, slightly noisy low-light details, imperfect camera exposure, realistic mobile phone sharpness, candid social media photography realism',
 
-  voice:'Thai young adult female voice, natural spoken Thai, trendy, energetic, friendly, influencer style, authentic Thai accent',
+  voice:'Thai young adult female voice, natural spoken Thai, casual conversational tone, authentic Thai accent, realistic human speaking rhythm',
 
-  dna:'beautiful young Korean woman, trendy Korean fashion aesthetic, random face and hairstyle every generation while maintaining modern Korean visual style, soft Korean beauty look, natural makeup, Korean fashion aesthetic, photorealistic live-action proportions'
+  dna:'real young Korean woman, completely unique human facial identity every generation, authentic human proportions, natural imperfect beauty, subtle asymmetrical facial structure, realistic pores and skin texture, unique jawline, nose, eyes and lips every generation, candid real-life photography look, natural hairstyle, ordinary everyday Korean appearance, non-glamorous realistic human look, documentary-style realism, smartphone camera realism, slight motion blur, natural lighting inconsistencies, real smartphone HDR artifacts, slightly noisy low-light details, realistic handheld camera feel, authentic imperfect photography, casual handheld selfie realism, imperfect framing, natural camera angle, authentic social media snapshot aesthetic'
 },
 korean_teen_male:{
   label:'วัยรุ่นชายเกาหลี',
 
-  image:'handsome young Korean man, ultra realistic cinematic Asian appearance, modern Korean fashion aesthetic, trendy Korean streetwear vibe, random face and hairstyle every generation, photorealistic live-action appearance',
+  image:'real young Korean man photographed naturally in real life, authentic human facial proportions, natural skin texture, realistic imperfections, subtle asymmetry in face, candid everyday photography, smartphone camera realism, natural lighting, ordinary Korean appearance, random realistic Korean facial structure every generation, realistic eyes and jawline, documentary photography feel, non-AI appearance, slight motion blur, natural lighting inconsistencies, real smartphone HDR artifacts, slightly noisy low-light details, imperfect camera exposure, realistic handheld phone camera look',
 
-  voice:'Thai young adult male voice, natural spoken Thai, relaxed, trendy, friendly, influencer vibe, authentic Thai accent',
+  voice:'Thai young adult male voice, natural spoken Thai, casual realistic speaking tone, authentic Thai accent',
 
-  dna:'handsome young Korean man, modern Korean fashion aesthetic, Korean streetwear vibe, randomized face and hairstyle every generation while maintaining modern Korean visual style, photorealistic live-action proportions'
+  dna:'real young Korean man, completely unique human facial identity every generation, authentic human facial proportions, realistic skin texture, subtle asymmetrical facial structure, natural imperfections, unique hairstyle, jawline, eyes and nose every generation, candid everyday realism, documentary-style photography look, smartphone camera realism, ordinary Korean human appearance, slight motion blur, natural lighting inconsistencies, real smartphone HDR artifacts, slightly noisy low-light details, realistic handheld camera feel, authentic imperfect photography, casual handheld selfie realism, imperfect framing, natural camera angle, authentic social media snapshot aesthetic'
 },
-  elder_female:{label:'หญิงชรา',image:'elderly Thai woman, Asian only, kind face, natural wrinkles, grey or silver hair, warm trustworthy expression, photorealistic live-action appearance',voice:'Thai elderly female voice, calm, warm, wise, trustworthy, natural spoken Thai',dna:'elderly Thai female presenter, realistic Asian elder face, grey hair, kind expression, human live-action proportions'},
-  elder_male:{label:'ชายชรา',image:'elderly Thai man, Asian only, wise face, natural wrinkles, silver hair, calm trustworthy expression, photorealistic live-action appearance',voice:'Thai elderly male voice, calm, slightly deep, wise, trustworthy, natural spoken Thai',dna:'elderly Thai male presenter, realistic Asian elder face, silver hair, calm wise expression, human live-action proportions'},
-  thai_girl:{label:'เด็กผู้หญิง',image:'Thai little girl, Asian only, child-safe realistic appearance, cheerful expression, natural dark hair, photorealistic live-action appearance',voice:'Thai little girl voice, cheerful, cute, energetic, natural spoken Thai',dna:'Thai little girl, realistic Asian child face, natural dark hair, cheerful expression, child-safe live-action proportions'},
-  thai_boy:{label:'เด็กผู้ชาย',image:'Thai little boy, Asian only, child-safe realistic appearance, playful expression, natural dark hair, photorealistic live-action appearance',voice:'Thai little boy voice, playful, energetic, clear, natural spoken Thai',dna:'Thai little boy, realistic Asian child face, natural dark hair, playful expression, child-safe live-action proportions'}
-};
+  elder_female:{
+  label:'หญิงชรา',
+
+  image:'real elderly Thai woman photographed naturally in real life, authentic aged Thai facial structure, natural wrinkles, grey or silver hair, realistic skin texture, subtle facial asymmetry, candid everyday expression, documentary-style photography, smartphone camera realism, ordinary elderly Thai appearance, natural lighting, slight motion blur, imperfect framing, authentic human imperfections',
+
+  voice:'Thai elderly female voice, calm, warm, wise, authentic spoken Thai rhythm, realistic human speaking tone',
+
+  dna:'real elderly Thai woman, authentic aged Thai facial proportions, realistic wrinkles and skin texture, subtle asymmetrical facial structure, candid real-life photography look, ordinary elderly Thai appearance, smartphone camera realism, documentary photography aesthetic, slight motion blur, natural lighting inconsistencies, realistic handheld camera feel, authentic imperfect photography, casual candid realism'
+},
+elder_male:{
+  label:'ชายชรา',
+
+  image:'real elderly Thai man photographed naturally in real life, authentic aged Thai facial structure, natural wrinkles, silver hair, realistic skin texture, subtle facial asymmetry, candid everyday expression, documentary-style photography, smartphone camera realism, ordinary elderly Thai appearance, natural lighting, slight motion blur, imperfect framing, authentic human imperfections',
+
+  voice:'Thai elderly male voice, calm, slightly deep, wise, authentic spoken Thai rhythm, realistic human speaking tone',
+
+  dna:'real elderly Thai man, authentic aged Thai facial proportions, realistic wrinkles and skin texture, subtle asymmetrical facial structure, candid real-life photography look, ordinary elderly Thai appearance, smartphone camera realism, documentary photography aesthetic, slight motion blur, natural lighting inconsistencies, realistic handheld camera feel, authentic imperfect photography, casual candid realism'
+},
+thai_girl:{
+  label:'เด็กผู้หญิง',
+
+  image:'young Thai child girl, child-safe realistic appearance, authentic Thai child facial structure, natural dark hair, candid cheerful expression, ordinary everyday child appearance, documentary-style photography, smartphone camera realism, natural lighting, authentic family snapshot aesthetic, realistic child proportions, non-glamorous appearance',
+
+  voice:'Thai child female voice, cheerful, energetic, natural spoken Thai, authentic child speaking rhythm',
+
+  dna:'young Thai child girl, authentic Thai child facial proportions, realistic child-safe appearance, candid everyday realism, natural imperfect child expression, documentary-style photography look, smartphone camera realism, natural lighting inconsistencies, authentic family photo aesthetic, realistic handheld camera feel, casual candid snapshot realism'
+},
+thai_boy:{
+  label:'เด็กผู้ชาย',
+
+  image:'young Thai child boy, child-safe realistic appearance, authentic Thai child facial structure, natural dark hair, candid playful expression, ordinary everyday child appearance, documentary-style photography, smartphone camera realism, natural lighting, authentic family snapshot aesthetic, realistic child proportions, non-glamorous appearance',
+
+  voice:'Thai child male voice, playful, energetic, natural spoken Thai, authentic child speaking rhythm',
+
+  dna:'young Thai child boy, authentic Thai child facial proportions, realistic child-safe appearance, candid everyday realism, natural imperfect child expression, documentary-style photography look, smartphone camera realism, natural lighting inconsistencies, authentic family photo aesthetic, realistic handheld camera feel, casual candid snapshot realism'
+},
 function getThaiCharacterVoiceProfile(voiceType='thai_female'){
   const normalized = {'หญิง':'thai_female','ชาย':'thai_male','ผู้หญิง':'thai_female','ผู้ชาย':'thai_male','หญิงชรา':'elder_female','ชายชรา':'elder_male','เด็กผู้หญิง':'thai_girl','เด็กผู้ชาย':'thai_boy'}[voiceType] || voiceType || 'thai_female';
   return THAI_CHARACTER_VOICE_PROFILES[normalized] || THAI_CHARACTER_VOICE_PROFILES.thai_female;
