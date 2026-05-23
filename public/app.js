@@ -152,6 +152,7 @@ thai_boy:{
 
   dna:'young Thai child boy, authentic Thai child facial proportions, realistic child-safe appearance, candid everyday realism, natural imperfect child expression, documentary-style photography look, smartphone camera realism, natural lighting inconsistencies, authentic family photo aesthetic, realistic handheld camera feel, casual candid snapshot realism'
 },
+  };
 function getThaiCharacterVoiceProfile(voiceType='thai_female'){
   const normalized = {'หญิง':'thai_female','ชาย':'thai_male','ผู้หญิง':'thai_female','ผู้ชาย':'thai_male','หญิงชรา':'elder_female','ชายชรา':'elder_male','เด็กผู้หญิง':'thai_girl','เด็กผู้ชาย':'thai_boy'}[voiceType] || voiceType || 'thai_female';
   return THAI_CHARACTER_VOICE_PROFILES[normalized] || THAI_CHARACTER_VOICE_PROFILES.thai_female;
