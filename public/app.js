@@ -105,7 +105,7 @@ korean_teen_female:{
 
   voice:'Thai young adult female voice, natural spoken Thai, casual conversational tone, authentic Thai accent, realistic human speaking rhythm',
 
-  dna:'real young Korean woman, completely unique human facial identity every generation, authentic human proportions, natural imperfect beauty, subtle asymmetrical facial structure, realistic pores and skin texture, unique jawline, nose, eyes and lips every generation, candid real-life photography look, natural hairstyle, ordinary everyday Korean appearance, non-glamorous realistic human look, documentary-style realism, smartphone camera realism, slight motion blur, natural lighting inconsistencies, real smartphone HDR artifacts, slightly noisy low-light details, realistic handheld camera feel, authentic imperfect photography, casual handheld selfie realism, imperfect framing, natural camera angle, authentic social media snapshot aesthetic'
+  dna:'real young Korean woman, completely unique human facial identity every generation, authentic human proportions, natural imperfect beauty, subtle asymmetrical facial structure, realistic pores and skin texture, unique jawline, nose, eyes and lips every generation, candid real-life photography look, natural hairstyle, ordinary everyday Korean appearance, trendy Korean street-fashion vibe, youthful Gen Z Korean aesthetic, Korean fashion aesthetic, non-glamorous realistic human look, documentary-style realism, smartphone camera realism, slight motion blur, natural lighting inconsistencies, real smartphone HDR artifacts, slightly noisy low-light details, realistic handheld camera feel, authentic imperfect photography, casual handheld selfie realism, imperfect framing, natural camera angle, authentic social media snapshot aesthetic'
 },
 korean_teen_male:{
   label:'วัยรุ่นชายเกาหลี',
@@ -114,7 +114,7 @@ korean_teen_male:{
 
   voice:'Thai young adult male voice, natural spoken Thai, casual realistic speaking tone, authentic Thai accent',
 
-  dna:'real young Korean man, completely unique human facial identity every generation, authentic human facial proportions, realistic skin texture, subtle asymmetrical facial structure, natural imperfections, unique hairstyle, jawline, eyes and nose every generation, candid everyday realism, documentary-style photography look, smartphone camera realism, ordinary Korean human appearance, slight motion blur, natural lighting inconsistencies, real smartphone HDR artifacts, slightly noisy low-light details, realistic handheld camera feel, authentic imperfect photography, casual handheld selfie realism, imperfect framing, natural camera angle, authentic social media snapshot aesthetic'
+  dna:'real young Korean man, completely unique human facial identity every generation, authentic human facial proportions, realistic skin texture, subtle asymmetrical facial structure, natural imperfections, unique hairstyle, jawline, eyes and nose every generation, candid everyday realism, documentary-style photography look, smartphone camera realism, ordinary Korean human appearance, youthful Korean cafe-boy aesthetic, Korean streetwear vibe, Korean idol-inspired fashion, slight motion blur, natural lighting inconsistencies, real smartphone HDR artifacts, slightly noisy low-light details, realistic handheld camera feel, authentic imperfect photography, casual handheld selfie realism, imperfect framing, natural camera angle, authentic social media snapshot aesthetic'
 },
   elder_female:{
   label:'หญิงชรา',
@@ -235,10 +235,15 @@ function stripRepeatedCharacterBlocks(text=''){
     /\n?Voice\s*Profile\s*:\s*[\s\S]*?(?=\n(?:Continuity\s*Lock\s*:|Character\s*ID\s*:|Character\s*DNA\s*Block\s*:|\[TEXT OVERLAY\]|\[H2 OVERLAY\]|SCENE[_\s]*\d+|Scene\s*\d+|$))/ig,
     /\n?Continuity\s*Lock\s*:\s*[\s\S]*?(?=\n(?:Character\s*ID\s*:|Character\s*DNA\s*Block\s*:|Voice\s*Profile\s*:|\[TEXT OVERLAY\]|\[H2 OVERLAY\]|SCENE[_\s]*\d+|Scene\s*\d+|$))/ig,
     /\n?Lip\s*sync\s*[^\n]*(?:\n|$)/ig,
-    /\n?Audio\s*(?:Cue|Requirement|Profile)?\s*:\s*[^\n]*(?:\n|$)/ig
+    /\n?Audio\s*(?:Cue|Requirement|Profile)?\s*:\s*[^\n]*(?:\n|$)/ig,
+    // REMOVE DUPLICATE VISUAL PROFILE
+  /\(\s*following\s+visual\s+profile\s*:[\s\S]*?\)/ig
   ];
   patterns.forEach(re => { src = src.replace(re, '\n'); });
-  return src.replace(/\n{3,}/g, '\n\n').trim();
+  return src
+  .replace(/\n{3,}/g, '\n\n')
+  .replace(/\s{2,}/g,' ')
+  .trim();
 }
 
 function buildCharacterDNAHeader(d, character, type='image'){
@@ -247,13 +252,35 @@ function buildCharacterDNAHeader(d, character, type='image'){
     : 'PRODUCT ONLY VIDEO LOCK: Show only the product and environment. No human, no presenter, no face, no hands, no body parts, no character.';
   const profile = getThaiCharacterVoiceProfile(d.voiceType);
   const id = getCharacterId(d, character);
-  const visualDna = `${profile.dna}; ${character?.summary || ''}`.replace(/\s+/g,' ').trim();
+  const visualDna = String(profile.dna || '')
+  .replace(/\s+/g,' ')
+  .trim();
 
   if(type === 'image'){
-    return `Character ID: ${id}\nCharacter DNA Block:\n${visualDna}\nContinuity Lock:\nsame person, same Thai / Asian identity, same face, same hair, same outfit, same body proportions, same age, same identity across all scenes, only expression / pose / camera angle may change. Photorealistic live-action still image only. No voice profile, no dialogue, no lip sync, no audio instructions in IMAGE PROMPT. No 3D, no cartoon, no chibi, no mascot, no CGI, no animation style.`;
+    return `Character ID: ${id}
+Character DNA Block:
+${visualDna}
+
+Continuity Lock:
+same person across all scenes, consistent face, hairstyle, outfit, and identity.
+
+Photorealistic live-action still image only.
+No dialogue, no audio instructions.
+No 3D, cartoon, CGI, or animation style.`;
   }
 
-  return `Character ID: ${id}\nCharacter DNA Block:\n${visualDna}\nVoice Profile:\n${profile.voice}\nContinuity Lock:\nsame person, same Thai / Asian identity, same face, same hair, same outfit, same body proportions, same age, same voice profile, same identity across all scenes, only expression / pose / camera angle may change. Photorealistic live-action video only. No 3D, no cartoon, no chibi, no mascot, no CGI, no animation style.`;
+  return `Character ID: ${id}
+Character DNA Block:
+${visualDna}
+
+Voice Profile:
+${profile.voice}
+
+Continuity Lock:
+same person across all scenes, consistent face, hairstyle, outfit, voice, and identity.
+
+Photorealistic live-action video only.
+No 3D, cartoon, CGI, or animation style.`;
 }
 
 function prependDNAIfMissing(text='', d, character, type='image'){
@@ -289,7 +316,8 @@ function injectDNAIntoStructuredPrompt(prompt='', type='image', d={}, character=
 
   // Keep the stable engine result when the parser cannot see all scenes.
   // Do not rebuild partial scenes, because that is what made scene 2/3 disappear.
-  if(!hasAllScenes) return prependDNAIfMissing(src, d, character, type);
+  if(!hasAllScenes)
+  return src;
 
   return Array.from({length:count}, (_,i)=>{
     const sceneNo=i+1;
@@ -583,14 +611,46 @@ function buildAutoHookVisualScene1Block(d={}){
   const view = sanitizePolicyText(d.view || 'มุมกล้องมือถือแบบใช้งานจริง เห็นสินค้าเด่นชัด');
   const tone = sanitizePolicyText(d.viralTone || 'โปรแรง');
   if(isProductOnlyMode(d)){
-    return `VISUAL:
-AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1:
-PRODUCT ONLY LOCK: Photorealistic vertical 9:16 product-only still image. Use any attached/uploaded image as the strict product reference only. Main product must be clearly visible and central: ${product}. Scene 1 must never be text-only; show only the product, packaging, pedestal, infographic bubbles, icons, arrows, labels, clean environment/background: ${location}. Hook visual direction: ${view}. Selling tone: ${tone}. ${getModeHookVisualDirective(d)} No human, no presenter, no face, no hands, no body parts, no character. Product-first hero composition, clean readable foreground, strong commercial lighting, no watermark, no random background text except real product label and intended overlay blocks.`;
-  }
-  const characterProfile = getThaiCharacterVoiceProfile(d.voiceType);
   return `VISUAL:
 AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1:
-Photorealistic live-action vertical 9:16 still image only. Use any attached/uploaded image as the strict product reference only. Main product must be clearly visible and central: ${product}. Scene 1 must never be text-only; show the product in the first frame with a Thai / Asian presenter (${characterProfile.image}) naturally holding, pointing to, touching, or demonstrating the product. Environment/background: ${location}. Hook visual direction: ${view}. Selling tone: ${tone}. ${getModeHookVisualDirective(d)} Product-first hero composition, clean readable foreground, strong commercial lighting, realistic hands, natural Thai retail/UGC mood, no watermark, no random background text except real product label and intended overlay blocks.`;
+PRODUCT ONLY LOCK:
+Photorealistic vertical 9:16 product-only still image.
+
+Use any attached/uploaded image as the strict product reference only.
+
+Main product must be clearly visible and central: ${product}.
+
+Scene 1 must never be text-only; show only the product, packaging, pedestal, infographic bubbles, icons, arrows, labels, and clean commercial environment/background: ${location}.
+
+Hook visual direction: ${view}.
+Selling tone: ${tone}.
+
+${getModeHookVisualDirective(d)}
+
+No human, no presenter, no face, no hands, no body parts, no character.
+
+Product-first hero composition, clean readable foreground, strong commercial lighting, premium ecommerce realism, no watermark, no random background text except real product label and intended overlay blocks.`;
+}
+
+const characterProfile = getThaiCharacterVoiceProfile(d.voiceType);
+
+return `VISUAL:
+AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1:
+Photorealistic live-action vertical 9:16 still image only.
+
+Use any attached/uploaded image as the strict product reference only.
+
+Main product must be clearly visible and central: ${product}.
+
+Scene 1 must never be text-only; show the product naturally demonstrated by a Thai / Asian presenter in the first frame.
+
+Environment/background: ${location}.
+Hook visual direction: ${view}.
+Selling tone: ${tone}.
+
+${getModeHookVisualDirective(d)}
+
+Product-first hero composition, clean readable foreground, strong commercial lighting, natural Thai retail/UGC mood, realistic product interaction, premium ecommerce realism, no watermark, no random background text except real product label and intended overlay blocks.`;
 }
 
 function stripOverlayBlocksForVisualCheck(text=''){
@@ -1244,21 +1304,11 @@ function injectThaiLipSyncDirectives(prompt){
 
   const speechRules = `
 IMPORTANT VIDEO SPEECH RULES:
-- Dialogue pacing must be natural Thai conversational rhythm
-- Target speech length: approximately 18-24 Thai words per 5 seconds
-- Include natural pauses using "..." or "[pause]"
-- Prioritize accurate Thai lip sync over cinematic motion
-- Natural speech pacing is mandatory
-- Use close-up camera framing during speaking moments
-- Facial mouth movement must closely match Thai pronunciation timing
-- Avoid overly cinematic fast cuts during dialogue
-- Dialogue scenes should maintain stable framing for lip-sync accuracy
-- Realistic breathing pauses between sentences
-- Minimal camera movement during speaking segments
-- Maintain visible mouth framing during dialogue
-- Avoid side-profile shots while speaking
-- Keep mouth visibility unobstructed during speech
-- Dialogue delivery should prioritize phoneme visibility
+- Natural Thai conversational pacing
+- Accurate Thai lip sync priority
+- Stable close-up framing during dialogue
+- Visible mouth movement during speech
+- Natural breathing pauses
 `;
 
   return speechRules + '\n\n' + String(prompt || '');
