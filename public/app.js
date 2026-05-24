@@ -1064,7 +1064,7 @@ ${isProductOnlyMode(d) ? `PRODUCT ONLY + AUTO VOICE LOCK:
 - Auto selected voiceover profile from product/category: ${thaiCharacterProfile.label} — ${thaiCharacterProfile.voice}.
 - Default visual style: photorealistic product commercial / infographic cinematic only.` : `THAI CHARACTER + VOICE LOCK:
 - Selected character type: ${thaiCharacterProfile.label}.
-- Main character must be Thai / Asian only: ${thaiCharacterProfile.image}.
+- Main character style: ${thaiCharacterProfile.label}.
 - Voice must match selected character: ${thaiCharacterProfile.voice}.
 - Default visual style: photorealistic live-action cinematic only.
 - Never use 3D, cartoon, chibi, mascot, CGI, animation, Pixar-like, or stylized character unless the user explicitly types those words.`}
@@ -1112,7 +1112,9 @@ Product: ${sanitizePolicyText(d.product)}
 Location: ${sanitizePolicyText(d.location)}
 View / shot direction: ${sanitizePolicyText(d.view)}
 Character / product display mode: ${isProductOnlyMode(d) ? 'โชว์แต่สินค้า ไม่ต้องมีตัวละคร' : thaiCharacterProfile.label}
-Character visual profile: ${isProductOnlyMode(d) ? 'PRODUCT ONLY: no human, no presenter, no face, no hands, no body parts, no character' : thaiCharacterProfile.image}
+Character visual profile: ${isProductOnlyMode(d)
+  ? 'PRODUCT ONLY'
+  : thaiCharacterProfile.label}
 Voice profile: ${isProductOnlyMode(d) ? 'Off-screen Thai voiceover, auto selected by product/category: ' + thaiCharacterProfile.voice : thaiCharacterProfile.voice}
 Viral tone: ${d.viralTone}
 Scene count: ${d.sceneCount}
