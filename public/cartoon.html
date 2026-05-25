@@ -2,12 +2,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Horror Prompt Builder</title>
+<title>3D Prompt Builder</title>
 <style>
 body{
 margin:0;
 font-family:'Comic Sans MS',system-ui,sans-serif;
-background:linear-gradient(135deg,#ffe6f7,#dff6ff);
+background:radial-gradient(circle at 10% 10%, rgba(95,211,198,.18), transparent 30%),radial-gradient(circle at 90% 10%, rgba(127,223,242,.16), transparent 28%),linear-gradient(180deg,#08181d,#07161a 40%,#061116);
 color:#333
 }
 .container{display:flex;height:100vh}
@@ -23,15 +23,15 @@ color:#333
  height:100%;
  overflow-y:auto;
 }
-.topbar{display:flex;gap:6px;margin-bottom:12px;position:sticky;top:0;background:#f2f2f2;z-index:10}
+.topbar{display:flex;gap:6px;margin-bottom:12px;position:sticky;top:0;background:rgba(10,33,39,.84);color:#ecfbfb;border:1px solid rgba(111,211,198,.22);backdrop-filter:blur(24px);z-index:10}
 .btn{padding:8px 10px;border:none;border-radius:6px;color:#fff;cursor:pointer}
 .btn-blue{background:#4dabff}.btn-purple{background:#b06cff}.btn-green{background:#52c41a}
 .card{
-background:linear-gradient(180deg,#ffffff,#fff8fd);
+background:linear-gradient(180deg, rgba(10,33,39,.92), rgba(8,24,29,.96));
 border-radius:22px;
 padding:14px;
 margin-bottom:14px;
-border-left:8px solid #ff77c8;
+border-left:8px solid #5fd3c6;
 box-shadow:0 8px 20px rgba(255,119,200,.15)
 }
 .card.active{border-left:5px solid #28a745;box-shadow:0 0 0 2px #28a74533}
@@ -51,8 +51,9 @@ select,input,textarea,button{width:100%;padding:8px;margin-top:6px;border-radius
 <div class="left">
 
 <div class="topbar">
+<button class="btn btn-purple" onclick="modeImage()">🖼 สร้าง ภาพ</button>
 <button class="btn btn-blue" onclick="modeUniversal()">🎬 สร้าง VDO</button>
-<button class="btn btn-purple" onclick="modeImage()">🖼 สร้าง ภาพ</button><button class="btn btn-green" onclick="window.open('https://gemini-prompt-pro.web.app', '_self')">🏠 หน้าหลัก</button>
+<button class="btn btn-green" onclick="window.open('https://gemini-prompt-pro.web.app', '_self')">🏠 หน้าหลัก</button>
 </div>
 
 <div id="menu"></div>
@@ -62,7 +63,7 @@ select,input,textarea,button{width:100%;padding:8px;margin-top:6px;border-radius
 <div class="right">
 <h2>📄 Prompt VDO</h2>
 <textarea id="result" class="output" readonly></textarea>
-<button class="copy" onclick="copyText('result')">📋 Copy</button>
+<button class="copy" onclick="copyText('result')">📋 Copy Prompt</button>
 
 <hr style="border:1px solid #033;margin:12px 0">
 
@@ -70,7 +71,7 @@ select,input,textarea,button{width:100%;padding:8px;margin-top:6px;border-radius
 <textarea id="imageResult" class="output2" readonly></textarea>
 
 <div style="position:sticky;bottom:0;background:#111;padding-top:6px">
-<button class="copy" onclick="copyText('imageResult')">📋 Copy Horror Prompt</button>
+<button class="copy" onclick="copyText('imageResult')">📋 Copy Prompt</button>
 </div>
 
 <div class="log" id="log">Ready</div>
@@ -172,7 +173,7 @@ function render(){
   sec("📦 สินค้า","product",u.product)+
   sec("⚠️ ปัญหา","pain",u.pain)+
   sec("⭐ จุดเด่น","f1",u.f1)+
-  sec("🩸 HORROR STYLE","f2",u.f2)+
+  sec("🩸 CARTOON STYLE","f2",u.f2)+
   sec("📦 PRODUCT PRESENTATION","f3",u.f3)+
   sec("🎨 CHARACTER","character",u.character)+
   sec("🎤 VOICE","voice",u.voice)+
@@ -183,7 +184,7 @@ function render(){
   const i=data.image;
   menu.innerHTML=
   sec("👹 MONSTER","monster",i.monster)+
-  sec("🩸 HORROR STYLE","horrorStyle",i.horrorStyle)+
+  sec("🩸 CARTOON STYLE","horrorStyle",i.horrorStyle)+
   sec("🧪 PRODUCT","iproduct",data.universal.product);
  }
  update();
