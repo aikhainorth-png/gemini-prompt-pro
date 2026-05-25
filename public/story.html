@@ -627,30 +627,20 @@
     border-color:rgba(95,211,198,.35);
     box-shadow:0 0 18px rgba(95,211,198,.18);
 }
-        .platform-mode-btn.active {
-    background: linear-gradient(135deg,#16c47f,#0f9c66) !important;
-    border:1px solid rgba(95,211,198,.22) !important;
-    color:#ffffff !important;
-    font-weight:700 !important;
-    box-shadow:
-        0 8px 28px rgba(22,196,127,.35),
-        0 0 0 1px rgba(22,196,127,.2),
-        0 0 18px rgba(95,211,198,.28) !important;
-    transform: translateY(-1px);
+        .platform-mode-btn.active{
+background:linear-gradient(135deg,#16c47f,#0f9c66) !important;
+border:1px solid rgba(95,211,198,.35) !important;
+color:#ffffff !important;
+font-weight:800 !important;
+box-shadow:
+0 10px 30px rgba(22,196,127,.35),
+0 0 0 1px rgba(22,196,127,.25),
+0 0 18px rgba(95,211,198,.28) !important;
+transform:translateY(-1px);
+opacity:1 !important;
 }
 
         .platform-mode-btn.active .mode-label { color: rgba(255,255,255,0.7); }
-.platform-mode-btn.active .mode-label{
-    color:rgba(255,255,255,0.82) !important;
-}
-
-.platform-mode-btn.active:hover{
-    background: linear-gradient(135deg,#16c47f,#0f9c66) !important;
-    box-shadow:
-        0 12px 36px rgba(22,196,127,.45),
-        0 0 0 1px rgba(22,196,127,.3) !important;
-}
-
         .platform-mode-btn .mode-icon { font-size: 1.1rem; display: block; margin-bottom: 2px; }
         .platform-mode-btn .mode-label { display: block; font-size: 0.58rem; color: var(--text-muted); margin-top: 2px; }
 
@@ -1106,14 +1096,30 @@
 .preview-box,
 .prompt-mode-btn.active,
 .platform-mode-btn.active{
-    background:linear-gradient(180deg, rgba(9,40,49,.72), rgba(11,31,39,.5)) !important;
-    border:1px solid rgba(95,211,198,.22) !important;
-    color:#dffcf6 !important;
+background:linear-gradient(135deg,#16c47f,#0f9c66) !important;
+border:1px solid rgba(95,211,198,.35) !important;
+color:#ffffff !important;
+font-weight:800 !important;
+box-shadow:
+0 10px 30px rgba(22,196,127,.35),
+0 0 0 1px rgba(22,196,127,.25),
+0 0 18px rgba(95,211,198,.28) !important;
+transform:translateY(-1px);
+opacity:1 !important;
 }
 
 .prompt-mode-btn.active,
 .platform-mode-btn.active{
-    box-shadow:0 0 18px rgba(95,211,198,.18) !important;
+background:linear-gradient(135deg,#16c47f,#0f9c66) !important;
+border:1px solid rgba(95,211,198,.35) !important;
+color:#ffffff !important;
+font-weight:800 !important;
+box-shadow:
+0 10px 30px rgba(22,196,127,.35),
+0 0 0 1px rgba(22,196,127,.25),
+0 0 18px rgba(95,211,198,.28) !important;
+transform:translateY(-1px);
+opacity:1 !important;
 }
 
 .checkline{
@@ -1129,6 +1135,14 @@
 
 input[type="checkbox"]{
     accent-color:#16c47f;
+}
+
+
+.platform-mode-btn.active .mode-title,
+.platform-mode-btn.active .mode-label,
+.platform-mode-btn.active span{
+color:#ffffff !important;
+opacity:1 !important;
 }
 
 </style>
