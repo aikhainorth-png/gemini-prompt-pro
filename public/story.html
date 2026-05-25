@@ -622,18 +622,35 @@
             line-height: 1.4;
             box-shadow: var(--shadow-sm);
         }
-        .platform-mode-btn:hover {
-            border-color: var(--accent);
-            box-shadow: var(--shadow-md);
-        }
+        .platform-mode-btn:hover{
+    background:rgba(95,211,198,.08);
+    border-color:rgba(95,211,198,.35);
+    box-shadow:0 0 18px rgba(95,211,198,.18);
+}
         .platform-mode-btn.active {
-            background: linear-gradient(135deg, #10b981, #059669);
-            border-color: transparent;
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 4px 16px rgba(16,185,129,0.3);
-        }
+    background: linear-gradient(135deg,#16c47f,#0f9c66) !important;
+    border:1px solid rgba(95,211,198,.22) !important;
+    color:#ffffff !important;
+    font-weight:700 !important;
+    box-shadow:
+        0 8px 28px rgba(22,196,127,.35),
+        0 0 0 1px rgba(22,196,127,.2),
+        0 0 18px rgba(95,211,198,.28) !important;
+    transform: translateY(-1px);
+}
+
         .platform-mode-btn.active .mode-label { color: rgba(255,255,255,0.7); }
+.platform-mode-btn.active .mode-label{
+    color:rgba(255,255,255,0.82) !important;
+}
+
+.platform-mode-btn.active:hover{
+    background: linear-gradient(135deg,#16c47f,#0f9c66) !important;
+    box-shadow:
+        0 12px 36px rgba(22,196,127,.45),
+        0 0 0 1px rgba(22,196,127,.3) !important;
+}
+
         .platform-mode-btn .mode-icon { font-size: 1.1rem; display: block; margin-bottom: 2px; }
         .platform-mode-btn .mode-label { display: block; font-size: 0.58rem; color: var(--text-muted); margin-top: 2px; }
 
@@ -4318,10 +4335,17 @@ function selectPromptMode(btn) {
     selectedPromptMode = btn.dataset.mode;
 }
 
-function selectPlatformMode(btn) {
-    document.querySelectorAll('.platform-mode-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedPlatformMode = btn.dataset.platform;
+function selectPlatformMode(el){
+
+    // เอา active ออกจากทุกปุ่ม
+    document.querySelectorAll('.platform-mode-btn')
+    .forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // ใส่ active ให้ปุ่มที่กด
+    el.classList.add('active');
+
 }
 
 // ===== IMAGE UPLOAD =====
