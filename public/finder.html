@@ -900,5 +900,121 @@ onAuthStateChanged(auth, async(user)=>{
 });
 </script>
 
+
+<script type="module">
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+import { app } from './firebase-config.js';
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const rolePages = {
+
+    user: ['index.html'],
+
+    vip: [
+      'index.html',
+      'freestyle.html',
+      'cartoon.html',
+      'finder.html'
+    ],
+
+    gold: [
+      'index.html',
+      'freestyle.html',
+      'cartoon.html',
+      'finder.html',
+      'story.html'
+    ],
+
+    admin: ['*']
+};
+
+const ADMIN_EMAIL = 'aikhainorth@gmail.com';
+
+onAuthStateChanged(auth, async(user)=>{
+
+    if(!user){
+        window.location.href='index.html';
+        return;
+    }
+
+    let role='user';
+
+    // FIX ADMIN
+    if((user.email||'').toLowerCase() === ADMIN_EMAIL.toLowerCase()){
+
+        role='admin';
+
+    }else{
+
+        const snap = await getDoc(
+            doc(db,'users',user.uid)
+        );
+
+        if(snap.exists()){
+
+            role = snap.data().role || 'user';
+        }
+    }
+
+    const page =
+      window.location.pathname.split('/').pop()
+      || 'index.html';
+
+    function canAccess(role,pageName){
+
+        if(role==='admin') return true;
+
+        return (rolePages[role] || [])
+            .includes(pageName);
+    }
+
+    // block page
+    if(!canAccess(role,page)){
+
+        window.location.href='index.html';
+        return;
+    }
+
+    // hide menu
+    document.querySelectorAll('a[href]')
+    .forEach(link=>{
+
+        const href=link.getAttribute('href');
+
+        if(
+            !href ||
+            href.startsWith('http') ||
+            href.startsWith('#')
+        ) return;
+
+        const targetPage =
+            href.split('/').pop();
+
+        if(!canAccess(role,targetPage)){
+
+            const parent =
+              link.closest('li') || link;
+
+            parent.style.display='none';
+        }
+    });
+
+});
+
+</script>
+
 </body>
 </html>

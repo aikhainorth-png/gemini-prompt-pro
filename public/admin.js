@@ -11,7 +11,9 @@ let pendingDeleteUser=null;
 function hasAdminEmail(email=''){ return ADMIN_EMAILS.includes(String(email).toLowerCase()); }
 function showToast(message){ const t=$('toast'); t.textContent=message; t.classList.add('show'); clearTimeout(showToast._timer); showToast._timer=setTimeout(()=>t.classList.remove('show'),2200); }
 async function ensureUser(user){ const email=String(user.email||'').toLowerCase(); const ref=doc(db,'users',user.uid); const snap=await getDoc(ref); const now=serverTimestamp(); const base={uid:user.uid,email,displayName:user.displayName||'',photoURL:user.photoURL||'',lastLoginAt:now,updatedAt:now}; if(hasAdminEmail(email)){ await setDoc(ref,{...base,createdAt:snap.exists()?snap.data().createdAt||now:now,approved:true,role:'admin',approvedAt:now},{merge:true}); } else if(!snap.exists()){ await setDoc(ref,{...base,createdAt:now,approved:false,role:'user'},{merge:true}); } else { await setDoc(ref,base,{merge:true}); } const updated=await getDoc(ref); userDoc=updated.data(); }
-function isAdmin(){ return !!(userDoc?.role==='admin' || hasAdminEmail(currentUser?.email)); }
+function isAdmin(){
+   return hasAdminEmail(currentUser?.email);
+}
 async function signInGoogle(){ try{ await signInWithPopup(auth,provider);}catch(e){ showToast('เข้าสู่ระบบไม่สำเร็จ'); } }
 async function renderUsers(){
   const wrap=$('userList');
@@ -45,6 +47,12 @@ async function renderUsers(){
         <div class="meta">${escapeHtml(u.email||'')}<br>created: ${created}</div>
       </div>
       <div class="user-actions">
+        <select class="role-select" data-role-uid="${u.id}" ${isProtectedAdmin ? 'disabled' : ''}>
+          <option value="user" ${u.role==='user'?'selected':''}>User</option>
+          <option value="vip" ${u.role==='vip'?'selected':''}>VIP</option>
+          <option value="gold" ${u.role==='gold'?'selected':''}>Gold</option>
+        </select>
+
         <button class="btn btn-green approve-btn" data-uid="${u.id}" ${u.approved?'disabled':''}>อนุมัติ</button>
         <button class="btn btn-dark revoke-btn" data-uid="${u.id}">ยกเลิก</button>
         <button class="btn btn-red delete-user-btn" data-uid="${u.id}" data-email="${escapeHtml(u.email||'')}" data-name="${escapeHtml(u.displayName||'-')}" ${deleteDisabled?'disabled title="ไม่สามารถลบ admin หรือบัญชีตัวเอง"':''}>ลบ User</button>
@@ -55,8 +63,42 @@ async function renderUsers(){
   wrap.querySelectorAll('.approve-btn').forEach(btn=>btn.addEventListener('click',()=>setApproval(btn.dataset.uid,true)));
   wrap.querySelectorAll('.revoke-btn').forEach(btn=>btn.addEventListener('click',()=>setApproval(btn.dataset.uid,false)));
   wrap.querySelectorAll('.delete-user-btn').forEach(btn=>btn.addEventListener('click',()=>openDeleteUserModal(btn.dataset.uid, btn.dataset.email, btn.dataset.name)));
+
+  wrap.querySelectorAll('.role-select').forEach(select=>{
+    select.addEventListener('change', ()=>updateRole(select.dataset.roleUid, select.value));
+  });
 }
 async function setApproval(uid,approved){ if(!isAdmin()) return showToast('Admin only'); try{ await updateDoc(doc(db,'users',uid),{approved,updatedAt:serverTimestamp(),approvedAt:approved?serverTimestamp():null}); showToast(approved?'อนุมัติผู้ใช้แล้ว':'ยกเลิกสิทธิ์แล้ว'); await renderUsers(); }catch(e){ showToast(`อัปเดตไม่สำเร็จ: ${e.message}`); } }
+
+async function updateRole(uid, role){
+
+  if(!isAdmin()) return showToast('Admin only');
+
+  try{
+
+    if(role === 'admin'){
+      return showToast('ไม่สามารถสร้าง admin เพิ่มได้');
+    }
+
+    const ref = doc(db,'users',uid);
+
+    await updateDoc(ref,{
+      role: role,
+      updatedAt: serverTimestamp()
+    });
+
+    showToast(`เปลี่ยน role เป็น ${role} แล้ว`);
+
+    await renderUsers();
+
+  }catch(e){
+
+    console.error(e);
+
+    showToast(`อัปเดต role ไม่สำเร็จ: ${e.message}`);
+  }
+}
+
 
 function openDeleteUserModal(uid,email,name){
   if(!isAdmin()) return showToast('Admin only');
