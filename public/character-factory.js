@@ -27,9 +27,9 @@ const TYPE_BY_MODE = {
   books: ['reading lifestyle presenter', 'study presenter', 'product demonstrator']
 };
 
-const BODY_TYPES = ['natural human proportions', 'slim natural proportions', 'balanced adult proportions', 'petite natural proportions', 'fit natural proportions'];
+const BODY_TYPES = ['authentic human proportions', 'ordinary adult proportions', 'balanced real-world proportions', 'natural everyday body proportions', 'believable human anatomy'];
 const SKIN_TONES = ['warm cream skin', 'golden tan skin', 'light rosy skin', 'gentle neutral skin', 'medium warm skin'];
-const MATERIALS = ['natural skin texture', 'realistic skin texture', 'photoreal skin with subtle detail', 'live-action natural texture', 'real human skin finish'];
+const MATERIALS = ['visible skin pores and natural skin texture', 'realistic skin texture with subtle imperfections', 'real human skin finish with natural variation', 'live-action skin with authentic detail', 'natural skin surface with realistic shine'];
 const HAIR_STYLES = ['straight shoulder-length hair', 'soft side-parted hair', 'long smooth hair', 'neat tied-back hair', 'soft wavy hairstyle'];
 const HAIR_COLORS = ['deep brown', 'chestnut brown', 'dark black', 'warm caramel', 'soft ash brown'];
 const EYE_STYLES = ['warm brown eyes', 'friendly rounded eyes', 'bright lively eyes', 'soft expressive eyes', 'natural dark eyes'];
@@ -58,8 +58,8 @@ const OUTFIT_BASE = {
   stationery: ['clean study-life outfit', 'simple desk presenter clothing', 'minimal casual styling'],
   books: ['clean reading-life outfit', 'soft academic casual clothing', 'simple presenter styling']
 };
-const UNIQUE_TRAITS = ['wears a subtle product-themed accessory', 'keeps a neat signature hairstyle', 'has a consistent friendly smile', 'uses clean natural hand gestures', 'keeps a polished presenter look'];
-const EXPRESSIONS = ['friendly and curious', 'confident and persuasive', 'soft and trustworthy', 'energetic and expressive'];
+const UNIQUE_TRAITS = ['has naturally expressive facial features', 'keeps a recognizable everyday hairstyle', 'has a consistent approachable smile', 'uses authentic human hand gestures', 'has subtle real-world imperfections'];
+const EXPRESSIONS = ['genuine and approachable', 'naturally confident', 'trustworthy and relaxed', 'believable excitement', 'authentic product presentation', 'friendly without overacting'];
 
 function hashString(input='') {
   let hash = 2166136261;
@@ -86,17 +86,19 @@ function getThaiVoiceProfile(voiceType='thai_female') {
   const normalized = {
     'หญิง':'thai_female','ชาย':'thai_male','วัยรุ่นหญิงเกาหลี':'korean_teen_female',
   'วัยรุ่นชายเกาหลี':'korean_teen_male','ผู้หญิง':'thai_female','ผู้ชาย':'thai_male',
-    'หญิงชรา':'elder_female','ชายชรา':'elder_male','เด็กผู้หญิง':'thai_girl','เด็กผู้ชาย':'thai_boy'
+    'หญิงชรา':'elder_female','ชายชรา':'elder_male','เด็กผู้หญิง':'thai_girl','เด็กผู้ชาย':'thai_boy','พี่วิน(ชาย)':'win_seller_male','พิมรี่(หญิง)':'pimry_female'
   }[voiceType] || voiceType || 'thai_female';
   const map = {
-    thai_female: { gender:'Female', age:'young adult Thai woman appearance', role:'Thai female product presenter', voice:'Thai female natural commercial voice', hair:'long natural dark hair', eyes:'natural dark expressive eyes' },
-    thai_male: { gender:'Male', age:'adult Thai man appearance', role:'Thai male product presenter', voice:'Thai male natural commercial voice', hair:'short natural dark hair', eyes:'natural dark confident eyes' },
-    korean_teen_female:{ gender:'Female', age:'young Korean adult woman appearance', role:'Korean style female influencer', voice:'Thai young adult female influencer voice', hair:'random Korean hairstyle every generation', eyes:'soft Korean-style expressive eyes' },
-    korean_teen_male:{ gender:'Male', age:'young Korean adult man appearance', role:'Korean style male influencer', voice:'Thai young adult male influencer voice', hair:'random Korean hairstyle every generation', eyes:'calm Korean-style expressive eyes' },
-    elder_female: { gender:'Female', age:'elderly Thai woman appearance', role:'elderly Thai female trusted presenter', voice:'Thai elderly female warm wise voice', hair:'grey or silver neatly kept hair', eyes:'kind elder dark eyes' },
-    elder_male: { gender:'Male', age:'elderly Thai man appearance', role:'elderly Thai male trusted presenter', voice:'Thai elderly male calm deep voice', hair:'silver neatly kept hair', eyes:'wise elder dark eyes' },
-    thai_girl: { gender:'Female', age:'Thai little girl child appearance', role:'Thai little girl child presenter', voice:'Thai little girl cheerful voice', hair:'natural dark child hairstyle', eyes:'bright childlike dark eyes' },
-    thai_boy: { gender:'Male', age:'Thai little boy child appearance', role:'Thai little boy child presenter', voice:'Thai little boy energetic voice', hair:'natural dark child hairstyle', eyes:'bright childlike dark eyes' }
+    thai_female: { gender:'Female', age:'real young adult Thai woman appearance', role:'Thai female product presenter, ordinary everyday Thai woman, trustworthy appearance, non-model appearance, authentic human identity', voice:'Thai female natural speaking voice', hair:'natural dark hair with realistic texture', eyes:'natural dark expressive eyes' },
+    thai_male: { gender:'Male', age:'real adult Thai man appearance', role:'Thai male product presenter, ordinary everyday Thai man, trustworthy appearance, non-model appearance, authentic human identity', voice:'Thai male natural speaking voice', hair:'short natural dark hair', eyes:'natural dark confident eyes' },
+    win_seller_male: { gender:'Male', age:'real adult Thai livestream seller appearance', role:`real Thai male livestream seller, ordinary Thai man appearance, trustworthy market seller look, non-model appearance, authentic human identity, genuine product presentation, documentary realism`, voice:`natural energetic Thai male livestream voice, authentic selling rhythm, confident product presentation, not overacting`, randomizeAppearance:true, persistentCharacter:false },
+    pimry_female: { gender:'Female', age:'real adult Thai female livestream seller appearance', role:`real Thai female livestream seller, ordinary Thai woman appearance, trustworthy seller look, non-model appearance, authentic human identity, genuine excitement, documentary realism`, voice:`natural energetic Thai female livestream voice, authentic selling rhythm, confident product presentation, not overacting`, randomizeAppearance:true, persistentCharacter:false },
+    korean_teen_female:{ gender:'Female', age:'real young Korean woman appearance', role:'ordinary everyday Korean woman, non-model appearance, authentic human identity', voice:'natural young female speaking voice', hair:'natural Korean hairstyle with realistic flyaway strands', eyes:'natural Korean eyes with authentic expression' },
+    korean_teen_male:{ gender:'Male', age:'real young Korean man appearance', role:'ordinary everyday Korean man, non-model appearance, authentic human identity', voice:'natural young male speaking voice', hair:'natural Korean hairstyle with realistic imperfections', eyes:'natural Korean eyes with authentic expression' },
+    elder_female: { gender:'Female', age:'real elderly Thai woman appearance', role:'trusted elderly Thai woman, authentic human identity, ordinary everyday appearance', voice:'warm Thai elderly female voice', hair:'grey or silver naturally styled hair', eyes:'kind elder dark eyes' },
+    elder_male: { gender:'Male', age:'real elderly Thai man appearance', role:'trusted elderly Thai man, authentic human identity, ordinary everyday appearance', voice:'calm Thai elderly male voice', hair:'silver naturally styled hair', eyes:'wise elder dark eyes' },
+    thai_girl: { gender:'Female', age:'Thai little girl child appearance', role:'Thai child presenter with authentic everyday appearance', voice:'Thai little girl cheerful voice', hair:'natural dark child hairstyle', eyes:'bright childlike dark eyes' },
+    thai_boy: { gender:'Male', age:'Thai little boy child appearance', role:'Thai child presenter with authentic everyday appearance', voice:'Thai little boy energetic voice', hair:'natural dark child hairstyle', eyes:'bright childlike dark eyes' }
   };
   return map[normalized] || map.thai_female;
 }
@@ -122,9 +124,19 @@ export function buildCharacterFactoryProfile({ productName='', gemMode='signboar
   const bodyType = pick(seed + 4, BODY_TYPES);
   const skinTone = pick(seed + 5, SKIN_TONES);
   const material = pick(seed + 6, MATERIALS);
-  const hairStyle = voiceProfile.hair || pick(seed + 7, HAIR_STYLES);
-  const hairColor = pick(seed + 8, HAIR_COLORS);
-  const eyes = voiceProfile.eyes || pick(seed + 9, EYE_STYLES);
+  
+  const randomAppearance = voiceProfile.randomizeAppearance;
+
+const hairStyle = randomAppearance
+  ? pick(seed + 7, HAIR_STYLES)
+  : (voiceProfile.hair || pick(seed + 7, HAIR_STYLES));
+
+const hairColor = pick(seed + 8, HAIR_COLORS);
+
+const eyes = randomAppearance
+  ? pick(seed + 9, EYE_STYLES)
+  : (voiceProfile.eyes || pick(seed + 9, EYE_STYLES));
+  
   const outfit = pick(seed + 10, outfitPool);
   const trait = pick(seed + 11, UNIQUE_TRAITS);
   const expressionStyle = pick(seed + 12, EXPRESSIONS);
@@ -144,24 +156,28 @@ Unique traits: ${trait}
 Core expression style: ${expressionStyle}\nVoice profile: ${voiceProfile.voice}\nEthnicity lock: Thai / Asian only`;
 
   const dnaSummary = `Character ID ${sessionId}, a ${archetype}, ${bodyType}, ${skinTone}, ${material}, ${hairStyle}, ${hairColor}, ${eyes}, wearing ${outfit}, with ${trait}, Thai / Asian only, voice profile ${voiceProfile.voice}.`;
+  
+  const consistencyRule = voiceProfile.persistentCharacter === false
+  ? `Character variation allowed between generations while maintaining the same Thai livestream seller archetype, energy, and overall style.`
+  : `Consistency Lock: same character, identical face structure, same hairstyle, same hair color, same outfit, same body proportions, same facial features, same natural material behavior, same color logic, no variation, fixed identity, do not redesign, do not reinterpret, this is the exact same character across all scenes.`;
 
   const dnaBlock = `🧬 CHARACTER DNA BLOCK (Used in every prompt)
 Character Profile: ${dnaSummary}
 
-Consistency Lock: same character, identical face structure, same hairstyle, same hair color, same outfit, same body proportions, same facial features, same natural material behavior, same color logic, no variation, fixed identity, do not redesign, do not reinterpret, this is the exact same character across all scenes.
+${consistencyRule}
 
 Face Rule: facial features remain identical, only expression changes.
 
 World Lock: same universe, same visual world, same art direction, same rendering quality, same color logic, same environmental storytelling style, same lighting family across all scenes unless story progression explicitly changes it.
 
-Style Lock: same photorealistic live-action cinematic style across every scene, no 3D, no cartoon, no chibi, no mascot styling, no CGI stylization, no age shift, no style drift.
+Style Lock: same photorealistic live-action documentary style across every scene, same social-media realism, same smartphone camera realism, no 3D, no cartoon, no chibi, no mascot styling, no CGI stylization, no age shift, no style drift.
 
 Scale Lock: character scale must remain consistent relative to surrounding environment and props across all scenes unless the story explicitly changes scale.
 
 Motion Continuity Rule: this is the exact same character continuing from scene to scene, with the same identity, body proportions, outfit, face, Thai / Asian ethnicity, and voice profile.`;
 
   const lockBlock = `MULTI-SCENE CHARACTER LOCK RULE:
-Because sceneCount is greater than 1, every scene must use the exact same locked main character with Character ID ${sessionId}. You must carry the same character identity, face, costume, colors, materials, and proportions through every scene. Only pose, expression, camera angle, environment progression, and action can change. The character must remain photorealistic Thai / Asian human live-action, never 3D, cartoon, chibi, mascot, CGI, animation, or Pixar-like.`;
+Because sceneCount is greater than 1, every scene must use the exact same locked main character with Character ID ${sessionId}. You must carry the same character identity, face, costume, colors, materials, and proportions through every scene. Only pose, expression, camera angle, environment progression, and action can change. The character must remain photorealistic Thai / Asian human live-action, documentary realism, smartphone camera realism, natural human imperfections, non-model appearance, never 3D, cartoon, chibi, mascot, CGI, animation, or Pixar-like.`;
 
   return {
     enabled: true,

@@ -8,11 +8,51 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app); const db=getFirestore(app); const provider=new GoogleAuthProvider();
 let currentUser=null; let userDoc=null;
 let pendingDeleteUser=null;
+const rolePages = {
+
+  user: [
+    'index.html'
+  ],
+
+  vip: [
+    'index.html',
+    'freestyle.html',
+    'cartoon.html',
+    'finder.html'
+  ],
+
+  gold: [
+    'index.html',
+    'freestyle.html',
+    'cartoon.html',
+    'finder.html',
+    'story.html'
+  ],
+
+  admin: ['*']
+};
+
+function canAccess(role,page){
+
+  if(role === 'admin'){
+    return true;
+  }
+
+  return (
+    rolePages[role]
+    || []
+  ).includes(page);
+}
 function hasAdminEmail(email=''){ return ADMIN_EMAILS.includes(String(email).toLowerCase()); }
 function showToast(message){ const t=$('toast'); t.textContent=message; t.classList.add('show'); clearTimeout(showToast._timer); showToast._timer=setTimeout(()=>t.classList.remove('show'),2200); }
-async function ensureUser(user){ const email=String(user.email||'').toLowerCase(); const ref=doc(db,'users',user.uid); const snap=await getDoc(ref); const now=serverTimestamp(); const base={uid:user.uid,email,displayName:user.displayName||'',photoURL:user.photoURL||'',lastLoginAt:now,updatedAt:now}; if(hasAdminEmail(email)){ await setDoc(ref,{...base,createdAt:snap.exists()?snap.data().createdAt||now:now,approved:true,role:'admin',approvedAt:now},{merge:true}); } else if(!snap.exists()){ await setDoc(ref,{...base,createdAt:now,approved:false,role:'user'},{merge:true}); } else { await setDoc(ref,base,{merge:true}); } const updated=await getDoc(ref); userDoc=updated.data(); }
+async function ensureUser(user){ const email=String(user.email||'').toLowerCase(); const ref=doc(db,'users',user.uid); const snap=await getDoc(ref); const now=serverTimestamp(); const base={uid:user.uid,email,displayName:user.displayName||'',photoURL:user.photoURL||'',lastLoginAt:now,updatedAt:now}; if(hasAdminEmail(email)){ await setDoc(ref,{...base,createdAt:snap.exists()?snap.data().createdAt||now:now,approved:true,role:'admin',approvedAt:now},{merge:true}); } else if(!snap.exists()){ await setDoc(ref,{...base,createdAt:now,approved:true,role:'user'},{merge:true}); } else { await setDoc(ref,base,{merge:true}); } const updated=await getDoc(ref); userDoc=updated.data(); }
 function isAdmin(){
-   return hasAdminEmail(currentUser?.email);
+
+  return (
+    hasAdminEmail(currentUser?.email)
+    ||
+    userDoc?.role === 'admin'
+  );
 }
 async function signInGoogle(){ try{ await signInWithPopup(auth,provider);}catch(e){ showToast('เข้าสู่ระบบไม่สำเร็จ'); } }
 async function renderUsers(){
@@ -64,9 +104,27 @@ async function renderUsers(){
   wrap.querySelectorAll('.revoke-btn').forEach(btn=>btn.addEventListener('click',()=>setApproval(btn.dataset.uid,false)));
   wrap.querySelectorAll('.delete-user-btn').forEach(btn=>btn.addEventListener('click',()=>openDeleteUserModal(btn.dataset.uid, btn.dataset.email, btn.dataset.name)));
 
-  wrap.querySelectorAll('.role-select').forEach(select=>{
-    select.addEventListener('change', ()=>updateRole(select.dataset.roleUid, select.value));
-  });
+  wrap
+  .querySelectorAll('.role-select')
+  .forEach(select=>{
+
+    select.addEventListener(
+      'change',
+      async(e)=>{
+
+        const uid =
+          e.target.dataset.roleUid;
+
+        const role =
+          e.target.value;
+
+        await updateRole(
+          uid,
+          role
+        );
+      }
+    );
+});
 }
 async function setApproval(uid,approved){ if(!isAdmin()) return showToast('Admin only'); try{ await updateDoc(doc(db,'users',uid),{approved,updatedAt:serverTimestamp(),approvedAt:approved?serverTimestamp():null}); showToast(approved?'อนุมัติผู้ใช้แล้ว':'ยกเลิกสิทธิ์แล้ว'); await renderUsers(); }catch(e){ showToast(`อัปเดตไม่สำเร็จ: ${e.message}`); } }
 
@@ -137,6 +195,134 @@ async function confirmDeleteUser(){
     if(btn){ btn.disabled=false; btn.textContent=oldText || 'ยืนยันลบ User'; }
   }
 }
-function escapeHtml(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
-$('loginBtn').addEventListener('click', signInGoogle); $('logoutBtn').addEventListener('click', ()=>signOut(auth)); $('refreshBtn').addEventListener('click', renderUsers); $('cancelDeleteUserBtn')?.addEventListener('click', closeDeleteUserModal); $('confirmDeleteUserBtn')?.addEventListener('click', confirmDeleteUser); $('deleteUserModal')?.addEventListener('click', e=>{ if(e.target?.id==='deleteUserModal') closeDeleteUserModal(); });
-onAuthStateChanged(auth, async user=>{ currentUser=user; userDoc=null; if(!user){ $('authPill').textContent='ยังไม่ได้เข้าสู่ระบบ'; $('loginBtn').style.display='inline-flex'; $('logoutBtn').style.display='none'; $('userList').innerHTML='<div class="muted">กรุณาเข้าสู่ระบบด้วย Google admin</div>'; return; } await ensureUser(user); $('authPill').textContent=user.email||'signed in'; $('loginBtn').style.display='none'; $('logoutBtn').style.display='inline-flex'; await renderUsers(); });
+function escapeHtml(str){
+
+  return String(str||'')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+
+
+// ======================
+// BUTTON EVENTS
+// ======================
+
+$('loginBtn')
+  .addEventListener(
+    'click',
+    signInGoogle
+  );
+
+$('logoutBtn')
+  .addEventListener(
+    'click',
+    ()=>signOut(auth)
+  );
+
+$('refreshBtn')
+  .addEventListener(
+    'click',
+    renderUsers
+  );
+
+$('cancelDeleteUserBtn')
+  ?.addEventListener(
+    'click',
+    closeDeleteUserModal
+  );
+
+$('confirmDeleteUserBtn')
+  ?.addEventListener(
+    'click',
+    confirmDeleteUser
+  );
+
+$('deleteUserModal')
+  ?.addEventListener(
+    'click',
+    e=>{
+
+      if(
+        e.target?.id
+        === 'deleteUserModal'
+      ){
+
+        closeDeleteUserModal();
+      }
+    }
+);
+
+
+// ======================
+// AUTH STATE
+// ======================
+
+onAuthStateChanged(
+  auth,
+  async user=>{
+
+    currentUser = user;
+
+    userDoc = null;
+
+    if(!user){
+
+      $('authPill').textContent =
+        'ยังไม่ได้เข้าสู่ระบบ';
+
+      $('loginBtn').style.display =
+        'inline-flex';
+
+      $('logoutBtn').style.display =
+        'none';
+
+      $('userList').innerHTML =
+        '<div class="muted">กรุณาเข้าสู่ระบบด้วย Google admin</div>';
+
+      return;
+    }
+
+    await ensureUser(user);
+
+    // ตรวจสิทธิ์หน้า
+    const page =
+      location.pathname
+      .split('/')
+      .pop()
+      || 'index.html';
+
+    const role =
+      userDoc?.role || 'user';
+
+    if(
+      !canAccess(role,page)
+    ){
+
+      alert(
+        'ไม่มีสิทธิ์เข้าหน้านี้'
+      );
+
+      location.replace(
+        (
+          rolePages[role]
+          || ['index.html']
+        )[0]
+      );
+
+      return;
+    }
+
+    $('authPill').textContent =
+      user.email || 'signed in';
+
+    $('loginBtn').style.display =
+      'none';
+
+    $('logoutBtn').style.display =
+      'inline-flex';
+
+    await renderUsers();
+});

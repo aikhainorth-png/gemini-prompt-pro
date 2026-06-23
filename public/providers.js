@@ -104,6 +104,32 @@ function recoverPartialJsonObject(text = ''){
   return normalizeParsedObject({ image_prompt: image, video_prompt: video, caption_hashtags: caption });
 }
 
+
+function countThaiWords(text=''){
+  return String(text||'').trim().split(/\s+/).filter(Boolean).length;
+}
+function enforceDialogueWordRange(videoPrompt='', mode=''){
+  const ranges={
+    win:[32,35], win_pimry:[32,35], pimry:[32,35],
+    grok:[30,32], flow:[20,30]
+  };
+  const key=String(mode||'').toLowerCase();
+  let range=null;
+  Object.keys(ranges).forEach(k=>{ if(key.includes(k)) range=ranges[k]; });
+  if(!range) return videoPrompt;
+  return String(videoPrompt).replace(/(DIALOGUE_TH\s*:\s*\n\"?)([^\n"]*)(\"?)/gi,(m,a,b,c)=>{
+    let words=countThaiWords(b);
+    if(words<range[0]){
+      const filler=' สินค้าตัวนี้ใช้งานง่าย คุณภาพดี น่าใช้มาก';
+      while(words<range[0]){
+        b+=filler;
+        words=countThaiWords(b);
+      }
+    }
+    return a+b+c;
+  });
+}
+
 function inferNumberFromPrompt(prompt = '', label = 'Scene count', fallback = 1){
   const re = new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*:\\s*(\\d+)', 'i');
   const m = String(prompt || '').match(re);
@@ -181,7 +207,7 @@ function buildOpenAISceneContract(userPrompt = ''){
     const no = idx + 1;
     return `SCENE_${no}_VIDEO_PROMPT:\n${buildTimeRange(no, count, duration)}\nVISUAL:\n[detailed visible action, product interaction, camera movement]\nDIALOGUE_TH:\n"[exact Thai spoken line for this scene]"\nLIP_SYNC:\n[natural Thai lip-sync timing for ${buildTimeRange(no, count, duration)}]`;
   }).join('\n\n');
-  return `\n\nOPENAI SCENE 100% LOCK + SCENE TIME + LIP SYNC PRO:\n- Return ONLY valid JSON matching the schema.\n- video_prompt MUST contain exactly ${count} scene block(s).\n- If scene count is 1, still use SCENE_1_VIDEO_PROMPT and complete the full clip in that single scene.\n- If scene count is ${count}, do not create more or fewer than ${count} scenes.\n- Do not merge scenes into a paragraph.\n- Do not leave any scene header empty.\n- Every scene must include time range, VISUAL, DIALOGUE_TH, and LIP_SYNC.\n- Use this exact video_prompt structure:\n${sceneLines}\n\nimage_prompt should follow the requested image scene format. caption_hashtags must be one caption line plus exactly 5 hashtags.`;
+  return `\n\nOPENAI SCENE 100% LOCK + SCENE TIME + LIP SYNC PRO:\n- Return ONLY valid JSON matching the schema.\n- video_prompt MUST contain exactly ${count} scene block(s).\n- If scene count is 1, still use SCENE_1_VIDEO_PROMPT and complete the full clip in that single scene.\n- If scene count is ${count}, do not create more or fewer than ${count} scenes.\n- Do not merge scenes into a paragraph.\n- Do not leave any scene header empty.\n- Every scene must include time range, VISUAL, DIALOGUE_TH, and LIP_SYNC.\n- Use this exact video_prompt structure:\n${sceneLines}\n\nimage_prompt should follow the requested image scene format. caption_hashtags must be 1 Thai caption line between 290 and 310 Thai characters Never generate a caption shorter than 290 Thai characters Write in a high-conversion Thai TikTok selling style After the caption, add exactly 5 hashtags: 3 product-related hashtags and 2 trending Thai commerce/social hashtags, Compliance requirements: The caption and hashtags must comply with TikTok Shop policies, Do not include misleading, exaggerated, unverifiable, guaranteed, medical, health, financial, or unrealistic claims, Do not promise results, cures, treatments, earnings, or guarantees, Do not use fake urgency, fake scarcity, or deceptive promotional language, Use advertiser-friendly and policy-safe Thai language only.`;
 }
 
 function getSectionByLabel(text = '', startLabels = [], stopLabels = []){
@@ -343,3 +369,8 @@ export async function callAI(providerId, args){
   if(providerId === 'openai') return callOpenAI(args);
   return callGemini(args);
 }
+
+
+// Caption validation helpers
+export function countThaiChars(text=''){ return String(text||'').replace(/\n/g,'').trim().length; }
+export function validateCaptionLength(text=''){ const n=countThaiChars(text); return n>=290 && n<=310; }

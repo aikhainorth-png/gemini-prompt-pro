@@ -37,11 +37,19 @@ DIALOGUE_TH:
 LIP_SYNC:
 ...
 
-Continue exactly until the requested scene count. If scene count is 1, still return SCENE_1_VIDEO_PROMPT only and make it complete within that one scene. Do not leave any scene header empty.`
+Continue exactly until the requested scene count. If scene count is 1, still return SCENE_1_VIDEO_PROMPT only and make it complete within that one scene. Do not leave any scene header empty.
+
+WORD COUNT ENFORCEMENT:
+- Win Mode: every DIALOGUE_TH must contain 32-35 Thai words.
+- Pimry Mode: every DIALOGUE_TH must contain 32-35 Thai words.
+- Grok Mode: every DIALOGUE_TH must contain 30-32 Thai words.
+- Flow Mode: every DIALOGUE_TH must contain 20-30 Thai words.
+- Count words before returning JSON.
+- Never generate shorter dialogue than required.`
       },
       caption_hashtags: {
         type: 'string',
-        description: 'One Thai caption line followed by exactly 5 hashtags: 3 product-related and 2 trending hashtags.'
+        description: 'CAPTION HARD LOCK: Minimum 290 characters. Maximum 310 characters. Count characters before responding. Create exactly 1 Thai caption line between 290 and 310 Thai characters Never generate a caption shorter than 290 Thai characters Write in a high-conversion Thai TikTok selling style After the caption, add exactly 5 hashtags: 3 product-related hashtags and 2 trending Thai commerce/social hashtags, Compliance requirements: The caption and hashtags must comply with TikTok Shop policies, Do not include misleading, exaggerated, unverifiable, guaranteed, medical, health, financial, or unrealistic claims, Do not promise results, cures, treatments, earnings, or guarantees, Do not use fake urgency, fake scarcity, or deceptive promotional language, Use advertiser-friendly and policy-safe Thai language only.'
       }
     },
     required: ['image_prompt','video_prompt','caption_hashtags']

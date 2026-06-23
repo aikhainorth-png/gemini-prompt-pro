@@ -16,7 +16,7 @@ STRICT OUTPUT BEHAVIOR:
 - Thai dialogue must sound natural and spoken, not corporate.
 - Keep product visible early and often.
 - Use vertical 9:16 composition by default.
-- Use realistic Thai people, authentic Thai lifestyle, and natural UGC trust unless the selected category DNA says otherwise.
+- Use realistic Thai people, authentic Thai lifestyle, Human Realism, and natural UGC trust unless the selected category DNA says otherwise.
 
 HYBRID FORMULA:
 1. Stop-scroll visual hook in the first second.
@@ -33,6 +33,178 @@ SAFETY + COMPLIANCE:
 
 export const CATEGORY_MASTER_DNA = {
 
+  win_pimry: {
+visualIdentity:
+  'Thai TikTok Shop Live Commerce Chaos Mode, high-energy Thai livestream selling, strong social proof, viewer engagement surge, TikTok Shop urgency, authentic Thai online seller atmosphere.',
+
+characterStyle:
+  'Thai live seller, male or female, expressive face, energetic gestures, charismatic sales personality, realistic product demonstration, authentic livestream presentation.',
+
+environmentStyle:
+  'Thai warehouse, fulfillment station, packing desk, beauty table, food-selling setup, mattress showroom, ecommerce workspace, product shelf display, home livestream studio.',
+
+lightingStyle:
+  'Realistic livestream lighting, ring light mixed with practical indoor lighting, warehouse fluorescent light, smartphone camera exposure realism, natural skin texture visibility.',
+
+cameraStyle:
+  'Vertical 9:16 smartphone livestream realism, handheld capture feeling, documentary-style framing, product close to lens, realistic perspective distortion, social-media screenshot aesthetic.',
+
+psychologyTriggers: [
+  'คนดูทะลุแสน',
+  'คอมเมนต์ถามรัว',
+  'ออเดอร์เข้าไม่หยุด',
+  'กดตะกร้าด่วน',
+  'ของใกล้หมด',
+  'โปรเฉพาะไลฟ์',
+  'Gift เด้งไม่หยุด',
+  'ยอดขายพุ่ง',
+  'FOMO สูง',
+  'Social Proof หนาแน่น'
+],
+
+uiElements: [
+  'viewer_count',
+  'thai_comments',
+  'floating_hearts',
+  'gift_notification',
+  'shopping_cart',
+  'follow_button',
+  'share_button',
+  'live_badge',
+  'product_basket',
+  'engagement_indicators'
+],
+
+masterPrompt: `
+HUMAN REALISM GLOBAL MODULE:
+ordinary everyday human identity
+non-model appearance
+believable real-person proportions
+visible skin pores
+natural skin texture
+subtle facial asymmetry
+natural under-eye details
+slight blemishes
+realistic skin imperfections
+natural hair flyaways
+authentic facial muscle anatomy
+realistic jawline structure
+natural neck anatomy
+believable shoulder width
+realistic body proportions
+authentic human expression
+candid real-life behavior
+authentic emotional reactions
+documentary realism
+social-media snapshot realism
+smartphone camera realism
+handheld capture realism
+practical lighting only
+slight motion blur
+imperfect framing
+autofocus breathing
+realistic HDR artifacts
+noisy smartphone sensor details
+avoid beauty retouching
+LIVE COMMERCE SELLER MODULE:
+authentic Thai livestream seller
+real Thai ecommerce entrepreneur energy
+energetic body language
+expressive speaking gestures
+charismatic selling personality
+confident presentation style
+realistic product demonstration
+authentic Thai market seller charisma
+active audience interaction
+natural persuasion behavior
+high-engagement livestream behavior
+trust-building communication style
+LIVE COMMERCE ENVIRONMENT MODULE:
+real locations only
+believable Thai home
+warehouse fulfillment station
+ecommerce packing area
+beauty desk setup
+mattress showroom
+food-selling setup
+product shelf display
+home business corner
+office workspace
+retail store environment
+visible stock inventory
+shipping boxes
+order fulfillment activity
+realistic commercial workspace
+natural environmental imperfections
+SOCIAL PROOF MODULE:
+heavy viewer engagement
+rapidly increasing viewer count
+active Thai comments
+repeated customer questions
+purchase notifications
+floating hearts
+gift notifications
+audience excitement
+urgency-driven buying behavior
+strong FOMO atmosphere
+trust-building commerce signals
+repeated demand indicators
+TIKTOK LIVE UI MODULE:
+authentic TikTok Live interface
+realistic username display
+follow button
+live badge
+viewer count
+Thai comment bubbles
+floating hearts
+gift notifications
+share button
+shopping cart CTA
+product basket icon
+bottom comment bar
+engagement indicators
+readable Thai UI
+authentic platform layout
+CAMERA MODULE:
+smartphone vertical 9:16
+real phone screen capture feeling
+handheld livestream perspective
+product positioned near camera
+realistic perspective distortion
+documentary-style composition
+livestream screenshot aesthetic
+highly engaging visual hierarchy
+realistic mobile-phone capture appearance
+NEGATIVE REALISM RULES:
+avoid AI beauty polish
+avoid porcelain skin
+avoid airbrushed face
+avoid glamour photography
+avoid fashion editorial posing
+avoid perfect symmetry
+avoid CGI shine
+avoid over-staged composition
+avoid luxury studio photography
+avoid influencer beauty filters
+avoid unrealistic skin smoothing
+avoid fake livestream UI
+avoid broken Thai text
+avoid watermark
+FINAL OUTPUT:
+Ultra realistic TikTok Live smartphone screenshot style scene. Thai live host naturally presenting [PRODUCT] to the camera. Real TikTok Live UI overlay with viewer count, comments, floating hearts, gift notifications, shopping cart CTA and active audience engagement. Strong social proof. Authentic livestream urgency. Real ecommerce environment. Photographic smartphone screen-capture realism. Natural human realism. Vertical 9:16. Photorealistic. No watermark. No broken Thai text. No fake-looking UI.
+`,
+sceneFormula: [
+  'HOOK: urgent product reveal with immediate attention grab',
+  'DEMO: seller demonstrates product naturally close to camera',
+  'ENGAGEMENT: audience asks questions through active comments',
+  'SOCIAL_PROOF: viewer surge, gifts, comments and repeated orders',
+  'CTA: seller points to shopping basket and announces live-only promotion'
+],
+
+negativePrompt: `
+cartoon, anime, illustration, 3d render, cgi, watermark, logo, broken thai text, fake livestream ui, extra fingers, extra limbs, deformed hands, plastic skin, airbrushed skin, beauty filter, fashion editorial, luxury studio photography, perfect symmetry, oversaturated colors, unrealistic lighting `
+},
+
   infographic_ai: {
     visualIdentity: 'Health & Beauty Infographic AI — Thai pastel explainer poster, product-centered hero layout, benefit bubbles, arrows, icons, checklist, timeline, LINE OA/TikTok/Facebook friendly educational commerce design.',
     characterStyle: 'Usually no presenter required; if presenter appears, use a realistic Thai beauty/wellness presenter or small cute illustration accents only when requested. Product remains central.',
@@ -40,7 +212,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Bright clean high-key commercial lighting, soft pastel glow, premium health/beauty poster finish, crisp product highlights.',
     cameraStyle: 'Vertical 9:16 poster composition, product centered, H1 top, H2 capsule, 5-8 bubbles around product, bottom row for how-to/timeline/checklist/CTA.',
     psychologyTriggers: ['อ่านง่ายหยุดเลื่อน', 'ประโยชน์ครบจบในภาพเดียว', 'สายสุขภาพต้องเซฟ', 'ดูน่าเชื่อถือ', 'สรุปจุดขายชัด'],
-    masterPrompt: `Vertical 9:16 Thai infographic poster for [PRODUCT], product large and centered on a clean pedestal, pastel health/beauty theme selected from product type, large readable Thai H1 at top, H2 capsule subtitle, 5-8 rounded benefit bubbles around product with matching icons and arrows, lower checklist/timeline/how-to section, safe compliant benefit wording, cute premium TikTok Shop / Facebook / LINE OA rich message design, crisp typography, no watermark, no random text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Vertical 9:16 Thai infographic poster for [PRODUCT], product large and centered on a clean pedestal, pastel health/beauty theme selected from product type, large readable Thai H1 at top, H2 capsule subtitle, 5-8 rounded benefit bubbles around product with matching icons and arrows, lower checklist/timeline/how-to section, safe compliant benefit wording, cute premium TikTok Shop / Facebook / LINE OA rich message design, crisp typography, no watermark, no random text.`,
     sceneFormula: ['HOOK: large Thai H1 asks a curiosity question or benefit summary', 'PRODUCT HERO: product centered and clearly visible', 'BUBBLES: benefit callouts pop around product with icons and arrows', 'SAFE PROOF: checklist/timeline/how-to with compliant wording', 'CTA: soft commerce action such as save/share/tap cart'],
     negativePrompt: 'medical cure claims, guaranteed results, 100% claims, unreadable Thai text, random background text, watermark, cluttered layout, distorted product, messy typography, fake certifications, before-after medical claims'
   },
@@ -52,7 +231,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Cinematic industrial lighting, realistic fluorescent factory lights, clean stainless reflections, steam/cold mist/robot light/cleanroom white depending on F-code.',
     cameraStyle: 'Perfectly centered conveyor belt perspective, symmetrical composition, wide 24mm lens, deep vanishing point, products aligned in rows moving toward camera, vertical 9:16.',
     psychologyTriggers: ['สายพานโคตร satisfying', 'โรงงานจริงดูเพลินมาก', 'ผลิตจริงทุกขั้นตอน', 'เห็นแล้วน่าเชื่อถือ', 'industrial ASMR'],
-    masterPrompt: `Ultra realistic factory conveyor belt scene for [PRODUCT], automatically select the correct factory F-code from product type, centered symmetrical conveyor composition, long conveyor belt leading into deep vanishing point, products aligned perfectly in rows moving toward camera, Thai factory workers standing on both sides inspecting and packing, realistic product-specific machinery, cinematic industrial lighting, documentary manufacturing realism, stainless steel surfaces, satisfying repetitive production line, vertical 9:16, no watermark, no cartoon, no CGI, no random background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic factory conveyor belt scene for [PRODUCT], automatically select the correct factory F-code from product type, centered symmetrical conveyor composition, long conveyor belt leading into deep vanishing point, products aligned perfectly in rows moving toward camera, Thai factory workers standing on both sides inspecting and packing, realistic product-specific machinery, cinematic industrial lighting, documentary manufacturing realism, stainless steel surfaces, satisfying repetitive production line, vertical 9:16, no watermark, no cartoon, no CGI, no random background text.`,
     sceneFormula: ['HOOK: conveyor starts immediately with product rows moving toward camera', 'FACTORY SELECT: choose the correct F01-F20 factory type from product name', 'QC ACTION: workers inspect/sort/pack products on both sides', 'MOTION: camera push-in or tracking shot along conveyor with machine activity', 'CTA: final trustworthy factory-direct reveal'],
     negativePrompt: 'crooked conveyor, asymmetrical composition, distorted products, broken machinery, duplicate humans, floating objects, cartoon, CGI, 3D, unreadable random text, watermark, low quality, warped perspective, empty factory'
   },
@@ -64,7 +250,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Realistic phone screen capture lighting, ring light or warm indoor light, clear product visibility, natural skin texture, readable Thai UI overlays.',
     cameraStyle: 'Smartphone vertical 9:16 screen-capture composition, host centered, product close to camera, live comments stacked left, hearts floating right, cart and gift UI bottom area.',
     psychologyTriggers: ['คนดูทะลุแสน', 'คอมเมนต์ถามรัว', 'โปรเฉพาะไลฟ์', 'Gift เด้งไม่หยุด', 'กดตะกร้าด่วน', 'ของใกล้หมด'],
-    masterPrompt: `Ultra realistic TikTok Live smartphone screenshot style scene, Thai live host presenting [PRODUCT] naturally to the camera, real TikTok Live UI overlay with username, follow button, viewer count, comment bubbles in Thai, floating hearts, share button, gift notification, bottom comment bar, shopping cart CTA, product clearly visible, live commerce urgency, photographic real phone screen capture look, vertical 9:16, no watermark, no broken Thai text, no fake-looking UI.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic TikTok Live smartphone screenshot style scene, Thai live host presenting [PRODUCT] naturally to the camera, real TikTok Live UI overlay with username, follow button, viewer count, comment bubbles in Thai, floating hearts, share button, gift notification, bottom comment bar, shopping cart CTA, product clearly visible, live commerce urgency, photographic real phone screen capture look, vertical 9:16, no watermark, no broken Thai text, no fake-looking UI.`,
     sceneFormula: ['HOOK: live host opens with urgent product reveal and viewer/comment surge', 'DEMO: host holds or uses product close to camera while comments ask questions', 'PROOF: comments, viewer count, gift animation, repeated demand/social proof', 'CTA: host points to basket/cart and announces live-only promo'],
     negativePrompt: 'no cartoon, no 3D, no illustration, no broken Thai text, no fake app UI, no watermark, no distorted hands, no extra limbs, no prohibited claims'
   },
@@ -76,7 +269,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Bright retail lighting, high clarity, energetic contrast, product and yellow sign readable as hero objects.',
     cameraStyle: 'Fast push-in to yellow sign, handheld POV discovery, rack focus from sign to product, product stack hero close-up.',
     psychologyTriggers: ['ราคาช็อก', 'ล้างสต๊อก', 'ของใกล้หมด', 'คนรุมซื้อ', 'หมดแล้วหมดเลย'],
-    masterPrompt: `Ultra realistic Thai retail clearance sale scene, [PRODUCT] displayed in large stacks with a striking yellow sale sign nearby, Thai shoppers walking and stopping in the background, Thai shop staff pointing at the product, urgent stop-scroll retail energy, busy store atmosphere, product-first composition, handheld TikTok UGC realism, bright commercial lighting, sharp product details, vertical 9:16, no watermark, no random background text except the intended sale sign.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic Thai retail clearance sale scene, [PRODUCT] displayed in large stacks with a striking yellow sale sign nearby, Thai shoppers walking and stopping in the background, Thai shop staff pointing at the product, urgent stop-scroll retail energy, busy store atmosphere, product-first composition, handheld TikTok UGC realism, bright commercial lighting, sharp product details, vertical 9:16, no watermark, no random background text except the intended sale sign.`,
     sceneFormula: ['HOOK: fast zoom to yellow sale sign and product stack', 'DEMO: hand picks up product and shows size/value', 'PROOF: shoppers crowd or shelves look almost sold out', 'CTA: product held toward camera with urgent basket reason'],
     negativePrompt: 'no fake brand logos, no messy unreadable signs, no medical claims, no exaggerated guarantee, no watermark'
   },
@@ -87,7 +287,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Soft morning light, clean natural highlights, trustworthy wellness palette, no clinical fear-mongering.',
     cameraStyle: 'UGC close-up product reveal, routine demonstration, hand-to-camera bottle shot, calm push-in, lifestyle insert shots.',
     psychologyTriggers: ['ดูแลตัวเองตอนนี้ยังทัน', 'รูทีนสุขภาพ', 'คนวัยทำงานต้องดู', 'ใช้เป็นตัวช่วย', 'น่าเชื่อถือ'],
-    masterPrompt: `Ultra realistic Thai wellness UGC scene, Thai presenter showing [PRODUCT] as part of a daily self-care routine, clean trustworthy home environment, soft morning light, product label facing camera, natural hand interaction, gentle health lifestyle mood, premium but believable TikTok review style, no medical cure claims, no extreme before-after, vertical 9:16, no watermark, no background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic Thai wellness UGC scene, Thai presenter showing [PRODUCT] as part of a daily self-care routine, clean trustworthy home environment, soft morning light, product label facing camera, natural hand interaction, gentle health lifestyle mood, premium but believable TikTok review style, no medical cure claims, no extreme before-after, vertical 9:16, no watermark, no background text.`,
     sceneFormula: ['HOOK: relatable lifestyle pain or routine moment', 'REVEAL: product appears within first 3 seconds', 'DEMO: show how it fits into daily routine', 'PAYOFF: calmer, more confident self-care feeling', 'CTA: soft basket click reason'],
     negativePrompt: 'no cure claims, no guaranteed results, no hospital fear visuals, no fake doctor, no disease diagnosis, no watermark'
   },
@@ -98,7 +305,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Warm appetizing food lighting, glossy highlights, steam backlight, cinematic depth of field.',
     cameraStyle: 'Macro texture close-up, spoon lift, steam reveal, cutting/breaking shot, top-view plating, slow push-in.',
     psychologyTriggers: ['เห็นแล้วหิว', 'น้ำลายไหล', 'กลิ่นเหมือนถึงจอ', 'กินซ้ำง่าย', 'เมนูนี้ห้ามเลื่อน'],
-    masterPrompt: `Ultra realistic cinematic Thai food commercial, [PRODUCT] served hot and appetizing, visible steam rising, glossy sauce and detailed texture, Thai presenter naturally presenting or tasting, authentic Thai kitchen or dining table, macro food close-up, spoon lift, warm cinematic lighting, delicious craving mood, vertical 9:16, no watermark, no background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic cinematic Thai food commercial, [PRODUCT] served hot and appetizing, visible steam rising, glossy sauce and detailed texture, Thai presenter naturally presenting or tasting, authentic Thai kitchen or dining table, macro food close-up, spoon lift, warm cinematic lighting, delicious craving mood, vertical 9:16, no watermark, no background text.`,
     sceneFormula: ['HOOK: steam/bite/cheese-pull/spoon-lift close-up', 'DEMO: open pack or prepare food', 'TEXTURE: sauce, crunch, steam, freshness', 'PAYOFF: presenter reaction and serving shot', 'CTA: basket reason for hunger moment'],
     negativePrompt: 'no rotten food, no dirty kitchen, no fake text, no distorted hands, no watermark'
   },
@@ -109,7 +323,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Bright fun lighting, crisp highlights on snack surface, vibrant packaging clarity.',
     cameraStyle: 'Pack tear-open, hand grabs snack, macro crunch break, pour into bowl, reaction close-up.',
     psychologyTriggers: ['กรอบจนต้องเปิดเสียง', 'กินเพลิน', 'ถุงเดียวไม่พอ', 'สายกินเล่นต้องดู', 'ซื้อซ้ำง่าย'],
-    masterPrompt: `Ultra realistic viral Thai snack UGC scene, [PRODUCT] pack opened toward camera, crispy snack pieces shown in macro detail, Thai reviewer holding and tasting with fun expression, bright colorful snack-time setup, crunch ASMR visual feeling, product packaging clear and centered, vertical 9:16, no watermark, no random background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic viral Thai snack UGC scene, [PRODUCT] pack opened toward camera, crispy snack pieces shown in macro detail, Thai reviewer holding and tasting with fun expression, bright colorful snack-time setup, crunch ASMR visual feeling, product packaging clear and centered, vertical 9:16, no watermark, no random background text.`,
     sceneFormula: ['HOOK: tear open pack + close-up texture', 'CRUNCH: break/snack bite macro shot', 'TASTE: Thai reviewer reaction', 'VALUE: show amount/pack size/flavor', 'CTA: casual basket click'],
     negativePrompt: 'no messy crumbs covering product, no fake logos, no watermark, no unappetizing colors'
   },
@@ -120,7 +341,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Soft warm daylight, pastel tones, clean safe atmosphere, low contrast, comforting highlights.',
     cameraStyle: 'Gentle product close-up, parent hand demo, soft push-in, before/after organization, baby-safe distance.',
     psychologyTriggers: ['แม่ ๆ ต้องดู', 'ลูกสบายแม่แฮปปี้', 'ชีวิตแม่ง่ายขึ้น', 'อ่อนโยน', 'ใช้จริงในบ้าน'],
-    masterPrompt: `Ultra realistic warm Thai mom and baby lifestyle scene, Thai mother gently demonstrating [PRODUCT] in a clean safe nursery or family home, soft pastel environment, caring expression, product clearly visible, practical parent-friendly usage, gentle trustworthy mood, vertical 9:16, no watermark, no unsafe baby handling, no background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic warm Thai mom and baby lifestyle scene, Thai mother gently demonstrating [PRODUCT] in a clean safe nursery or family home, soft pastel environment, caring expression, product clearly visible, practical parent-friendly usage, gentle trustworthy mood, vertical 9:16, no watermark, no unsafe baby handling, no background text.`,
     sceneFormula: ['HOOK: common parent problem shown gently', 'REVEAL: product enters frame clearly', 'DEMO: safe practical use by parent', 'PAYOFF: baby/parent comfort and easier routine', 'CTA: soft recommendation for parents'],
     negativePrompt: 'no unsafe baby pose, no fear claims, no medical claims, no messy unsafe room, no watermark'
   },
@@ -131,7 +359,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Premium fashion lighting, soft shadows, luxury color grading, glowing skin tones, crisp fabric highlights.',
     cameraStyle: 'Full-body walk, spin, mirror reveal, close-up fabric, waist/detail shot, slow push-in, runway-style movement.',
     psychologyTriggers: ['ใส่แล้วดูแพง', 'ลุคนี้คนทัก', 'แมตช์ง่าย', 'มั่นใจขึ้น', 'หมดไวทุกไซซ์'],
-    masterPrompt: `Ultra realistic fashion commercial photoshoot, attractive Thai model wearing [PRODUCT], confident walking pose, fabric flowing naturally, premium outfit styling, luxury modern environment, full-body composition plus close-up clothing texture, cinematic fashion advertisement lighting, realistic skin and hands, high-end TikTok OOTD mood, vertical 9:16, no watermark, no logo, no background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic fashion commercial photoshoot, attractive Thai model wearing [PRODUCT], confident walking pose, fabric flowing naturally, premium outfit styling, luxury modern environment, full-body composition plus close-up clothing texture, cinematic fashion advertisement lighting, realistic skin and hands, high-end TikTok OOTD mood, vertical 9:16, no watermark, no logo, no background text.`,
     sceneFormula: ['HOOK: model entrance or mirror reveal', 'SHOWCASE: walk/spin to show silhouette', 'DETAIL: fabric, stitching, fit, movement close-up', 'STYLE: match with accessories or second look', 'CTA: confidence/value reason'],
     negativePrompt: 'no distorted body, no extra limbs, no wardrobe malfunction, no random brand logos, no watermark'
   },
@@ -142,7 +377,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Crisp commercial lighting, reflective floor highlights, clear material texture, lifestyle realism.',
     cameraStyle: 'Low-angle walking shot, foot step close-up, sole bend demo, outfit match pan, product hero rotation.',
     psychologyTriggers: ['เดินสบาย', 'คู่นี้ต้องมี', 'ใส่ได้ทุกวัน', 'แมตช์ง่าย', 'คุ้ม'],
-    masterPrompt: `Ultra realistic Thai footwear commercial, [PRODUCT] worn by Thai model walking naturally, low-angle close-up of shoes, clear sole and material details, stylish outfit match, clean lifestyle environment, comfortable walking mood, premium product hero lighting, vertical 9:16, no watermark, no random text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic Thai footwear commercial, [PRODUCT] worn by Thai model walking naturally, low-angle close-up of shoes, clear sole and material details, stylish outfit match, clean lifestyle environment, comfortable walking mood, premium product hero lighting, vertical 9:16, no watermark, no random text.`,
     sceneFormula: ['HOOK: stylish first step into frame', 'DEMO: walking and sole flexibility', 'DETAIL: material, stitching, cushion, grip close-up', 'STYLE: match with outfit', 'CTA: daily comfort reason'],
     negativePrompt: 'no distorted feet, no extra toes, no dirty product, no fake logos, no watermark'
   },
@@ -153,7 +395,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Soft elegant light, smooth fabric highlights, pastel/luxury tones, gentle shadows.',
     cameraStyle: 'Product flat lay, fabric stretch demo, strap/hook detail, under-clothing smoothness demo using outerwear/mannequin.',
     psychologyTriggers: ['ใส่สบาย', 'มั่นใจ', 'เนียนใต้ชุด', 'ไม่อึดอัด', 'ของดีบอกต่อ'],
-    masterPrompt: `Ultra realistic tasteful lingerie product commercial, [PRODUCT] shown elegantly on clean premium display or worn in modest fashion styling, Thai presenter demonstrating soft fabric stretch and smooth fit respectfully, comfort-first mood, clean dressing room or vanity environment, premium soft lighting, vertical 9:16, no sexualized pose, no nudity, no watermark, no background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic tasteful lingerie product commercial, [PRODUCT] shown elegantly on clean premium display or worn in modest fashion styling, Thai presenter demonstrating soft fabric stretch and smooth fit respectfully, comfort-first mood, clean dressing room or vanity environment, premium soft lighting, vertical 9:16, no sexualized pose, no nudity, no watermark, no background text.`,
     sceneFormula: ['HOOK: fabric softness or smooth-fit reveal', 'DEMO: stretch/support/detail close-up', 'STYLE: show under outerwear or flat lay set', 'PAYOFF: confident comfortable movement', 'CTA: comfort reason'],
     negativePrompt: 'no nudity, no explicit pose, no sexualization, no body distortion, no watermark'
   },
@@ -164,7 +413,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Soft dewy beauty lighting, glossy highlights, natural reflections, luxury skincare palette.',
     cameraStyle: 'Dropper/cream macro, texture smear on hand, face application, product rotation, glow close-up.',
     psychologyTriggers: ['ผิวดูฉ่ำ', 'รูทีนผิวสวย', 'เนื้อดี', 'สาวรักผิวต้องดู', 'ใช้ทุกวัน'],
-    masterPrompt: `Ultra realistic luxury skincare UGC scene, Thai beauty presenter applying [PRODUCT] as part of a daily skincare routine, macro close-up of cream or serum texture, dewy glow on skin, clean vanity or bathroom environment, product packaging clear and centered, soft premium beauty lighting, realistic skin texture, compliant beauty language, vertical 9:16, no watermark, no background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic luxury skincare UGC scene, Thai beauty presenter applying [PRODUCT] as part of a daily skincare routine, macro close-up of cream or serum texture, dewy glow on skin, clean vanity or bathroom environment, product packaging clear and centered, soft premium beauty lighting, realistic skin texture, compliant beauty language, vertical 9:16, no watermark, no background text.`,
     sceneFormula: ['HOOK: texture/glow macro close-up', 'REVEAL: product bottle/jar facing camera', 'DEMO: apply on hand or face', 'PAYOFF: skin appears hydrated/glowy', 'CTA: daily routine reason'],
     negativePrompt: 'no medical cure claims, no impossible whitening, no fake before-after, no plastic skin, no watermark'
   },
@@ -175,7 +431,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Bright clean home lighting, natural daylight, organized satisfying look.',
     cameraStyle: 'Before/after reveal, installation close-up, hand demo, pan across organized space, top-down usage shot.',
     psychologyTriggers: ['บ้านเป็นระเบียบ', 'ชีวิตง่ายขึ้น', 'ของมันต้องมี', 'ประหยัดพื้นที่', 'ใช้จริงทุกวัน'],
-    masterPrompt: `Ultra realistic Thai smart home product scene, [PRODUCT] used in a clean modern Thai home to organize or solve a daily problem, clear before-after feeling, Thai creator demonstrating practical usage with hands, satisfying neat result, bright natural home lighting, product-first composition, vertical 9:16, no watermark, no random background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic Thai smart home product scene, [PRODUCT] used in a clean modern Thai home to organize or solve a daily problem, clear before-after feeling, Thai creator demonstrating practical usage with hands, satisfying neat result, bright natural home lighting, product-first composition, vertical 9:16, no watermark, no random background text.`,
     sceneFormula: ['HOOK: messy/problem corner', 'REVEAL: product enters frame', 'DEMO: install/use step clearly', 'PAYOFF: clean organized after shot', 'CTA: home must-have reason'],
     negativePrompt: 'no clutter blocking product, no unsafe installation, no fake text, no watermark'
   },
@@ -186,7 +449,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Soft warm bedroom light, morning glow, gentle shadows, fabric texture highlights.',
     cameraStyle: 'Bed-making reveal, fabric rub close-up, pillow fluff, blanket toss, slow push-in to cozy bed.',
     psychologyTriggers: ['นุ่มน่านอน', 'ห้องดูแพง', 'แต่งห้องง่าย', 'ฟีลโรงแรม', 'หลับสบายขึ้น'],
-    masterPrompt: `Ultra realistic cozy luxury bedroom commercial, [PRODUCT] displayed on a beautifully made bed, Thai lifestyle presenter or hands smoothing soft fabric, pillow fluff and blanket texture visible, warm morning light, hotel-like premium room transformation, inviting sleep mood, vertical 9:16, no watermark, no background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic cozy luxury bedroom commercial, [PRODUCT] displayed on a beautifully made bed, Thai lifestyle presenter or hands smoothing soft fabric, pillow fluff and blanket texture visible, warm morning light, hotel-like premium room transformation, inviting sleep mood, vertical 9:16, no watermark, no background text.`,
     sceneFormula: ['HOOK: blanket toss or bed transformation', 'DEMO: touch/rub/fold fabric', 'DETAIL: texture and color close-up', 'PAYOFF: cozy hotel-like bedroom shot', 'CTA: room upgrade reason'],
     negativePrompt: 'no dirty bed, no messy room, no distorted fabric, no watermark'
   },
@@ -197,7 +467,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Clean bright kitchen lighting, natural highlights, stainless/wood reflections, food-safe clarity.',
     cameraStyle: 'Top-down prep demo, hand close-up, one-motion use, before/after kitchen organization, product hero on counter.',
     psychologyTriggers: ['เข้าครัวง่ายขึ้น', 'ประหยัดเวลา', 'แม่บ้านต้องมี', 'ใช้ง่าย', 'ครัวเป็นระเบียบ'],
-    masterPrompt: `Ultra realistic Thai kitchen utility commercial, Thai home cook demonstrating [PRODUCT] on a clean kitchen counter, practical cooking or food-prep action, clear hand interaction, organized modern kitchen background, product-first demo, bright food-safe lighting, satisfying time-saving mood, vertical 9:16, no watermark, no background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic Thai kitchen utility commercial, Thai home cook demonstrating [PRODUCT] on a clean kitchen counter, practical cooking or food-prep action, clear hand interaction, organized modern kitchen background, product-first demo, bright food-safe lighting, satisfying time-saving mood, vertical 9:16, no watermark, no background text.`,
     sceneFormula: ['HOOK: annoying kitchen problem', 'REVEAL: product solution on counter', 'DEMO: real use in one clear action', 'PAYOFF: faster/cleaner prep result', 'CTA: kitchen must-have reason'],
     negativePrompt: 'no dirty kitchen, no unsafe knife action, no fake text, no watermark'
   },
@@ -208,7 +485,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Bright clean bathroom light, fresh reflections, white/neutral tones, water sparkle highlights.',
     cameraStyle: 'Install/use close-up, water test, before/after shelf organization, sink counter hero shot.',
     psychologyTriggers: ['ห้องน้ำดูดีขึ้น', 'สะอาดเป็นระเบียบ', 'ใช้ทุกวัน', 'ติดตั้งง่าย', 'ของมันต้องมี'],
-    masterPrompt: `Ultra realistic clean Thai bathroom product scene, [PRODUCT] installed or used in a modern bathroom, clear practical demonstration, fresh water and tile reflections, organized sink or shower area, bright clean lighting, satisfying hygiene and convenience mood, vertical 9:16, no watermark, no random background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic clean Thai bathroom product scene, [PRODUCT] installed or used in a modern bathroom, clear practical demonstration, fresh water and tile reflections, organized sink or shower area, bright clean lighting, satisfying hygiene and convenience mood, vertical 9:16, no watermark, no random background text.`,
     sceneFormula: ['HOOK: messy bathroom problem', 'REVEAL: product placement', 'DEMO: install/use/water test', 'PAYOFF: clean organized after shot', 'CTA: bathroom upgrade reason'],
     negativePrompt: 'no dirty toilet focus, no mold exaggeration, no unsafe installation, no watermark'
   },
@@ -219,7 +503,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Bright clarity lighting, clean highlights, visible texture and foam/water movement.',
     cameraStyle: 'Pour/spray/scrub close-up, before/after split feeling, foam macro, clean result reveal.',
     psychologyTriggers: ['งานบ้านง่ายขึ้น', 'เห็นผลลัพธ์ชัด', 'ประหยัดแรง', 'แม่บ้านต้องดู', 'สะอาดขึ้น'],
-    masterPrompt: `Ultra realistic Thai cleaning and laundry demo scene, [PRODUCT] used on clothes, floor, stain, or household surface, visible foam/water/action, Thai creator demonstrating with hands, satisfying before-after cleaning result, bright practical home lighting, product label visible, vertical 9:16, no watermark, no fake text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic Thai cleaning and laundry demo scene, [PRODUCT] used on clothes, floor, stain, or household surface, visible foam/water/action, Thai creator demonstrating with hands, satisfying before-after cleaning result, bright practical home lighting, product label visible, vertical 9:16, no watermark, no fake text.`,
     sceneFormula: ['HOOK: stain/mess/problem close-up', 'REVEAL: product applied', 'DEMO: scrub/wash/pour action', 'PAYOFF: visibly cleaner result', 'CTA: save effort reason'],
     negativePrompt: 'no dangerous chemical misuse, no extreme impossible cleaning guarantee, no fake text, no watermark'
   },
@@ -230,7 +521,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Clean tech commercial lighting, crisp reflections, LED/product detail highlights.',
     cameraStyle: 'Button press close-up, product operation demo, before/after effect, hero rotation, POV usage shot.',
     psychologyTriggers: ['ชีวิตง่ายขึ้น', 'ฟังก์ชันดี', 'คุ้ม', 'ของมันต้องมี', 'ใช้ง่าย'],
-    masterPrompt: `Ultra realistic Thai gadget and appliance commercial, [PRODUCT] operating in a modern Thai home, Thai creator pressing buttons and demonstrating real function, clear cause-and-effect result, product hero close-up with crisp material details, clean tech lifestyle lighting, vertical 9:16, no watermark, no random text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic Thai gadget and appliance commercial, [PRODUCT] operating in a modern Thai home, Thai creator pressing buttons and demonstrating real function, clear cause-and-effect result, product hero close-up with crisp material details, clean tech lifestyle lighting, vertical 9:16, no watermark, no random text.`,
     sceneFormula: ['HOOK: daily inconvenience', 'REVEAL: appliance/gadget hero shot', 'DEMO: turn on and show function', 'PAYOFF: easier/faster result', 'CTA: value reason'],
     negativePrompt: 'no sparks/fire unless safe cooking context, no broken device, no fake UI text, no watermark'
   },
@@ -241,7 +539,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Fresh natural daylight, green highlights, water sparkle, earthy warm tones.',
     cameraStyle: 'Watering close-up, pruning action, soil handling, plant before/after, garden pan reveal.',
     psychologyTriggers: ['สวนดูดีขึ้น', 'สายปลูกต้องดู', 'ใช้ง่าย', 'คนรักต้นไม้ต้องมี', 'ปลูกสนุก'],
-    masterPrompt: `Ultra realistic Thai gardening lifestyle scene, Thai plant lover using [PRODUCT] in a fresh green garden or balcony, close-up of plants, soil, water droplets, practical gardening action, calm satisfying outdoor mood, natural daylight, product clearly visible, vertical 9:16, no watermark, no background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic Thai gardening lifestyle scene, Thai plant lover using [PRODUCT] in a fresh green garden or balcony, close-up of plants, soil, water droplets, practical gardening action, calm satisfying outdoor mood, natural daylight, product clearly visible, vertical 9:16, no watermark, no background text.`,
     sceneFormula: ['HOOK: plant/garden problem', 'REVEAL: tool/product in hand', 'DEMO: watering/pruning/planting action', 'PAYOFF: garden looks healthier/neater', 'CTA: garden must-have reason'],
     negativePrompt: 'no dead plants as final shot, no unsafe tool use, no fake text, no watermark'
   },
@@ -252,7 +557,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Fresh natural light, juicy highlights, vibrant color, crisp texture clarity.',
     cameraStyle: 'Slice/open reveal, water rinse, basket close-up, hand pick, macro juice/freshness shot.',
     psychologyTriggers: ['สดมาก', 'เห็นแล้วอยากกิน', 'สายสุขภาพ', 'คุ้มค่า', 'ของสดวันนี้'],
-    masterPrompt: `Ultra realistic fresh Thai produce commercial, [PRODUCT] displayed beautifully with vibrant natural colors, Thai shopper or vendor holding and presenting freshness, close-up slice or rinse shot showing juicy/crisp texture, clean market or kitchen setting, fresh daylight, healthy appetizing mood, vertical 9:16, no watermark, no background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic fresh Thai produce commercial, [PRODUCT] displayed beautifully with vibrant natural colors, Thai shopper or vendor holding and presenting freshness, close-up slice or rinse shot showing juicy/crisp texture, clean market or kitchen setting, fresh daylight, healthy appetizing mood, vertical 9:16, no watermark, no background text.`,
     sceneFormula: ['HOOK: slice/open/rinse freshness reveal', 'DETAIL: color, juice, crisp texture', 'USAGE: plate/salad/cooking prep', 'PAYOFF: fresh healthy table shot', 'CTA: fresh deal reason'],
     negativePrompt: 'no rotten produce, no dirty market focus, no fake labels, no watermark'
   },
@@ -263,7 +575,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Strong crisp workshop lighting, metallic highlights, clear material texture, practical realism.',
     cameraStyle: 'Drill/screw/cut close-up, grip detail, tool kit reveal, action proof, low-angle power hero shot.',
     psychologyTriggers: ['สายช่างต้องดู', 'จบงานไว', 'แข็งแรง', 'ของต้องมีติดบ้าน', 'คุ้ม'],
-    masterPrompt: `Ultra realistic Thai DIY tool commercial, Thai handyman safely using [PRODUCT] on a workshop bench or home repair task, close-up of tool action, strong material details, practical proof of use, organized tool environment, crisp workshop lighting, product-first hero shot, vertical 9:16, no watermark, no random text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic Thai DIY tool commercial, Thai handyman safely using [PRODUCT] on a workshop bench or home repair task, close-up of tool action, strong material details, practical proof of use, organized tool environment, crisp workshop lighting, product-first hero shot, vertical 9:16, no watermark, no random text.`,
     sceneFormula: ['HOOK: repair problem or action close-up', 'REVEAL: tool in hand', 'DEMO: real drilling/screwing/fixing action safely', 'PAYOFF: completed task', 'CTA: tool must-have reason'],
     negativePrompt: 'no unsafe injury, no sparks near face, no weapon framing, no fake text, no watermark'
   },
@@ -274,7 +593,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Soft bright desk lighting, pastel color harmony, clean paper texture, cozy productivity mood.',
     cameraStyle: 'Top-down writing demo, pen stroke close-up, color swatch, organizer before/after, flat lay hero.',
     psychologyTriggers: ['สายเรียนต้องดู', 'โต๊ะดูดีขึ้น', 'น่ารักจนต้องกด', 'เขียนลื่น', 'ซื้อซ้ำง่าย'],
-    masterPrompt: `Ultra realistic cute Thai stationery desk setup, [PRODUCT] arranged on a clean aesthetic study desk, Thai creator hands writing, highlighting, or organizing, close-up of paper texture and product detail, pastel cozy productivity mood, soft bright lighting, vertical 9:16, no watermark, no random background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic cute Thai stationery desk setup, [PRODUCT] arranged on a clean aesthetic study desk, Thai creator hands writing, highlighting, or organizing, close-up of paper texture and product detail, pastel cozy productivity mood, soft bright lighting, vertical 9:16, no watermark, no random background text.`,
     sceneFormula: ['HOOK: satisfying pen stroke/color swatch', 'REVEAL: product set flat lay', 'DEMO: writing/organizing action', 'PAYOFF: beautiful desk setup', 'CTA: study/work must-have reason'],
     negativePrompt: 'no illegible random text, no messy desk blocking product, no watermark'
   },
@@ -285,7 +611,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Warm cozy reading light, paper texture highlights, calm premium shadows.',
     cameraStyle: 'Book cover reveal, page flip close-up, highlight/note-taking, shelf placement, over-shoulder reading.',
     psychologyTriggers: ['อ่านง่าย', 'เล่มนี้คนพูดถึง', 'ใช้ได้จริง', 'เริ่มต้นได้เลย', 'เก็บเข้าชั้น'],
-    masterPrompt: `Ultra realistic Thai BookTok lifestyle scene, [PRODUCT] book shown clearly on a cozy reading desk, Thai reader flipping pages and highlighting useful sections, warm lamp light, calm intellectual mood, cover and page texture visible without copying copyrighted text, vertical 9:16, no watermark, no random background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic Thai BookTok lifestyle scene, [PRODUCT] book shown clearly on a cozy reading desk, Thai reader flipping pages and highlighting useful sections, warm lamp light, calm intellectual mood, cover and page texture visible without copying copyrighted text, vertical 9:16, no watermark, no random background text.`,
     sceneFormula: ['HOOK: book cover/page flip reveal', 'VALUE: show chapter/page layout generally', 'USAGE: highlight/note/read moment', 'PAYOFF: reader inspired or confident', 'CTA: why this book is worth adding'],
     negativePrompt: 'no readable copyrighted page reproduction, no fake author claims, no watermark, no random text'
   },
@@ -296,7 +629,14 @@ export const CATEGORY_MASTER_DNA = {
     lightingStyle: 'Premium beauty lighting, glossy highlights, soft skin glow, reflective packaging, luxury color grading.',
     cameraStyle: 'Swatch macro, one-swipe application, mirror reveal, product rotation, before/after half-face respectfully, close-up finish.',
     psychologyTriggers: ['แต่งแล้วดูแพง', 'สีนี้ไวรัล', 'เท็กซ์เจอร์สวย', 'ตัวนี้คนถาม', 'ของมันต้องมีสายบิวตี้'],
-    masterPrompt: `Ultra realistic luxury Thai beauty cosmetics commercial, Thai beauty presenter applying [PRODUCT], macro texture payoff, swatch on hand or lips/cheek/eye, product packaging facing camera, premium beauty counter or vanity setup, glossy reflections, soft glam finish, TikTok beauty review energy, vertical 9:16, no watermark, no random background text.`,
+    masterPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+Ultra realistic luxury Thai beauty cosmetics commercial, Thai beauty presenter applying [PRODUCT], macro texture payoff, swatch on hand or lips/cheek/eye, product packaging facing camera, premium beauty counter or vanity setup, glossy reflections, soft glam finish, TikTok beauty review energy, vertical 9:16, no watermark, no random background text.`,
     sceneFormula: ['HOOK: texture/swatch/one-swipe close-up', 'REVEAL: packaging hero shot', 'DEMO: apply product on face/hand', 'PAYOFF: polished beauty finish', 'CTA: beauty must-have reason'],
     negativePrompt: 'no impossible skin claims, no medical claims, no distorted face, no messy makeup, no watermark'
   }

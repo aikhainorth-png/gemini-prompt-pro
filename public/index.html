@@ -250,32 +250,36 @@ color:#7fdff2;
   <div class="pill" id="authPill">ยังไม่ได้เข้าสู่ระบบ</div>
 
   <a
-    href="https://lin.ee/NGN1H1S"
-    target="_blank"
-    class="btn btn-dark"
-    style="text-decoration:none"
-  >
-    ติดต่อ Admin
-  </a>
+  href="https://lin.ee/NGN1H1S"
+  target="_blank"
+  class="btn btn-dark"
+  data-always-show="true"
+  style="text-decoration:none"
+>
+  <span data-always-show="true">ติดต่อ Admin</span>
+</a>
 
 <a
   href="./finder.html"
+  data-role-page="finder.html"
   class="btn btn-dark"
-  id="finderBtn"
-  style="display:none;text-decoration:none">
-💎 TikTok Finder
+  style="text-decoration:none"
+>
+  💎 TikTok Finder
 </a>
 
 <a
   href="./freestyle.html"
+  data-role-page="freestyle.html"
   class="btn btn-dark"
   style="text-decoration:none"
 >
- 🧠 FreeStyle
+  🧠 FreeStyle
 </a>
 
 <a 
   href="./cartoon.html"
+  data-role-page="cartoon.html"
   target="_self"
   class="btn btn-dark"
   style="text-decoration:none"
@@ -285,6 +289,7 @@ color:#7fdff2;
 
 <a 
   href="./story.html"
+  data-role-page="story.html"
   target="_self"
   class="btn btn-dark"
   style="text-decoration:none"
@@ -292,12 +297,13 @@ color:#7fdff2;
   🎬 Story
 </a>
 
-  <a class="btn btn-dark" id="adminLink" href="./admin.html" style="display:none;text-decoration:none">
-    Admin PRO MAX
+  <a class="btn btn-dark" id="adminLink" href="./admin.html" data-admin-only="true"
+  style="text-decoration:none">
+    Admin
   </a>
 
   <button class="btn btn-primary" id="loginBtn">Sign in with Google</button>
-  <button class="btn btn-dark" id="logoutBtn" style="display:none">ออกจากระบบ</button>
+  <button class="btn btn-dark" id="logoutBtn" data-always-show="true" style="display:none"><span data-always-show="true">ออกจากระบบ</span></button>
 </div>
     </div>
     <div class="layout">
@@ -308,7 +314,7 @@ color:#7fdff2;
               <div class="api-title">🔐 API คีย์ส่วนตัว</div>
               <div class="api-sub">API Key จะถูกเก็บไว้เฉพาะในเครื่องของคุณเท่านั้น</div>
             </div>
-            <button class="btn btn-dark" id="togglePrivateKeysBtn" type="button" style="padding:8px 12px">▼</button>
+            <button class="btn bstyle="text-decoration:none"tn-dark" id="togglePrivateKeysBtn" type="button" style="padding:8px 12px">▼</button>
           </div>
 
           <div id="privateKeysBody" style="display:none;gap:14px;">
@@ -350,14 +356,32 @@ color:#7fdff2;
           </div>
         </div>
 		<br>
-        <div class="section"><h3>Prompt Builder</h3><div class="field"><label class="label" for="product">1. สินค้า</label><input id="product" placeholder="เช่น แบตเตอรี่ GS Tough / เก้าอี้สำนักงาน / ทิชชู่ Scott Extra" /></div><div class="field"><label class="label" for="location">2. สถานที่</label><input id="location" placeholder="เช่น ร้านแบตเตอรี่ / ห้าง / ร้านเฟอร์นิเจอร์ / โกดัง" /></div><div class="field"><label class="label" for="view">3. มุมมองสินค้า</label><textarea id="view" placeholder="เช่น ช่างยกสินค้าโชว์หน้ากล้อง ซูมป้ายเหลืองลดราคา กล้องมือถือแบบเร่งด่วน"></textarea></div><div class="row"><div class="field"><label class="label" for="promptStrategy">4. แนวทางคลิป</label><select id="promptStrategy"><option value="viral">Viral</option><option value="conversion">Conversion</option><option value="hybrid">Hybrid</option><option value="pro_max">🔥Pro Max</option></select></div></div>
-        <div class="row"><div class="field"><label class="label" for="gemMode">5. หมวดหมู่</label><select id="gemMode"><option value="infographic_ai" selected>อินโฟกราฟิก AI</option><option value="factory_conveyor">🏭 โรงงานสายพาน</option><option value="signboard">🎥 สินค้าติดป้าย</option><option value="supplement_stop_scroll">อาหารเสริม คนหยุดดู</option><option value="tiktok_live">TikTok Live</option></select></div>
+        <div class="section"><h3>Prompt Builder</h3><div class="field"><label class="label" for="product">1. สินค้า</label><input id="product" placeholder="เช่น แบตเตอรี่ GS Tough / เก้าอี้สำนักงาน / ทิชชู่ Scott Extra" /></div><div class="field"><label class="label" for="location">2. สถานที่</label><input id="location" placeholder="เช่น ร้านแบตเตอรี่ / ห้าง / ร้านเฟอร์นิเจอร์ / โกดัง" /></div><div class="field"><label class="label" for="view">3. มุมมองสินค้า</label><textarea id="view" placeholder="เช่น ช่างยกสินค้าโชว์หน้ากล้อง ซูมป้ายเหลืองลดราคา กล้องมือถือแบบเร่งด่วน"></textarea></div><div class="row"><div class="field"><label class="label" for="promptStrategy">4. แนวทางคลิป</label><select id="promptStrategy"><option value="viral">💡 Viral</option><option value="conversion">🎯 Conversion</option><option value="hybrid">🔦 Hybrid</option><option value="pro_max">🔥 Pro Max</option><option value="review">⭐ Review (Script-Pro)</option></select></div></div>
+        <div class="row"><div class="field"><label class="label" for="gemMode">5. หมวดหมู่</label><select id="gemMode">
+<option value="win_pimry" selected>วิน/พิมรี่</option>
+<option value="infographic_ai">อินโฟกราฟิก AI</option>
+<option value="factory_conveyor">🏭 โรงงานสายพาน</option>
+<option value="signboard">🎥 สินค้าติดป้าย</option>
+<option value="supplement_stop_scroll">อาหารเสริม คนหยุดดู</option>
+<option value="tiktok_live">TikTok Live</option></select></div>
         <div class="field"><label class="label" for="providerMode">6. ผู้ให้บริการ AI</label><select id="providerMode"><option value="gemini">Gemini</option><option value="openai" selected>OpenAI</option></select></div></div>
-		<div class="row"><button class="btn btn-dark" id="exampleTissueBtn">ตัวอย่างทิชชู่</button><button class="btn btn-dark" id="exampleBatteryBtn">ตัวอย่างแบต</button><button class="btn btn-dark" id="exampleChairBtn">ตัวอย่างเก้าอี้</button></div>
-		<div class="row"><div class="field"><label class="label" for="voiceType">7. ตัวละคร</label><select id="voiceType"><option value="product_only" selected>📦 โชว์แต่สินค้า</option><option value="thai_female">ผู้หญิง</option><option value="thai_male">ผู้ชาย</option>
+		<div class="field"><label class="label">ตัวอย่าง</label></div>
+    <div class="row"><button class="btn btn-dark" id="exampleTissueBtn">ตัวอย่างทิชชู่</button><button class="btn btn-dark" id="exampleBatteryBtn">ตัวอย่างแบต</button><button class="btn btn-dark" id="exampleChairBtn">ตัวอย่างเก้าอี้</button></div>
+		<div class="row"><div class="field"><label class="label" for="voiceType">7. ตัวละคร</label><select id="voiceType">
+
+<option value="product_only" selected>โชว์แต่สินค้า</option>
+<option value="thai_female">ผู้หญิง</option>
+<option value="thai_male">ผู้ชาย</option>
+<option value="win_seller_male">พี่วิน(ชาย)</option>
+<option value="pimry_female">พิมรี่(หญิง)</option>
 <option value="korean_teen_female">อินฟลู-หญิง</option>
 <option value="korean_teen_male">อินฟลู-ชาย</option>
-<option value="elder_female">หญิงชรา</option><option value="elder_male">ชายชรา</option><option value="thai_girl">เด็กผู้หญิง</option><option value="thai_boy">เด็กผู้ชาย</option></select></div><div class="field"><label class="label" for="viralTone">8. โทนไวรัล</label><select id="viralTone"><option value="ล้างสต๊อก">ล้างสต๊อก</option><option value="ของใกล้หมด">ของใกล้หมด</option><option value="คนรุมซื้อ">คนรุมซื้อ</option><option value="คนดูทะลุแสน">คนดูทะลุแสน</option><option value="คอมเมนต์ถามรัว">คอมเมนต์ถามรัว</option><option value="โปรเฉพาะไลฟ์">โปรเฉพาะไลฟ์</option><option value="Gift เด้งไม่หยุด">Gift เด้งไม่หยุด</option><option value="กดตะกร้าด่วน">กดตะกร้าด่วน</option><option value="ยอดวิวพุ่ง">ยอดวิวพุ่ง</option><option value="แม่ค้าเอนเตอร์เทน">แม่ค้าเอนเตอร์เทน</option><option value="คนแห่แชร์ไลฟ์">คนแห่แชร์ไลฟ์</option><option value="รีวิวสดเห็นผลจริง">รีวิวสดเห็นผลจริง</option></select></div></div><div class="row"><div class="field"><label class="label" for="sceneCount">9. จำนวน Scene</label><select id="sceneCount">
+<option value="elder_female">หญิงชรา</option>
+<option value="elder_male">ชายชรา</option>
+<option value="thai_girl">เด็กผู้หญิง</option>
+<option value="thai_boy">เด็กผู้ชาย</option></select></div>
+<div class="field"><label class="label" for="viralTone">8. โทนไวรัล</label><select id="viralTone">
+<option value="ล้างสต๊อก">ล้างสต๊อก</option><option value="ของใกล้หมด">ของใกล้หมด</option><option value="คนรุมซื้อ">คนรุมซื้อ</option><option value="คนดูทะลุแสน">คนดูทะลุแสน</option><option value="คอมเมนต์ถามรัว">คอมเมนต์ถามรัว</option><option value="โปรเฉพาะไลฟ์">โปรเฉพาะไลฟ์</option><option value="Gift เด้งไม่หยุด">Gift เด้งไม่หยุด</option><option value="กดตะกร้าด่วน">กดตะกร้าด่วน</option><option value="ยอดวิวพุ่ง">ยอดวิวพุ่ง</option><option value="แม่ค้าเอนเตอร์เทน">แม่ค้าเอนเตอร์เทน</option><option value="คนแห่แชร์ไลฟ์">คนแห่แชร์ไลฟ์</option><option value="รีวิวสดเห็นผลจริง">รีวิวสดเห็นผลจริง</option></select></div></div><div class="row"><div class="field"><label class="label" for="sceneCount">9. จำนวน Scene</label><select id="sceneCount">
   <option value="1" selected>1 Scene</option>
   <option value="2">2 Scene</option>
   <option value="3">3 Scene</option>
@@ -472,7 +496,8 @@ const grid=document.getElementById('gemmodeGrid');
 const close=document.getElementById('gemmodeClose');
 if(!gemMode||!popup||!grid) return;
 
-const emoji={
+const emoji={ 
+win_pimry:'🎤',
 infographic_ai:'📊',
 factory_conveyor:'🏭',
 tiktok_live:'🎥',
@@ -531,120 +556,9 @@ popup.onclick=(e)=>{if(e.target===popup) popup.classList.remove('show');};
 </script>
 
 
-<script type="module">
 
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-import {
-  getFirestore,
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-import { app } from './firebase-config.js';
-
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const rolePages = {
-
-    user: ['index.html'],
-
-    vip: [
-      'index.html',
-      'freestyle.html',
-      'cartoon.html',
-      'finder.html'
-    ],
-
-    gold: [
-      'index.html',
-      'freestyle.html',
-      'cartoon.html',
-      'finder.html',
-      'story.html'
-    ],
-
-    admin: ['*']
-};
-
-const ADMIN_EMAIL = 'aikhainorth@gmail.com';
-
-onAuthStateChanged(auth, async(user)=>{
-
-    if(!user){
-        window.location.href='index.html';
-        return;
-    }
-
-    let role='user';
-
-    // FIX ADMIN
-    if((user.email||'').toLowerCase() === ADMIN_EMAIL.toLowerCase()){
-
-        role='admin';
-
-    }else{
-
-        const snap = await getDoc(
-            doc(db,'users',user.uid)
-        );
-
-        if(snap.exists()){
-
-            role = snap.data().role || 'user';
-        }
-    }
-
-    const page =
-      window.location.pathname.split('/').pop()
-      || 'index.html';
-
-    function canAccess(role,pageName){
-
-        if(role==='admin') return true;
-
-        return (rolePages[role] || [])
-            .includes(pageName);
-    }
-
-    // block page
-    if(!canAccess(role,page)){
-
-        window.location.href='index.html';
-        return;
-    }
-
-    // hide menu
-    document.querySelectorAll('a[href]')
-    .forEach(link=>{
-
-        const href=link.getAttribute('href');
-
-        if(
-            !href ||
-            href.startsWith('http') ||
-            href.startsWith('#')
-        ) return;
-
-        const targetPage =
-            href.split('/').pop();
-
-        if(!canAccess(role,targetPage)){
-
-            const parent =
-              link.closest('li') || link;
-
-            parent.style.display='none';
-        }
-    });
-
-});
-
-</script>
-
+<script type="module" src="./role-guard.js"></script>
 </body>
 </html>

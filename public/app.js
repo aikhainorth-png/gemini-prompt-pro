@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
-import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js';
+import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, addDoc, query, where, orderBy, limit, getDocs, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
@@ -7,16 +7,21 @@ import * as ViralModes from './gem-modes.js';
 import * as ConversionModes from './gem-modes-conversion.js';
 import * as HybridModes from './gem-modes-hybrid.js';
 import * as ProMaxModes from './GEM_MODES_MASTER_PROMPT_PRO_MAX.js';
+import * as ReviewModes from './gem-modes-review.js';
 import { buildCharacterFactoryProfile } from './character-factory.js';
 import { callAI } from './providers.js';
 import { sanitizePolicyText } from './policy-engine.js';
+import { CLIP_FRAMEWORK_MAP } from './clip-framework-map.js';
+import { VIRAL_FRAMEWORKS } from './framework-engine.js';
+import { HOOKS } from './hook-generator.js';
+import { CTA_TYPES } from './cta-generator.js';
 
 const ADMIN_EMAILS = ['aikhainorth@gmail.com'];
 const LS_FORM = 'GEMINI_FINAL_PROMPT_PRO_FORM_SPARK_V1';
 const LS_KEY = 'userGeminiApiKey';
 const LS_OPENAI_KEY = 'userOpenAIApiKey';
 const DEFAULT_MODEL = 'gemini-2.5-flash';
-const DEFAULT_GEM_MODE = 'infographic_ai';
+const DEFAULT_GEM_MODE = 'win_pimry';
 const LS_PROMPT_STRATEGY = 'GEMINI_FINAL_PROMPT_PRO_PROMPT_STRATEGY_V1';
 const $ = (id) => document.getElementById(id);
 let userLockedGemMode = false;
@@ -35,11 +40,113 @@ let approvalPollTimer = null;
 
 function hasAdminEmail(email=''){ return ADMIN_EMAILS.includes(String(email).toLowerCase()); }
 
+
+const rolePages = {
+  user: ['index.html'],
+  vip: [
+    'index.html',
+    'freestyle.html',
+    'cartoon.html',
+    'finder.html'
+  ],
+  gold: [
+    'index.html',
+    'freestyle.html',
+    'cartoon.html',
+    'finder.html',
+    'story.html'
+  ],
+  admin: ['*']
+};
+
+function getCurrentPageName(){
+  const path = window.location.pathname.split('/').pop();
+  return path || 'index.html';
+}
+
+async function checkPageAccess(user){
+
+  if(!user){
+    window.location.replace('./index.html');
+    return false;
+  }
+
+  try{
+
+    const snap = await getDoc(doc(db,'users',user.uid));
+
+    if(!snap.exists()){
+      window.location.replace('./index.html');
+      return false;
+    }
+
+    const data = snap.data() || {};
+
+    let role = String(data.role || 'user').toLowerCase();
+
+    if(hasAdminEmail(user.email || '')){
+      role = 'admin';
+    }
+
+    const allowedPages = rolePages[role] || ['index.html'];
+    const currentPage = getCurrentPageName();
+
+    if(!allowedPages.includes('*') && !allowedPages.includes(currentPage)){
+
+      alert('คุณไม่มีสิทธิ์เข้าหน้านี้');
+
+      window.location.href = allowedPages[0] || 'index.html';
+
+      return false;
+    }
+
+    applyMenuPermission(allowedPages);
+
+    return true;
+
+  }catch(e){
+
+    console.error('ROLE CHECK ERROR', e);
+
+    window.location.replace('./index.html');
+
+    return false;
+  }
+}
+
+function applyMenuPermission(allowedPages){
+
+  document.querySelectorAll('a[href]').forEach(el=>{
+
+    const href = el.getAttribute('href') || '';
+
+    const page = href.split('/').pop().split('?')[0];
+
+    if(!page.endsWith('.html')) return;
+
+    el.style.removeProperty('display');
+
+    if(allowedPages.includes('*')) return;
+
+    if(!allowedPages.includes(page)){
+
+      el.style.display='none';
+    }
+  });
+}
+
+
+
 function getModeSource(){
-  const strategy = $('promptStrategy')?.value || localStorage.getItem(LS_PROMPT_STRATEGY) || 'viral';
+  const strategy = $('promptStrategy')?.value ||
+                   localStorage.getItem(LS_PROMPT_STRATEGY) ||
+                   'viral';
+
   if (strategy === 'conversion') return ConversionModes;
   if (strategy === 'hybrid') return HybridModes;
   if (strategy === 'pro_max') return ProMaxModes;
+  if (strategy === 'review') return ReviewModes;
+
   return ViralModes;
 }
 function getCurrentStrategy(){
@@ -98,6 +205,27 @@ const THAI_CHARACTER_VOICE_PROFILES = {
 
   dna:'real Thai man, authentic Thai facial proportions, completely unique facial identity every generation, realistic skin texture, subtle asymmetrical facial structure, realistic pores and natural imperfections, candid real-life photography look, ordinary everyday Thai appearance, smartphone camera realism, documentary photography aesthetic, slight motion blur, natural lighting inconsistencies, real smartphone HDR artifacts, slightly noisy low-light details, realistic handheld camera feel, authentic imperfect photography, casual handheld selfie realism, imperfect framing, natural camera angle, authentic social media snapshot aesthetic'
 },
+
+win_seller_male:{
+    label:'พี่วิน(ชาย)',
+
+    image:'real Thai male TikTok live seller photographed naturally in real life, energetic Thai street-market seller vibe, expressive confident face, natural dark hair, authentic Thai facial structure, realistic skin texture, slightly sweaty realistic skin, candid energetic expression, realistic smartphone camera look, documentary-style social media photography, handheld phone realism, natural lighting, imperfect framing, realistic pores, subtle asymmetrical facial features, authentic live commerce atmosphere, high-energy Thai online seller aesthetic',
+
+    voice:'Thai male energetic live-selling voice, fast-paced conversational Thai rhythm, highly confident and persuasive speaking style, realistic Thai accent, excited TikTok live commerce seller tone, playful and charismatic delivery, emotionally engaging sales speech pattern',
+
+    dna:'real Thai male live seller, authentic Thai facial proportions, completely unique facial identity every generation, realistic imperfect skin texture, subtle asymmetrical facial structure, expressive eyes, realistic pores and facial imperfections, candid real-life livestream photography aesthetic, smartphone camera realism, handheld social media live atmosphere, authentic Thai online market seller vibe, slight motion blur, realistic HDR artifacts, noisy low-light smartphone details, imperfect framing, energetic body language, authentic imperfect photography, casual handheld livestream realism'
+  },
+
+  pimry_female:{
+    label:'พิมรี่(หญิง)',
+
+    image:'real Thai female TikTok live seller photographed naturally in real life, energetic charismatic Thai businesswoman vibe, expressive confident face, glamorous but realistic Thai appearance, realistic skin texture, natural dark hair, lively candid expression, smartphone camera realism, documentary-style livestream photography, handheld camera feeling, imperfect framing, authentic Thai online seller aesthetic, realistic pores, slightly imperfect makeup details, energetic social media atmosphere',
+
+    voice:'Thai female high-energy live-selling voice, extremely engaging conversational Thai rhythm, confident charismatic speech style, emotionally expressive Thai accent, playful persuasive TikTok live commerce delivery, humorous and entertaining speaking pattern, fast-paced sales energy',
+
+    dna:'real Thai female livestream seller, authentic Thai facial proportions, completely unique facial identity every generation, realistic imperfect beauty, realistic skin texture, subtle asymmetrical facial structure, expressive eyes and smile, realistic pores and natural imperfections, candid real-life livestream photography aesthetic, smartphone camera realism, authentic Thai online seller atmosphere, documentary-style social media photography, slight motion blur, realistic HDR artifacts, noisy low-light smartphone details, imperfect framing, energetic body language, authentic imperfect photography, casual handheld livestream realism'
+  },
+  
 korean_teen_female:{
   label:'วัยรุ่นหญิงเกาหลี',
 
@@ -154,23 +282,39 @@ thai_boy:{
 }
 	};
 function getThaiCharacterVoiceProfile(voiceType='thai_female'){
+
   const normalized = {
-  'หญิง':'thai_female',
-  'ชาย':'thai_male',
-  'ผู้หญิง':'thai_female',
-  'ผู้ชาย':'thai_male',
 
-  'หญิงชรา':'elder_female',
-  'ชายชรา':'elder_male',
+    'หญิง':'thai_female',
+    'ชาย':'thai_male',
+    'ผู้หญิง':'thai_female',
+    'ผู้ชาย':'thai_male',
 
-  'เด็กผู้หญิง':'thai_girl',
-  'เด็กผู้ชาย':'thai_boy',
+    'หญิงชรา':'elder_female',
+    'ชายชรา':'elder_male',
 
-  'วัยรุ่นหญิงเกาหลี':'korean_teen_female',
-  'วัยรุ่นชายเกาหลี':'korean_teen_male'
+    'เด็กผู้หญิง':'thai_girl',
+    'เด็กผู้ชาย':'thai_boy',
 
-}[voiceType] || voiceType || 'thai_female';
-  return THAI_CHARACTER_VOICE_PROFILES[normalized] || THAI_CHARACTER_VOICE_PROFILES.thai_female;
+    'วัยรุ่นหญิงเกาหลี':'korean_teen_female',
+    'วัยรุ่นชายเกาหลี':'korean_teen_male',
+
+    // WIN / PIMRY
+    'พี่วิน':'win_seller_male',
+    'วิน':'win_seller_male',
+    'พี่วิน(ชาย)':'win_seller_male',
+    'win_seller_male':'win_seller_male',
+
+    'พิมรี่':'pimry_female',
+    'พิมรี่(หญิง)':'pimry_female',
+    'pimry_female':'pimry_female',
+
+    'win_pimry':'pimry_female'
+
+  }[voiceType] || voiceType || 'thai_female';
+
+  return THAI_CHARACTER_VOICE_PROFILES[normalized]
+      || THAI_CHARACTER_VOICE_PROFILES.thai_female;
 }
 
 function isProductOnlyMode(d){
@@ -197,25 +341,64 @@ function getActiveVoiceLabel(d={}){
 }
 
 function enforceProductOnlyPrompt(text = '', type = 'image', d = {}) {
-  let src = stripRepeatedCharacterBlocks(text || '');
 
-  src = src
-    .replace(/Thai\s*\/\s*Asian\s*(?:presenter|host|person|woman|man|identity)[^\n.]*(?:\.|\n|$)/ig, '')
-    .replace(/(?:Thai|Asian)\s+(?:female|male|woman|man|presenter|host)[^\n.]*(?:\.|\n|$)/ig, '')
-    .replace(/\b(?:presenter|host|model|influencer|woman|man|person|people|human|face|faces|hand|hands|arm|arms|body|character)\b[^\n.]*(?:\.|\n|$)/ig, '')
-    .replace(/(?:ผู้หญิง|ผู้ชาย|พรีเซนเตอร์|นางแบบ|นายแบบ|คน|มือ|ใบหน้า|ตัวละคร)[^\n.]*(?:\.|\n|$)/g, '')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
+let src = stripRepeatedCharacterBlocks(text || '');
 
-  const productLock = type === 'image'
-    ? 'PRODUCT ONLY LOCK: Show only the product as the hero. No human, no presenter, no face, no hands, no body parts, no character. Use the attached/uploaded image as product reference only. Product must be large, centered, sharp, and clearly visible.'
-    : 'PRODUCT ONLY VIDEO LOCK: Show only the product, packaging, infographic elements, icons, arrows, motion graphics, camera movement, and environment. No human, no presenter, no face, no hands, no body parts, no character. Audio must be off-screen Thai voiceover only.';
+src = src
 
-  if (!/PRODUCT\s+ONLY\s+(?:LOCK|VIDEO\s+LOCK)/i.test(src)) {
-    src = `${productLock}\n${src}`.trim();
-  }
+  // Product Only Mode
+  .replace(/Character ID:[^\n]*(?:\n|$)/ig, '')
+  .replace(/Character DNA Block:[\s\S]*?(?=Continuity Lock:|$)/ig, '')
+  .replace(/Continuity Lock:[\s\S]*?(?=VISUAL:|$)/ig, '')
 
-  return src;
+  // Thai / Asian presenter
+  .replace(
+    /Thai(?:\s*\/\s*|\s+)Asian\s+(?:presenter|host|person|woman|man|identity)[^\n.]*(?:\.|\n|$)/ig,
+    ''
+  )
+
+  // Thai female / Asian male
+  .replace(
+    /(?:Thai|Asian)\s+(?:female|male|woman|man|presenter|host)[^\n.]*(?:\.|\n|$)/ig,
+    ''
+  )
+
+  // Human character descriptors
+  .replace(
+    /\b(?:presenter|host|model|influencer|woman|man|person|people|face|faces|hand|hands|arm|arms|body|character)\b[^\n.]*(?:\.|\n|$)/ig,
+    ''
+  )
+
+  // Thai character descriptors
+  .replace(
+    /(?:ผู้หญิง|ผู้ชาย|พรีเซนเตอร์|นางแบบ|นายแบบ|คน|มือ|ใบหน้า|ตัวละคร)[^\n.]*(?:\.|\n|$)/g,
+    ''
+  )
+
+  .replace(/\n{3,}/g, '\n\n')
+  .trim();
+
+const productLock = type === 'image'
+? 'PRODUCT ONLY LOCK: Show only the product as the hero. No human, no presenter, no face, no hands, no body parts, no character. Use the attached/uploaded image as product reference only. Product must be large, centered, sharp, and clearly visible.'
+: 'PRODUCT ONLY VIDEO LOCK: Show only the product, packaging, infographic elements, icons, arrows, motion graphics, camera movement, and environment. No human, no presenter, no face, no hands, no body parts, no character. Audio must be off-screen Thai voiceover only.';
+
+const HUMAN_REALISM_PRODUCT = "PRODUCT REALISM LOCK: real physical product, authentic material texture, real commercial product photography, documentary product realism, practical lighting, natural mixed color temperature, real warehouse environment, real retail environment, authentic manufacturing environment, natural shadows, real HDR artifacts, imperfect reflections, smartphone camera capture, social media snapshot realism, authentic product photography, avoid CGI render look, avoid 3D render appearance, avoid artificial studio perfection, avoid plastic looking materials, avoid unrealistic reflections, real manufacturing details, real packaging imperfections, authentic label printing, real world wear and tear, commercial shelf realism, retail photography realism, documentary commerce realism";
+
+const REAL_ENVIRONMENT_LOCK = "REAL ENVIRONMENT LOCK: real warehouse, real retail store, real supermarket, real factory environment, real office desk, real home environment, documentary realism, natural imperfections, realistic shadows, authentic commercial setting, avoid luxury studio backdrop, avoid abstract CGI background, avoid floating product, avoid isolated render look";
+
+if (!/PRODUCT\s+ONLY\s+(?:LOCK|VIDEO\s+LOCK)/i.test(src)) {
+src = `
+${productLock}
+
+${HUMAN_REALISM_PRODUCT}
+
+${REAL_ENVIRONMENT_LOCK}
+
+${src}
+`.trim();
+}
+
+return src;
 }
 
 function getCharacterId(d={}, character={}){
@@ -246,6 +429,25 @@ function stripRepeatedCharacterBlocks(text=''){
   .trim();
 }
 
+function getHumanRealismDirective(subject='character'){
+  return `Human Realism Lock:
+- ordinary everyday human identity, non-model appearance, believable real person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+- ${subject} should feel like a real person in a real place, not a studio mannequin or influencer render`;
+}
+
+function getHumanRealismSceneDirective(d={}){
+  const modeLabel = (() => { try { return getModeSource().getGemModeConfig(d.gemMode).label; } catch(e){ return d.gemMode || 'scene'; } })();
+  return `HUMAN REALISM SCENE LOCK (${modeLabel}):
+- use real human anatomy, believable proportions, and ordinary everyday presence
+- use practical location details and documentary realism rather than beauty-advertising perfection
+- keep the scene grounded in a real place with natural clutter, lighting variation, and authentic imperfections`;
+}
+
 function buildCharacterDNAHeader(d, character, type='image'){
   if(isProductOnlyMode(d)) return type === 'image'
     ? 'PRODUCT ONLY LOCK: Show only the product as the hero. No human, no presenter, no face, no hands, no body parts, no character.'
@@ -255,11 +457,15 @@ function buildCharacterDNAHeader(d, character, type='image'){
   const visualDna = String(profile.dna || '')
   .replace(/\s+/g,' ')
   .trim();
+  const realismBlock = getHumanRealismDirective(profile.label || 'character');
 
   if(type === 'image'){
     return `Character ID: ${id}
 Character DNA Block:
 ${visualDna}
+
+Human Realism Block:
+${realismBlock}
 
 Continuity Lock:
 same person across all scenes, consistent face, hairstyle, outfit, and identity.
@@ -272,6 +478,9 @@ No 3D, cartoon, CGI, or animation style.`;
   return `Character ID: ${id}
 Character DNA Block:
 ${visualDna}
+
+Human Realism Block:
+${realismBlock}
 
 Voice Profile:
 ${profile.voice}
@@ -326,6 +535,54 @@ function injectDNAIntoStructuredPrompt(prompt='', type='image', d={}, character=
     const header=type==='image'?`SCENE_${sceneNo}_IMAGE_PROMPT:`:`SCENE_${sceneNo}_VIDEO_PROMPT:`;
     return `${header}\n${prependDNAIfMissing(body,d,character,type)}`;
   }).join('\n\n');
+}
+
+function injectWinPimryEnhancement(basePrompt, formData={}){
+
+  const viralTone = formData.viralTone || '';
+  const voiceType = formData.voiceType || '';
+
+  const characterData = getThaiCharacterVoiceProfile(voiceType);
+
+  let characterStyle = '';
+
+  if(characterData){
+
+    characterStyle = `
+${characterData.dna || ''}
+
+VOICE STYLE:
+${characterData.role || ''}
+`;
+
+  }
+
+  return `
+${basePrompt}
+
+VIRAL TONE:
+${viralTone}
+
+CHARACTER STYLE:
+${characterStyle}
+
+CAMERA STYLE:
+handheld smartphone motion
+micro autofocus breathing
+natural TikTok livestream instability
+vertical 9:16 framing
+
+AUDIO DESIGN:
+crowd chatter
+staff cheering
+fast-paced Thai commercial EDM rhythm
+
+NEGATIVE PROMPT:
+no CGI
+no cartoon
+no plastic skin
+no robotic motion
+`;
 }
 
 function showToast(message){ const t=$('toast'); if(!t) return; t.textContent=message; t.classList.add('show'); clearTimeout(showToast._timer); showToast._timer=setTimeout(()=>t.classList.remove('show'),2200); }
@@ -600,7 +857,8 @@ function getModeHookVisualDirective(d={}){
     viral: 'Viral hook: make the first frame feel stop-scroll, surprising, high curiosity, product visible immediately.',
     conversion: 'Conversion hook: show the product as the solution immediately, clear problem-solution selling angle, strong basket-click reason.',
     hybrid: 'Hybrid hook: combine viral stop-scroll energy with fast product reveal and clear demo value.',
-    pro_max: 'Pro Max hook: master prompt level hero composition, cinematic product-first selling image, premium conversion-focused thumbnail.'
+    pro_max: 'Pro Max hook: master prompt level hero composition, cinematic product-first selling image, premium conversion-focused thumbnail.',
+    review: 'Review hook: authentic real-user experience, believable product testing moment, clear before-and-after impression, trustworthy review-focused visual storytelling.'
   };
   return `${map[strategy] || map.viral} Selected clip direction: ${modeLabel}.`;
 }
@@ -642,15 +900,16 @@ Use any attached/uploaded image as the strict product reference only.
 
 Main product must be clearly visible and central: ${product}.
 
-Scene 1 must never be text-only; show the product naturally demonstrated by a Thai / Asian presenter in the first frame.
+Scene 1 must never be text-only; show the product naturally demonstrated by a real Thai / Asian human with believable face, skin texture, hands, and posture in the first frame.
 
 Environment/background: ${location}.
 Hook visual direction: ${view}.
 Selling tone: ${tone}.
 
 ${getModeHookVisualDirective(d)}
+${getHumanRealismSceneDirective(d)}
 
-Product-first hero composition, clean readable foreground, strong commercial lighting, natural Thai retail/UGC mood, realistic product interaction, premium ecommerce realism, no watermark, no random background text except real product label and intended overlay blocks.`;
+Product-first hero composition, clean readable foreground, strong commercial lighting, grounded documentary realism, realistic product interaction, premium ecommerce realism, no watermark, no random background text except real product label and intended overlay blocks.`;
 }
 
 function stripOverlayBlocksForVisualCheck(text=''){
@@ -1004,9 +1263,56 @@ function buildSceneTimeRange(sceneNo = 1, sceneCount = 1, duration = 10){
   return `[${fmt(start)}-${fmt(end)}s]`;
 }
 
+function getDialogueLengthRule(d = {}) {
+
+  const voiceType = String(d.voiceType || '').toLowerCase();
+  const providerMode = String(d.providerMode || '').toLowerCase();
+
+  // WIN / PIMRY (ต้องอยู่บนสุด)
+if (
+    voiceType.includes('win') ||
+    voiceType.includes('vin') ||
+    voiceType.includes('pim') ||
+    voiceType.includes('พิม')
+) {
+    return `
+- DIALOGUE_TH must contain 32-35 Thai words.
+- Medium-fast delivery.
+- High-pressure live-selling energy.
+- Strong urgency and persuasion.
+- Confident Thai TikTok seller personality.
+- Never generate fewer than 35 words.
+
+SPEECH PACING RULES:
+- Do not rush the dialogue.
+- Do not speak at maximum speed.
+- Prioritize clarity over speed.
+- Use natural pauses every 8-12 words.
+- Use emphasis and rhythm.
+- Build excitement through emotion, not speaking speed.
+- Sound like a top Thai live-commerce host closing a sale.
+`;
+}
+
+  // GROK
+  if (providerMode.includes('grok')) {
+      return `
+- DIALOGUE_TH must contain 30-32 Thai words.
+- Target speaking duration: 10 seconds.
+`;
+  }
+
+  // FLOW
+  return `
+- DIALOGUE_TH must contain 20-30 Thai words.
+- Target speaking duration: 8 seconds.
+`;
+}
+
 function buildSceneTimeLipSyncContract(d = {}){
   const count = Math.max(1, Number(d.sceneCount || 1));
   const duration = Math.max(1, Number(d.duration || 10));
+  const dialogueRule = getDialogueLengthRule(d);
   const sceneBlocks = Array.from({length: count}, (_,idx)=>{
     const no = idx + 1;
     return `SCENE_${no}_VIDEO_PROMPT:
@@ -1033,6 +1339,11 @@ OPENAI SCENE 100% + SCENE TIME + LIP SYNC PRO:
   3) DIALOGUE_TH
   4) LIP_SYNC
 - Dialogue must be Thai only, natural spoken Thai, ready for narration/lip-sync.
+
+${dialogueRule}
+
+- Count words before output.
+- Never generate dialogue shorter than required.
 - The combined scenes must complete the whole story within ${duration} seconds.
 - Use this exact target video_prompt format:
 
@@ -1069,21 +1380,32 @@ ${isProductOnlyMode(d) ? `PRODUCT ONLY + AUTO VOICE LOCK:
 - Default visual style: photorealistic live-action cinematic only.
 - Never use 3D, cartoon, chibi, mascot, CGI, animation, Pixar-like, or stylized character unless the user explicitly types those words.`}
 
+HUMAN REALISM GLOBAL LOCK:
+- Characters must look like real people captured in the real world, not fashion-model AI renders.
+- Use ordinary human identity, natural skin texture, subtle facial asymmetry, believable anatomy, and documentary realism.
+- Locations and scenes must feel real: practical lighting, authentic clutter, believable depth, and handheld/smartphone imperfections.
+- Avoid airbrushed face, porcelain skin, perfect symmetry, glamour photography, over-staged studio polish, and CGI-like shine.
+
 GLOBAL OUTPUT RULES:
 - Return FINAL-READY prompts only, not analysis.
 - Generate two polished deliverables:
 1) image_prompt: a single final image generation prompt for a vertical 9:16 promotional image
 2) video_prompt: a single final video generation prompt containing all scenes in sequence
 - For the image prompt, explicitly state that any uploaded or attached image must be used as the product reference only.
-- AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1: SCENE_1_IMAGE_PROMPT must always include a VISUAL section before any [TEXT OVERLAY] or [H2 OVERLAY]. Scene 1 must show the main product clearly; if Product Only mode is active, show no human/hand/face/body parts; otherwise use a Thai / Asian presenter or realistic hand interaction; include real environment/background, lighting, and camera composition. TEXT OVERLAY or H2 OVERLAY alone is forbidden. This rule improves only Image Prompt Scene 1 and must not change the selected Viral / Conversion / Hybrid / Pro Max video structure, scene count, timing, or dialogue.
+- AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1: SCENE_1_IMAGE_PROMPT must always include a VISUAL section before any [TEXT OVERLAY] or [H2 OVERLAY]. Scene 1 must show the main product clearly; if Product Only mode is active, show no human/hand/face/body parts; otherwise use a Thai / Asian presenter or realistic hand interaction with Human Realism styling; include real environment/background, lighting, and camera composition. TEXT OVERLAY or H2 OVERLAY alone is forbidden. This rule improves only Image Prompt Scene 1 and must not change the selected Viral / Conversion / Hybrid / Pro Max video structure, scene count, timing, or dialogue.
 - The default visual style must be photorealistic live-action cinematic advertising.
+- Human Realism must be applied to every visible person, location, and scene: ordinary everyday appearance, believable anatomy, natural skin texture, subtle asymmetry, practical lighting, documentary realism.
 - Absolutely no 3D animated style, no cartoon style, no chibi style, no mascot style, and no CGI-stylized character unless the user explicitly asks for that.
 - No subtitles in video prompt.
-- If people appear, avoid clear faces; prefer hands, arms, backs, or blurred passersby.
+- If people appear, show believable real human faces and anatomy; avoid hiding faces unless the shot explicitly calls for background passersby.
 - VOICEOVER PRO MAX: every scene in the video prompt must contain Thai voiceover dialogue.
 - Every scene must include exact Thai spoken lines ready for narration or lip-sync.
 - If Product Only mode is active, there is no visible character and the selected/auto voice controls off-screen narration only; otherwise the selected character + voice type controls visible character identity and narrator voice.
-- The selected viral tone controls urgency, emotion, and selling pressure.
+- Viral: curiosity and stop-scroll.
+- Conversion: selling pressure and problem-solution.
+- Hybrid: viral + conversion balance.
+- Pro Max: premium commercial persuasion.
+- Review: authentic user experience, honest product evaluation, before-after results, trust building.
 - No silent scenes.
 - Keep both prompts fully final and ready to use.
 - If Scene count is greater than 1, format the image prompt and video prompt with clear blocks using these exact headers:
@@ -1099,15 +1421,97 @@ SCENE_2_VIDEO_PROMPT:
 Continue the same pattern for all scenes.${buildSceneTimeLipSyncContract(d)}`;
 }
 function buildUserPrompt(d){
-  const gem = getModeSource().getGemModeConfig(d.gemMode);
+  const gem = getModeSource().getGemModeConfig(d.gemMode); 
+
+const frameworkName =
+    gem.viralToneFrameworks?.[
+        d.viralTone
+    ];
+
+const clipFramework =
+    CLIP_FRAMEWORK_MAP[
+        d.clipStyle
+    ];
+
+const finalFrameworkName =
+    frameworkName ??
+    clipFramework ??
+    'REVIEW';
+
+const framework =
+    VIRAL_FRAMEWORKS[
+        finalFrameworkName
+    ] || VIRAL_FRAMEWORKS.REVIEW; 
+  
+  const hookPool =
+    HOOKS[
+        finalFrameworkName
+    ] || [];
+
+const randomHook =
+    hookPool[
+        Math.floor(
+            Math.random()*hookPool.length
+        )
+    ] || '';
+
+const ctaPool =
+    CTA_TYPES[
+        framework.ctaType
+    ] || [];
+
+const randomCTA =
+    ctaPool[
+        Math.floor(
+            Math.random()*ctaPool.length
+        )
+    ] || '';
+    
+  const sceneFlowText =
+  framework?.sceneFlow?.join(' → ')
+  || ''; 
   const character = isProductOnlyMode(d) ? {enabled:false, profileBlock:'', dnaBlock:'', lockBlock:''} : buildCharacterFactoryProfile(d);
   const randomNote = d.randomizedFields?.length ? `\nAUTO RANDOM FILLED: ${d.randomizedFields.join(', ')}` : '';
   const thaiCharacterProfile = getActiveVoiceProfile(d);
-  const characterNote = character.enabled ? `\n\nCHARACTER FACTORY PRO MAX:\n${character.profileBlock}\n\n${character.dnaBlock}\n\n${character.lockBlock}` : '';
-  return `GEM MODE: ${gem.label}
+  const characterNote = character.enabled ? `\n\nCHARACTER FACTORY PRO MAX:\n${character.profileBlock}\n\n${character.dnaBlock}\n\n${character.lockBlock}` : ''; 
+  const frameworkBlock = `
+
+VIRAL TONE:
+${d.viralTone}
+
+FRAMEWORK:
+${finalFrameworkName}
+
+HOOK STYLE:
+${framework.hookType}
+
+RECOMMENDED HOOK:
+${randomHook}
+
+SCENE FLOW:
+${sceneFlowText}
+
+CTA STYLE:
+${framework.ctaType}
+
+RECOMMENDED CTA:
+${randomCTA}
+
+Generate scenes exactly
+in this order:
+
+${sceneFlowText}
+
+`; 
+  return `
+
+${frameworkBlock}
+
+GEM MODE: ${gem.label}
 GEM DESCRIPTION: ${gem.description}${randomNote}${characterNote}
 
 Create final production-ready prompts using these inputs.
+
 Product: ${sanitizePolicyText(d.product)}
 Location: ${sanitizePolicyText(d.location)}
 View / shot direction: ${sanitizePolicyText(d.view)}
@@ -1121,31 +1525,104 @@ Scene count: ${d.sceneCount}
 Total duration: ${d.duration} seconds
 Average duration per scene: ${formatPerScene(d.duration,d.sceneCount)}
 
+AUTO SCENE GENERATION:
+
+Generate scenes exactly in this order:
+
+${sceneFlowText}
+
+Each scene must follow the framework sequence exactly.
+Do not skip or rearrange scenes.
+The final scene must always contain CTA.
+
 Requirements:
 - Return one final image prompt and one final video prompt.
 - The image prompt must clearly instruct the model to use the attached/uploaded image as the product reference only.
 - The default visual style must be photorealistic live-action cinematic advertising.
+- Human Realism must be applied to every visible person, location, and scene: ordinary everyday appearance, believable anatomy, natural skin texture, subtle asymmetry, practical lighting, documentary realism.
 - Do not use 3D animated, cartoon, chibi, mascot, or CGI-stylized character language anywhere in the output unless the user explicitly asks for that style.
 - The video prompt must include Scene 1 to Scene ${d.sceneCount} in sequence.
 - Every scene must include Thai voiceover dialogue, not just visual direction.
 - If Product Only mode is active, do not include visible character/hands/faces anywhere; narration must be off-screen Thai voiceover auto selected by product/category. Otherwise visible character and narration voice must follow the selected Thai / Asian character + voice profile: ${thaiCharacterProfile.label}.
+- All visible people and locations in character mode must follow Human Realism rather than model/editorial perfection.
+${d.promptStrategy === 'review'
+? `
+- The communication style should prioritize authenticity, trust building, and user experience rather than urgency-driven selling.
+`
+: `
 - The selling psychology and urgency must follow the selected viral tone: ${d.viralTone}.
+
+- Viral framework:
+${finalFrameworkName}
+
+- Hook style:
+${framework?.hookType || ''}
+
+- Required scene flow:
+${framework?.sceneFlow?.join(' → ') || ''}
+
+- CTA style:
+${framework?.ctaType || ''}
+`
+}
 - Add exact spoken Thai lines for every scene, ready for voiceover or lip-sync.
 - Follow the selected GEM MODE creative strategy closely.
+- Follow the selected VIRAL FRAMEWORK strictly.
+- The hook must match the selected framework.
+- Scene progression must follow the framework scene flow.
+- CTA wording must match the framework CTA style.
+- Viral tone should influence hook, emotional trigger, pacing, scene transitions, and CTA.
+FRAMEWORK EXECUTION RULES:
+- Generate Scene 1 as the Hook Scene.
+- Generate all scenes in the exact order specified by the framework scene flow.
+- Maintain framework consistency across all scenes.
+- The final scene must contain the CTA.
+- Hook, Story Progression, and CTA must be aligned with the selected viral tone.
+
+FRAMEWORK RULES:
+- Hook style must follow ${framework.hookType}
+- Scene order must follow ${framework.sceneFlow.join(' → ')}
+- CTA style must follow ${framework.ctaType}
+- Viral tone must influence hook, pacing, emotional trigger, and CTA wording
 - If scene count is greater than 1 and CHARACTER FACTORY PRO MAX is active, every SCENE_n_IMAGE_PROMPT must begin with Character ID, Character DNA Block, and Continuity Lock only. Do not put Voice Profile, dialogue, lip-sync, or audio instructions inside IMAGE PROMPT.
 - Every SCENE_n_VIDEO_PROMPT must begin with Character ID, Character DNA Block, Voice Profile, and Continuity Lock.
 - For multi-scene outputs, keep the same main character identity across all scenes with no redesign or reinterpretation.
 - If scene count is greater than 1, split both image_prompt and video_prompt into clear scene blocks using these exact headers only: SCENE_1_IMAGE_PROMPT:, SCENE_2_IMAGE_PROMPT:, ... and SCENE_1_VIDEO_PROMPT:, SCENE_2_VIDEO_PROMPT:, ...
-- Also return caption_hashtags: one Thai caption line plus exactly 5 hashtags, where 3 hashtags are product-related and 2 hashtags are trending Thai commerce/social hashtags.
+- Also return caption_hashtags: one Thai caption line between 290 and 310 writtenadd exactly 5 hashtags Use 3 product-related hashtags and 2 trending Thai commerce/social hashtags, The caption Never generate shorter than 290 Thai characters and captionn be written in a high-conversion Thai TikTok selling style.
+- TikTok Shop compliance: The caption and hashtags must be fully compliant with TikTok Shop policies, Avoid prohibited, restricted, misleading, unverifiable, comparative, guaranteed, medical, health, weight-loss, financial, or performance claims Do not promise results, outcomes, earnings, cures, treatments, or guarantees, Do not use fake urgency, fake scarcity, or exaggerated marketing language, Ensure all content is safe, accurate, advertiser-friendly, and suitable for TikTok Shop review and approval.
 - AUTO PRODUCT INSERT + AUTO HOOK VISUAL SCENE 1: Before any overlay blocks, SCENE_1_IMAGE_PROMPT must contain VISUAL: with product, product-only hero composition when Product Only mode is active, otherwise character/hand interaction, environment/background, lighting, and camera composition. Do not return overlay-only Scene 1.
-- If TEXT OVERLAY or H2 overlay are enabled, preserve those overlay instructions naturally inside the image prompt output for the selected scenes.
+- If TEXT OVERLAY or H2 overlay are enabled, preserimagerallyhose overlay instructions naturally inside the image prompt output for the selected scenes.
 - Final only.
+VOICE DIALOGUE RULES:
+- Win Mode:
+  40-42 Thai words.
+- Pimry Mode:
+  40-42 Thai words.
+- Grok Mode:
+  30-40 Thai words.
+- Flow Mode:
+  20-30 Thai words.
+Count words before generating dialogue.
+Never generate shorter dialogue than required.
+${d.promptStrategy === 'review' ? `
+REVIEW MODE RULES:
+- Focus on authentic user experience.
+- Speak like a real customer or honest reviewer.
+- Use first-hand product experience storytelling.
+- Include practical observations, usage impressions, and real-life benefits.
+- Build trust before attempting conversion.
+- Avoid aggressive sales pressure.
+- Avoid exaggerated marketing language.
+- Prioritize review storytelling over direct selling.
+- Dialogue should sound natural, believable, and experience-based.
+- DIALOGUE_TH length: 30-32 Thai words.
+` : ''}
 ${buildSceneTimeLipSyncContract(d)}`;
 }
 function buildResponseSchema(){ return {type:'OBJECT',properties:{image_prompt:{type:'STRING'},video_prompt:{type:'STRING'},caption_hashtags:{type:'STRING'}},required:['image_prompt','video_prompt','caption_hashtags'],propertyOrdering:['image_prompt','video_prompt','caption_hashtags']}; }
 async function callSelectedProvider(d){ return await callAI(d.providerMode, { systemPrompt: buildSystemInstruction(d), userPrompt: buildUserPrompt(d) }); }
-async function upsertCurrentUser(user){ const email=String(user.email||'').toLowerCase(); const ref=doc(db,'users',user.uid); const snap=await getDoc(ref); const now=serverTimestamp(); const base={uid:user.uid,email,displayName:user.displayName||'',photoURL:user.photoURL||'',lastLoginAt:now,updatedAt:now}; if(hasAdminEmail(email)){ await setDoc(ref,{...base,createdAt:snap.exists()?snap.data().createdAt||now:now,approved:true,role:'admin',approvedAt:now},{merge:true}); } else if(!snap.exists()){ await setDoc(ref,{...base,createdAt:now,approved:false,role:'user'},{merge:true}); } else { await setDoc(ref,base,{merge:true}); } const updated=await getDoc(ref); userDocCache=updated.exists()?updated.data():null; }
-function isApproved(){ return !!(userDocCache?.approved || hasAdminEmail(currentUser?.email)); }
+async function upsertCurrentUser(user){ const email=String(user.email||'').toLowerCase(); const ref=doc(db,'users',user.uid); const snap=await getDoc(ref); const now=serverTimestamp(); const base={uid:user.uid,email,displayName:user.displayName||'',photoURL:user.photoURL||'',lastLoginAt:now,updatedAt:now}; if(hasAdminEmail(email)){ await setDoc(ref,{...base,createdAt:snap.exists()?snap.data().createdAt||now:now,approved:true,role:'admin',approvedAt:now},{merge:true}); } else if(!snap.exists()){ await setDoc(ref,{...base,createdAt:now,approved:false,role:'guest'},{merge:true}); } else { await setDoc(ref,base,{merge:true}); } const updated=await getDoc(ref); userDocCache=updated.exists()?updated.data():null; }
+function isApproved(){ return !!currentUser && !!userDocCache?.approved; }
 function isAdmin(){ return !!(userDocCache?.role==='admin' || hasAdminEmail(currentUser?.email)); }
 async function signInGoogle(){
   showError('');
@@ -1228,7 +1705,6 @@ async function renderAuthState(){
     if($('loginBtn')) $('loginBtn').style.display = 'inline-flex';
     if($('logoutBtn')) $('logoutBtn').style.display = 'none';
     if($('adminLink')) $('adminLink').style.display = 'none';
-    if(finderBtn) finderBtn.style.display = 'none';
 
     showPending(false);
     await renderHistory();
@@ -1245,7 +1721,6 @@ async function renderAuthState(){
     if($('loginBtn')) $('loginBtn').style.display = 'none';
     if($('logoutBtn')) $('logoutBtn').style.display = 'inline-flex';
     if($('adminLink')) $('adminLink').style.display = isAdmin() ? 'inline-flex' : 'none';
-    if(finderBtn) finderBtn.style.display = 'none';
 
     showPending(true);
     await renderHistory();
@@ -1260,7 +1735,6 @@ async function renderAuthState(){
   if($('loginBtn')) $('loginBtn').style.display = 'none';
   if($('logoutBtn')) $('logoutBtn').style.display = 'inline-flex';
   if($('adminLink')) $('adminLink').style.display = isAdmin() ? 'inline-flex' : 'none';
-  if(finderBtn) finderBtn.style.display = 'inline-flex';
 
   showPending(false);
   await renderHistory();
@@ -1316,7 +1790,38 @@ IMPORTANT VIDEO SPEECH RULES:
   return speechRules + '\n\n' + String(prompt || '');
 }
 
-async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); d.characterSessionId = generateCharacterSessionId(); const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); 
+async function generatePrompts(){ showError(''); if(!currentUser) return showToast('กรุณาเข้าสู่ระบบก่อน'); if(!isApproved()) return showToast('บัญชียังไม่ได้รับอนุมัติจากแอดมิน'); const raw=getFormData(); const d=getPreparedFormData(raw); 
+
+const mode =
+  getModeSource()
+    .getGemModeConfig(
+      d.gemMode
+    );
+
+const frameworkName =
+    mode.viralToneFrameworks?.[
+        d.viralTone
+    ];
+
+const clipFramework =
+    CLIP_FRAMEWORK_MAP[
+        d.clipStyle
+    ];
+
+const finalFrameworkName =
+    frameworkName ??
+    clipFramework ??
+    'REVIEW';
+
+const framework =
+  VIRAL_FRAMEWORKS[
+    finalFrameworkName
+  ] || VIRAL_FRAMEWORKS.REVIEW;
+
+d.characterSessionId =
+  generateCharacterSessionId();
+
+const err=validateForm(d); if(err) return showToast(err); const character = buildCharacterFactoryProfile(d); try{ setLoading(true); updateGeminiNativeModeStatus('⚡ Gemini / OpenAI PRO MAX • กำลังสร้าง Final Prompt'); 
 const result = await callSelectedProvider(d);
 
 // ห้าม sanitize ก่อน parse / overlay / DNA เพราะจะทำให้ Scene header เพี้ยน
@@ -1483,6 +1988,7 @@ async function init(){
   rebindOpenAIButtons();
   loadForm();
   populateGemModeOptions($('gemMode')?.value || 'signboard');
+  populateViralToneOptions($('gemMode')?.value || 'signboard');
   applyGemMode(($('gemMode')?.value || 'signboard'), { keepTone: true, skipSave: true });
   populateTextStyleOptions();
   populateH2StyleOptions();
@@ -1513,7 +2019,15 @@ async function init(){
     showError('');
     try{
       if(user){
+
+        const accessAllowed = await checkPageAccess(user);
+
+        if(!accessAllowed){
+          return;
+        }
+
         await upsertCurrentUser(user);
+
         if(!isApproved()) startApprovalWatcher();
       }
     }catch(e){

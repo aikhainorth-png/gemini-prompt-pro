@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>รอแอดมินอนุมัติ</title>
+<style>
+:root{
+  --bg:#07161b;
+  --card:#0b2026;
+  --text:#eafcff;
+  --muted:#9fc3c7;
+  --accent:#ff6600;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  background:linear-gradient(180deg,#061217,#0a1f26);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--text);
+}
+.overlay{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.loader{
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+.btn{
+  border:none;
+  cursor:pointer;
+  transition:.2s ease;
+  font-weight:800;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-dark{
+  background:#102d35;
+  color:#fff;
+}
+</style>
+</head>
+<body>
+<div class="overlay" id="pendingGate">
+  <div class="loader" style="max-width:520px;width:calc(100% - 30px);padding:34px;border-radius:28px;background:#0b2026;text-align:center;">
+    <div style="font-size:70px;margin-bottom:18px">⏳</div>
+
+    <div style="font-size:42px;font-weight:900;margin-bottom:10px;color:#ff6600">
+      รอแอดมินอนุมัติ
+    </div>
+
+    <div id="pendingUserEmail" style="color:#7fdff2;font-size:20px;font-weight:700;margin-bottom:10px;">
+      user@email.com
+    </div>
+
+    <div style="color:#9fc3c7;font-size:18px;line-height:1.7;margin-bottom:18px;">
+      ระบบได้รับคำขอของคุณแล้ว<br>
+      กรุณารอแอดมินตรวจสอบและอนุมัติการเข้าใช้งาน
+    </div>
+
+    <a
+      href="https://lin.ee/NGN1H1S"
+      target="_blank"
+      class="btn btn-dark"
+      style="width:100%;height:64px;font-size:22px;border-radius:18px;text-decoration:none;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
+      ติดต่อ LINE Admin
+    </a>
+
+    <button
+      class="btn btn-dark"
+      id="pendingBackToLoginBtn"
+      style="width:100%;height:64px;font-size:22px;border-radius:18px;">
+      ← กลับไปหน้า Login
+    </button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const emailEl = document.getElementById("pendingUserEmail");
+const backBtn = document.getElementById("pendingBackToLoginBtn");
+
+onAuthStateChanged(auth,(user)=>{
+  if(!user){
+    location.replace("./index.html");
+    return;
+  }
+  emailEl.textContent = user.email || "user@email.com";
+});
+
+backBtn.addEventListener("click", async()=>{
+  try{
+    await signOut(auth);
+  }catch(e){}
+  location.replace("./index.html");
+});
+</script>
+</body>
+</html>

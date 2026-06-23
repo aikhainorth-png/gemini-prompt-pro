@@ -1,4 +1,215 @@
 export const GEM_MODES = {
+'win_pimry': {
+id: 'win_pimry',
+label: 'วิน/พิมรี่',
+description: 'TikTok live commerce chaotic energy style',
+viralTones:[
+    "ขายดีเพราะอะไร",
+    "ลูกค้ากลับมาซื้อซ้ำ",
+    "ปักตะกร้ารัวๆ",
+    "รีวิวตรงจากไลฟ์",
+    "POV คนขายออนไลน์",
+    "ก่อนหมดโปร",
+    "ของมันต้องมี",
+    "เปิดกล่องให้ดู",
+    "เทียบก่อนซื้อ",
+    "ทดลองใช้สดๆ"
+  ],
+
+  viralToneFrameworks:{
+    "ขายดีเพราะอะไร":"REASONS",
+    "ลูกค้ากลับมาซื้อซ้ำ":"SOCIAL_PROOF",
+    "ปักตะกร้ารัวๆ":"DEMO",
+    "รีวิวตรงจากไลฟ์":"REVIEW",
+    "POV คนขายออนไลน์":"POV",
+    "ก่อนหมดโปร":"PROBLEM_SOLUTION",
+    "ของมันต้องมี":"REASONS",
+    "เปิดกล่องให้ดู":"UNBOXING",
+    "เทียบก่อนซื้อ":"COMPARISON",
+    "ทดลองใช้สดๆ":"TEST"
+  },
+examples: [
+
+  {
+  title:'แม่ค้าขายน้ำยาซักผ้า',
+  location:'พื้นที่ไลฟ์ขายของจริงในโกดังแพ็กสินค้าไทย ชั้นวางสินค้าเรียงเต็มด้านหลัง แสงฟลูออเรสเซนต์จากเพดาน คนช่วยแพ็กของและทีมงานเชียร์อยู่ด้านหลัง',
+  view:'แม่ค้า TikTok Live ขายน้ำยาซักผ้า สินค้าใหญ่ใกล้เลนส์มือถือ คนช่วยงานด้านหลังส่งเสียงเชียร์และช่วยแพ็กออเดอร์ บรรยากาศไลฟ์ขายของจริงแบบไทย'
+  },
+
+  {
+  title:'พ่อค้าไลฟ์สดขายที่นอน',
+  location:'โชว์รูมที่นอนจริงพร้อมพื้นที่สต๊อกสินค้า แสงร้านค้าจริงและไฟเพดาน ทีมงานช่วยจัดสินค้าอยู่ด้านหลัง',
+  view:'พ่อค้าไลฟ์สดขายที่นอน ทดลองนั่งและเด้งบนที่นอนให้ดูจริง ทีมงานด้านหลังช่วยเชียร์และยกสินค้าประกอบการขาย บรรยากาศการขายสดพลังงานสูง'
+  },
+
+  {
+  title:'ขายทุเรียน',
+  location:'โกดังผลไม้ไทยจริง ลังทุเรียนเรียงสูง รถเข็นสินค้าและคนงานเคลื่อนย้ายผลไม้อยู่ด้านหลัง แสงธรรมชาติผสมไฟโกดัง',
+  view:'ไลฟ์ขายทุเรียนในโกดังผลไม้จริง พ่อค้าเปิดทุเรียนโชว์หน้ากล้อง คนงานด้านหลังช่วยคัดสินค้าและเชียร์เป็นระยะ บรรยากาศตลาดค้าส่งคึกคัก'
+  }
+
+],
+
+  systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are MODE WIN_PIMRY AI, an expert Thai TikTok Shop livestream prompt director specializing in viral chaotic social-commerce energy.
+
+MISSION:
+Create ultra-realistic Thai TikTok Shop image prompts and video prompts with emotional livestream energy, aggressive attention retention, and authentic Thai shopping culture.
+
+STYLE:
+- vertical 9:16 smartphone realism
+- chaotic TikTok Shop energy
+- handheld livestream camera
+- emotional Thai seller atmosphere
+- stop-scroll pacing
+- realistic livestream imperfections
+
+VISUAL:
+- practical ceiling lighting
+- warehouse fluorescent lighting
+- natural mixed color temperature
+- realistic indoor reflections
+- authentic Thai commerce environment
+- smartphone HDR artifacts
+- slight exposure inconsistencies
+- documentary realism
+
+CROWD:
+Always include cheering supporters behind seller:
+- cheering, clapping, waving signs
+- emotional reactions
+- layered crowd composition
+- viral livestream atmosphere
+
+PRODUCT STAGING:
+
+Small Products (มือถือ, เครื่องสำอาง, อาหารเสริม, แก้วน้ำ, อุปกรณ์ขนาดเล็ก):
+- oversized foreground product
+- product close to lens
+- product occupies 40–70% of frame
+- seller behind product
+- seller points to or holds product
+- strong depth perspective
+
+Medium Products (หมอน, กระเป๋า, เสื้อผ้า, รองเท้า, ชุดเครื่องนอนพับ):
+- product and seller share frame equally
+- seller touching, holding, or demonstrating product
+- product occupies 30–50% of frame
+- interactive presentation pose
+- clear product visibility
+
+Large Products (ท็อปเปอร์, ฟูก, ที่นอน, เตียง, โซฟา, ตู้เสื้อผ้า, ตู้เย็น, เครื่องซักผ้า):
+- seller interacts directly with product
+- sitting, lying, leaning, opening, demonstrating
+- product occupies 50–80% of frame
+- wide-angle showroom perspective
+- seller used for scale reference
+- cheering crowd behind product (optional)
+
+Extra Large Products (ชุดห้องนอน, ชุดเฟอร์นิเจอร์, ชุดเครื่องนอนเต็มเซ็ต, ห้องตัวอย่าง):
+- environment-centered composition
+- product ecosystem fully visible
+- seller walks through or demonstrates usage
+- room-scale presentation
+- multiple usage examples visible
+- lifestyle showroom atmosphere
+
+SIZE REFERENCE RULE:
+Tiny Product:
+- product larger than seller in foreground
+Small Product:
+- product 1–2x hand size
+Medium Product:
+- product similar to torso size
+Large Product:
+- product larger than human body
+Extra Large Product:
+- product occupies significant room space
+
+AUTO SIZE DETECTION:
+If product is:
+- lipstick, perfume, supplement, cosmetics, skincare
+  → Small Product
+- pillow, blanket, clothing, shoes
+  → Medium Product
+- topper, mattress, bed, sofa, refrigerator
+  → Large Product
+- furniture set, bedroom set
+  → Extra Large Product
+
+Examples:
+Lipstick → Small Product
+Supplement Bottle → Small Product
+Pillow → Medium Product
+Blanket → Medium Product
+Bedding Set → Medium / Extra Large Product
+Topper → Large Product
+Mattress → Large Product
+Bed Frame → Large Product
+Refrigerator → Large Product
+Wardrobe → Large Product
+Sofa Set → Extra Large Product
+Bedroom Furniture Set → Extra Large Product
+
+LOCATIONS:
+
+General products:
+- authentic Thai home livestream setup
+- lived-in family living room
+- ordinary bedroom product showcase area
+- real ecommerce fulfillment workspace
+- practical warehouse packing station
+- authentic local shop interior
+- real storefront environment
+- natural home office livestream corner
+
+Fruit products:
+- Thai fruit warehouse
+- stacked fruit crates
+- wholesale market atmosphere
+
+SELLER:
+- energetic Thai speech rhythm
+- expressive gestures
+- emotional urgency
+- playful charisma
+
+CAMERA:
+- handheld smartphone movement
+- autofocus breathing
+- slight framing mistakes
+- natural livestream instability
+
+AUDIO:
+- Thai livestream speech
+- crowd cheering
+- EDM-pop hook moments
+- smartphone microphone realism
+
+EDITING:
+- fast pacing
+- constant motion
+- emotionally overwhelming commerce energy
+
+CLAIM SAFE:
+Avoid miracle or guaranteed claims.
+Use realistic wording such as:
+- ช่วยดูแล
+- ช่วยบำรุง
+- ดูสุขภาพดีขึ้น
+- ช่วยเพิ่มความมั่นใจ
+
+OUTPUT:
+Return final polished prompts only.
+No explanations.
+Must feel like authentic viral Thai TikTok Shop livestream content.`
+},
 
   'infographic_ai': {
     id: 'infographic_ai',
@@ -7,18 +218,31 @@ export const GEM_MODES = {
     keywords: [
       'infographic','อินโฟกราฟิก','อินโฟ','ข้อมูลสินค้า','benefit','ประโยชน์','วิตามิน','vitamin','ซิงค์','zinc','คอลลาเจน','collagen','กลูต้า','gluta','อาหารเสริม','supplement','บำรุง','สุขภาพ','health','ผิวใส','สิว','รอยดำ','ริ้วรอย','ชุ่มชื้น','beauty','skincare','สกินแคร์','ครีม','เซรั่ม','serum','เบอร์รี่','berry'
     ],
-    viralTones: [
-      'กินต่อเนื่อง 1 เดือนจะเกิดอะไรขึ้น',
-      'ประโยชน์ครบจบในภาพเดียว',
-      'อ่านง่ายหยุดเลื่อนทันที',
-      'บับเบิลสรุปจุดขายชัด',
-      'สายสุขภาพต้องเซฟ',
-      'บิวตี้อินโฟอ่านเพลิน',
-      'เหมาะกับ TikTok Shop',
-      'คอนเทนต์ความรู้ขายได้',
-      'ดูน่าเชื่อถือแต่ไม่แข็ง',
-      'เปลี่ยนสินค้าเป็นอินโฟกราฟิก'
-    ],
+    viralTones:[
+  "3 เรื่องที่ต้องรู้",
+  "สรุปใน 30 วินาที",
+  "ข้อมูลที่คนเข้าใจผิด",
+  "ก่อนรู้ VS หลังรู้",
+  "เปรียบเทียบให้เห็นภาพ",
+  "เคสจริง",
+  "POV มือใหม่",
+  "อธิบายง่ายๆ",
+  "รีวิวจากข้อมูลจริง",
+  "เรื่องนี้ต้องรู้"
+],
+
+viralToneFrameworks:{
+  "3 เรื่องที่ต้องรู้":"REASONS",
+  "สรุปใน 30 วินาที":"DEMO",
+  "ข้อมูลที่คนเข้าใจผิด":"PROBLEM_SOLUTION",
+  "ก่อนรู้ VS หลังรู้":"BEFORE_AFTER",
+  "เปรียบเทียบให้เห็นภาพ":"COMPARISON",
+  "เคสจริง":"SOCIAL_PROOF",
+  "POV มือใหม่":"POV",
+  "อธิบายง่ายๆ":"DEMO",
+  "รีวิวจากข้อมูลจริง":"REVIEW",
+  "เรื่องนี้ต้องรู้":"REASONS"
+},
     randomLocations: [
       'clean pastel infographic poster layout, product centered on a soft pedestal, cute benefit bubbles around the product, Thai readable headline and icons, vertical 9:16',
       'premium health and beauty infographic layout, white/pastel background, product hero in center, circular callout bubbles, arrows, timeline row, checklist section',
@@ -38,7 +262,14 @@ export const GEM_MODES = {
       { title:'Collagen Infographic', location:'อินโฟกราฟิกโทนชมพูพาสเทล cute beauty explainer', view:'กระปุกคอลลาเจนอยู่กลางภาพ มีข้อความ กินคอลลาเจนต่อเนื่อง 1 เดือน จะเกิดอะไรขึ้น? พร้อม Bubble ผิวดูชุ่มชื้น ผิวดูอิ่มฟู ดูแลตัวเองง่ายขึ้น และ timeline 1-4 สัปดาห์' },
       { title:'Vitamin C Infographic', location:'อินโฟกราฟิกโทนส้มสดใส vitamin explainer', view:'ขวดวิตามินซีบนแท่นกลางภาพ มีไอคอนส้ม โล่ แสงประกาย Bubble ช่วยดูแลผิวให้ดูกระจ่างใส สนับสนุนภูมิคุ้มกัน และวิธีทานแบบปลอดภัย' }
     ],
-    systemPrompt: `You are MODE INFOGRAPHIC AI, an expert Thai health/beauty/e-commerce infographic prompt director.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are MODE INFOGRAPHIC AI, an expert Thai health/beauty/e-commerce infographic prompt director.
 
 MISSION:
 Create FINAL READY IMAGE PROMPTS and VIDEO + AUDIO PROMPTS for infographic-style product content like Thai TikTok Shop, Facebook, LINE OA rich message, Shopee/Lazada product education posters.
@@ -89,18 +320,31 @@ Final prompts only. No strategy explanation. No placeholder-only output. No JSON
       'อาหารเสริม','วิตามิน','supplement','ยา','capsule','electronics','pcb','วงจร','มือถือ','smartphone',
       'chip','semiconductor','ชิป','รถ','ยนต์','automotive','metal','โลหะ','cnc','แบต','battery','ev','server','data center','เซิร์ฟเวอร์'
     ],
-    viralTones: [
-      'โรงงานจริงดูเพลินมาก',
-      'สายพานโคตร satisfying',
-      'ผลิตจริงทุกขั้นตอน',
-      'โรงงานระดับโปร',
-      'ดูแล้วหยุดไม่ได้',
-      'ไลน์ผลิตสวยมาก',
-      'ของเรียงเป๊ะเหมือนไวรัล',
-      'industrial ASMR',
-      'เห็นแล้วน่าเชื่อถือ',
-      'ผลิตสดจากโรงงาน'
-    ],
+    viralTones:[
+  "ผลิตยังไง",
+  "เบื้องหลังโรงงาน",
+  "ก่อนผลิต VS หลังผลิต",
+  "ทดสอบคุณภาพ",
+  "มาตรฐานโรงงาน",
+  "เปรียบเทียบวัสดุ",
+  "3 ขั้นตอนการผลิต",
+  "รีวิวสายการผลิต",
+  "แกะระบบให้ดู",
+  "ของจริงจากโรงงาน"
+],
+
+viralToneFrameworks:{
+  "ผลิตยังไง":"DEMO",
+  "เบื้องหลังโรงงาน":"POV",
+  "ก่อนผลิต VS หลังผลิต":"BEFORE_AFTER",
+  "ทดสอบคุณภาพ":"TEST",
+  "มาตรฐานโรงงาน":"SOCIAL_PROOF",
+  "เปรียบเทียบวัสดุ":"COMPARISON",
+  "3 ขั้นตอนการผลิต":"REASONS",
+  "รีวิวสายการผลิต":"REVIEW",
+  "แกะระบบให้ดู":"DEMO",
+  "ของจริงจากโรงงาน":"SOCIAL_PROOF"
+},
     factories: {
       F01: { name:'นาข้าวพื้นบ้าน', useFor:['ข้าวเปลือก','เกษตร','นา','เมล็ดพันธุ์'], visual:'ชาวนาไทย หมวกฟาง ทุ่งนาเขียว รถเกี่ยวข้าวหรือรางลำเลียงกลางนา' },
       F02: { name:'โรงสีข้าวชุมชน', useFor:['ข้าวสาร','ข้าวหอมมะลิ','rice'], visual:'โรงสีข้าวไทย กระสอบข้าว ฝุ่นแป้งบาง ๆ สายพานถุงข้าว' },
@@ -142,7 +386,14 @@ Final prompts only. No strategy explanation. No placeholder-only output. No JSON
       { title:'F13 อาหารเสริม/ยา', location:'cleanroom อาหารเสริม sterile white lab coat N95', view:'ขวดอาหารเสริมและกล่องเรียงบนสายพาน คนงานชุดกาวน์ตรวจ QC สองฝั่ง' },
       { title:'F12 คลังสินค้า', location:'คลังสินค้าชั้นวางสูง forklift และกล่องพัสดุ', view:'กล่องสินค้าบนสายพานยาวพุ่งเข้ากล้อง คนงานเสื้อสะท้อนแสงยืนสองฝั่ง' }
     ],
-    systemPrompt: `You are an INDUSTRIAL FACTORY CONVEYOR PROMPT DIRECTOR for Thai TikTok commerce, Veo3, Google Flow, Sora, Kling, Runway.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an INDUSTRIAL FACTORY CONVEYOR PROMPT DIRECTOR for Thai TikTok commerce, Veo3, Google Flow, Sora, Kling, Runway.
 
 MISSION:
 Create FINAL READY IMAGE PROMPT and VIDEO + AUDIO PROMPT in the factory conveyor style.
@@ -182,18 +433,31 @@ Return final prompts only. Do not return strategy notes. Image prompt must be on
     label: 'TikTok Live',
     description: 'สร้างทั้ง IMAGE PROMPT และ VIDEO + AUDIO PROMPT สำหรับภาพ/คลิปไลฟ์สด TikTok แบบสมจริง มี UI Live คอมเมนต์ หัวใจ Gift ตะกร้า และ CTA กดซื้อ',
     keywords: ['tiktok live', 'live', 'ไลฟ์', 'ไลฟ์สด', 'ขายไลฟ์', 'แม่ค้าไลฟ์', 'พ่อค้าไลฟ์', 'คอมเมนต์ไลฟ์', 'gift', 'ของขวัญไลฟ์', 'ตะกร้าไลฟ์'],
-    viralTones: [
-      'คนดูทะลุแสน',
-      'คอมเมนต์ถามรัว',
-      'โปรเฉพาะไลฟ์',
-      'ของใกล้หมด',
-      'Gift เด้งไม่หยุด',
-      'กดตะกร้าด่วน',
-      'ยอดวิวพุ่ง',
-      'แม่ค้าเอนเตอร์เทน',
-      'คนแห่แชร์ไลฟ์',
-      'รีวิวสดเห็นผลจริง'
-    ],
+    viralTones:[
+  "คนดูพุ่งเพราะอะไร",
+  "POV ไลฟ์ขายของ",
+  "เปิดไลฟ์จริง",
+  "รีวิวหลังไลฟ์",
+  "เทคนิคปักตะกร้า",
+  "ก่อนไลฟ์ VS หลังไลฟ์",
+  "เคสยอดขายจริง",
+  "เปรียบเทียบสคริปต์",
+  "ทดสอบ Hook",
+  "3 เทคนิคยอดขาย"
+],
+
+viralToneFrameworks:{
+  "คนดูพุ่งเพราะอะไร":"REASONS",
+  "POV ไลฟ์ขายของ":"POV",
+  "เปิดไลฟ์จริง":"DEMO",
+  "รีวิวหลังไลฟ์":"REVIEW",
+  "เทคนิคปักตะกร้า":"DEMO",
+  "ก่อนไลฟ์ VS หลังไลฟ์":"BEFORE_AFTER",
+  "เคสยอดขายจริง":"SOCIAL_PROOF",
+  "เปรียบเทียบสคริปต์":"COMPARISON",
+  "ทดสอบ Hook":"TEST",
+  "3 เทคนิคยอดขาย":"REASONS"
+},
     randomLocations: [
       'ห้องนอนโทนอุ่นพร้อมไฟไลฟ์และโต๊ะวางสินค้า',
       'โต๊ะเครื่องแป้ง beauty live setup พร้อม ring light',
@@ -226,7 +490,14 @@ Return final prompts only. Do not return strategy notes. Image prompt must be on
         view: 'ผู้ชายไทยไลฟ์ขายเก้าอี้พับ ยกเก้าอี้โชว์ความแข็งแรง ตอบคอมเมนต์เรื่องรับน้ำหนักและจัดส่งไว'
       }
     ],
-    systemPrompt: `You are a TikTok Live commerce prompt director for Thai market.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are a TikTok Live commerce prompt director for Thai market.
 Create FINAL READY IMAGE PROMPT and VIDEO + AUDIO PROMPT for a realistic TikTok Live selling scene.
 
 CORE OUTPUT:
@@ -273,13 +544,44 @@ STRICT NEGATIVE RULES:
     label: 'สินค้าติดป้าย',
     description: 'คอนเทนต์ขายของหน้าร้านแนวป้ายเหลือง ราคาช็อก ล้างสต๊อก คนหยุดดู',
     keywords: ['ป้าย', 'ล้างสต๊อก', 'ลดราคา', 'หน้าร้าน', 'clearance', 'sale'],
-    viralTones: ['ล้างสต๊อก', 'ของใกล้หมด', 'คนรุมซื้อ', 'ราคาช็อก', 'หมดแล้วหมดเลย'],
+    viralTones:[
+  "ก่อนติด VS หลังติด",
+  "ป้ายนี้ช่วยขาย",
+  "รีวิวหน้างาน",
+  "POV เจ้าของร้าน",
+  "เปรียบเทียบวัสดุ",
+  "ทดสอบกลางแดด",
+  "ลูกค้าบอกต่อ",
+  "3 จุดเด่น",
+  "ติดตั้งให้ดู",
+  "แกะงานจริง"
+],
+
+viralToneFrameworks:{
+  "ก่อนติด VS หลังติด":"BEFORE_AFTER",
+  "ป้ายนี้ช่วยขาย":"PROBLEM_SOLUTION",
+  "รีวิวหน้างาน":"REVIEW",
+  "POV เจ้าของร้าน":"POV",
+  "เปรียบเทียบวัสดุ":"COMPARISON",
+  "ทดสอบกลางแดด":"TEST",
+  "ลูกค้าบอกต่อ":"SOCIAL_PROOF",
+  "3 จุดเด่น":"REASONS",
+  "ติดตั้งให้ดู":"DEMO",
+  "แกะงานจริง":"UNBOXING"
+},
     examples: [
       { title: 'ทิชชู่ลดราคา', location: 'ห้างสรรพสินค้าช่วงลดราคา คนเดินพลุกพล่าน', view: 'กองทิชชู่สูงเป็นภูเขา ซูมป้ายเหลือง 50 บาท มือพนักงานแตะสินค้า คนเดินผ่านด้านหลังเบลอ' },
       { title: 'แบตเตอรี่โปรแรง', location: 'ร้านแบตเตอรี่แน่นสินค้า มีถนนด้านนอกเห็นคนผ่าน', view: 'ช่างใส่ถุงมือยกแบตขึ้นโชว์หน้ากล้อง ซูมป้ายเหลืองลดราคา 300 บาท ฉากหลังเต็มไปด้วยแบตเรียงแน่น' },
       { title: 'เก้าอี้ล้างสต๊อก', location: 'ร้านเฟอร์นิเจอร์แสงสว่างจัด เรียงสินค้าเต็มร้าน', view: 'เก้าอี้เรียงยาวเต็มร้าน มือคนจับเก้าอี้ตัวหน้า ซูมป้ายเหลืองลดราคา 250 บาท แพนกล้องเข้าอย่างเร็ว' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai สินค้าติดป้าย content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai สินค้าติดป้าย content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: สินค้าติดป้าย.
 
 Core objective:
@@ -324,13 +626,44 @@ Output quality:
     label: 'อาหารเสริม คนหยุดดู',
     description: 'ไวรัลคอนเทนต์อาหารเสริมแบบ stop-scroll เน้น hook แรง UGC trust และ compliant',
     keywords: ['วิตามิน', 'อาหารเสริม', 'สุขภาพ', 'บำรุง', 'routine', 'supplement'],
-    viralTones: ['คนหยุดดู', 'คนวัย 30+ ต้องดู', 'หลายคนพลาดสิ่งนี้', 'ดูแลตัวเองตอนนี้ยังทัน', 'ตัวช่วยรูทีนสุขภาพ'],
+    viralTones:[
+  "ก่อนกิน VS หลังกิน",
+  "ใช้จริง 7 วัน",
+  "ใช้จริง 30 วัน",
+  "POV คนไม่มีเวลา",
+  "ตอบคำถามยอดฮิต",
+  "รีวิวลูกค้าจริง",
+  "3 เหตุผลที่คนซื้อ",
+  "คุ้มไหม",
+  "ของแท้ดูยังไง",
+  "ทดสอบทั้งวัน"
+],
+
+viralToneFrameworks:{
+  "ก่อนกิน VS หลังกิน":"BEFORE_AFTER",
+  "ใช้จริง 7 วัน":"REVIEW",
+  "ใช้จริง 30 วัน":"REVIEW",
+  "POV คนไม่มีเวลา":"POV",
+  "ตอบคำถามยอดฮิต":"DEMO",
+  "รีวิวลูกค้าจริง":"SOCIAL_PROOF",
+  "3 เหตุผลที่คนซื้อ":"REASONS",
+  "คุ้มไหม":"REVIEW",
+  "ของแท้ดูยังไง":"DEMO",
+  "ทดสอบทั้งวัน":"TEST"
+},
     examples: [
       { title: 'วิตามินบำรุงสายตา', location: 'โต๊ะทำงานหรือห้องนั่งเล่นสะอาดน่าเชื่อถือ', view: 'เริ่มจากอาการล้าตาเวลาใช้มือถือทั้งวัน แล้วค่อยเปิดตัวสินค้าแบบ UGC นุ่มน่าเชื่อถือ' },
       { title: 'ตัวช่วยนอนหลับสบาย', location: 'ห้องนอนแสงอุ่น ผ่อนคลาย', view: 'เริ่มจากคนนอนไม่หลับ พลิกตัวบ่อย แล้วรีวิวรูทีนก่อนนอนแบบละมุน' },
       { title: 'อาหารเสริมข้อเข่า', location: 'ห้องนั่งเล่นบ้านครอบครัวหรือสวนหน้าบ้าน', view: 'เริ่มจากเดินขึ้นลงบันไดไม่คล่อง แล้วเล่า routine ดูแลตัวเองของผู้ใหญ่' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai อาหารเสริม คนหยุดดู content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai อาหารเสริม คนหยุดดู content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: อาหารเสริม คนหยุดดู.
 
 Core objective:
@@ -375,13 +708,44 @@ Output quality:
     label: 'อาหาร',
     description: 'คอนเทนต์อาหารพร้อมทานหรือวัตถุดิบแบบหยุดดูด้วยความหิวและความอยากกิน',
     keywords: ['อาหาร', 'ของกิน', 'อร่อย', 'หิว', 'food', 'กินอะไรดี'],
-    viralTones: ['หิวตอนดึกหยุดดู', 'เห็นแล้วน้ำลายไหล', 'คนซื้อซ้ำเยอะ', 'เมนูนี้ห้ามเลื่อน', 'หมดไวทุกวัน'],
+    viralTones:[
+  "คำแรกเป็นยังไง",
+  "เมนูห้ามพลาด",
+  "ชิมสดๆ",
+  "POV คนหิว",
+  "ก่อนเสิร์ฟ VS หลังเสิร์ฟ",
+  "เทียบเมนูดัง",
+  "ร้านนี้ดังเพราะอะไร",
+  "เปิดครัวให้ดู",
+  "3 เมนูต้องลอง",
+  "รีวิวตรงๆ"
+],
+
+viralToneFrameworks:{
+  "คำแรกเป็นยังไง":"REVIEW",
+  "เมนูห้ามพลาด":"REASONS",
+  "ชิมสดๆ":"TEST",
+  "POV คนหิว":"POV",
+  "ก่อนเสิร์ฟ VS หลังเสิร์ฟ":"BEFORE_AFTER",
+  "เทียบเมนูดัง":"COMPARISON",
+  "ร้านนี้ดังเพราะอะไร":"SOCIAL_PROOF",
+  "เปิดครัวให้ดู":"DEMO",
+  "3 เมนูต้องลอง":"REASONS",
+  "รีวิวตรงๆ":"REVIEW"
+},
     examples: [
       { title: 'น้ำพริกกะปิแม่บ้าน', location: 'โกดังขายน้ำพริกหรือครัวไทย', view: 'เปิดด้วยช้อนตักน้ำพริกใส่ข้าวสวยร้อน ๆ เห็นเนื้อชัด ซูมฉลาก' },
       { title: 'ข้าวหอมมะลิถุงใหญ่', location: 'ร้านข้าวสารหรือบ้านครัวไทย', view: 'ฉีกถุงเห็นเมล็ดข้าวสวยเรียงตัวสวย ซูมความเงาและไอน้ำตอนหุง' },
       { title: 'หมูกรอบพร้อมทาน', location: 'เคาน์เตอร์ครัวหรือโต๊ะอาหาร', view: 'หักหมูกรอบให้ได้ยินเสียงกรอบ แล้วจัดเสิร์ฟบนข้าวร้อน ๆ' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai อาหาร content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai อาหาร content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: อาหาร.
 
 Core objective:
@@ -426,13 +790,44 @@ Output quality:
     label: 'ขนมของขบเคี้ยว',
     description: 'คอนเทนต์ขนมที่เน้นเสียงกรอบ เคี้ยวมัน เพลินมือ และซื้อซ้ำง่าย',
     keywords: ['ขนม', 'ของกินเล่น', 'กรอบ', 'snack', 'อร่อย', 'รีวิวขนม'],
-    viralTones: ['หยุดดูถ้าสายกินเล่น', 'กรอบจนต้องเปิดเสียง', 'กินเพลินมาก', 'ถุงเดียวไม่เคยพอ', 'คนซื้อซ้ำเยอะ'],
+    viralTones:[
+  "กัดคำแรก",
+  "รสไหนอร่อยสุด",
+  "ลองชิมจริง",
+  "POV สายกิน",
+  "ของมันต้องลอง",
+  "รีวิวไม่อวย",
+  "ก่อนเปิด VS หลังเปิด",
+  "ลูกค้าซื้อซ้ำ",
+  "3 รสยอดฮิต",
+  "แกะซองให้ดู"
+],
+
+viralToneFrameworks:{
+  "กัดคำแรก":"REVIEW",
+  "รสไหนอร่อยสุด":"COMPARISON",
+  "ลองชิมจริง":"TEST",
+  "POV สายกิน":"POV",
+  "ของมันต้องลอง":"REASONS",
+  "รีวิวไม่อวย":"REVIEW",
+  "ก่อนเปิด VS หลังเปิด":"UNBOXING",
+  "ลูกค้าซื้อซ้ำ":"SOCIAL_PROOF",
+  "3 รสยอดฮิต":"REASONS",
+  "แกะซองให้ดู":"DEMO"
+},
     examples: [
       { title: 'มันฝรั่งทอดรสชีส', location: 'มุมโต๊ะทำงานหรือห้องนั่งเล่น', view: 'เปิดถุงแล้วหยิบชิ้นใหญ่เข้ากล้อง เห็นผงชีสเต็ม ๆ' },
       { title: 'ขนมอบกรอบสาหร่าย', location: 'โต๊ะ snack time สีสดใส', view: 'ฉีกชิ้นให้เห็น texture กรอบเบา แล้ววางข้างแก้วน้ำเย็น' },
       { title: 'ถั่วอบกรอบรวมรส', location: 'โต๊ะทำงานหรือรถยนต์', view: 'เทขนมลงฝ่ามือแล้วเทกลับถุงให้ดูน่ากินและพกง่าย' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ขนมของขบเคี้ยว content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ขนมของขบเคี้ยว content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: ขนมของขบเคี้ยว.
 
 Core objective:
@@ -477,13 +872,44 @@ Output quality:
     label: 'แม่และเด็ก',
     description: 'คอนเทนต์แม่และเด็กที่เน้นความอ่อนโยน ปลอดภัย ใช้ง่าย และชีวิตแม่ง่ายขึ้น',
     keywords: ['แม่ ๆ ต้องดู', 'ของมันต้องมี', 'ลูกสบายแม่แฮปปี้', 'บ้านไหนมีลูกต้องรู้', 'momlife'],
-    viralTones: ['แม่ ๆ ต้องดู', 'ลูกสบายแม่แฮปปี้', 'ของมันต้องมีสำหรับบ้านที่มีลูก', 'ใช้แล้วชีวิตง่ายขึ้น', 'แม่บ้านบอกต่อ'],
+    viralTones:[
+  "คุณแม่ต้องดู",
+  "รีวิวจากแม่จริง",
+  "ก่อนใช้ VS หลังใช้",
+  "แก้ปัญหาลูกน้อย",
+  "ทดสอบจริง",
+  "ใช้ทุกวัน",
+  "3 เหตุผลที่ควรมี",
+  "ของมันต้องมี",
+  "เปิดกล่องให้ดู",
+  "เปรียบเทียบก่อนซื้อ"
+],
+
+viralToneFrameworks:{
+  "คุณแม่ต้องดู":"POV",
+  "รีวิวจากแม่จริง":"SOCIAL_PROOF",
+  "ก่อนใช้ VS หลังใช้":"BEFORE_AFTER",
+  "แก้ปัญหาลูกน้อย":"PROBLEM_SOLUTION",
+  "ทดสอบจริง":"TEST",
+  "ใช้ทุกวัน":"REVIEW",
+  "3 เหตุผลที่ควรมี":"REASONS",
+  "ของมันต้องมี":"REASONS",
+  "เปิดกล่องให้ดู":"UNBOXING",
+  "เปรียบเทียบก่อนซื้อ":"COMPARISON"
+},
     examples: [
       { title: 'ผ้าอ้อมเด็กซึมซับดี', location: 'ห้องเด็กอ่อนหรือมุมครอบครัว', view: 'หยิบแพ็กผ้าอ้อมแล้วสาธิตความนุ่มและซึมซับอย่างละมุน' },
       { title: 'ครีมทาผิวเด็กอ่อนโยน', location: 'โต๊ะเปลี่ยนผ้าอ้อมสะอาด', view: 'แม่บีบครีมลงมือแล้วลูบเบา ๆ เน้นความละมุน' },
       { title: 'ขวดนมคอใหญ่ล้างง่าย', location: 'ครัวบ้านหรือมุมเตรียมนม', view: 'ประกอบขวดนมให้ดูทีละชิ้น เน้นความง่ายในการล้าง' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai แม่และเด็ก content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai แม่และเด็ก content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: แม่และเด็ก.
 
 Core objective:
@@ -528,13 +954,44 @@ Output quality:
     label: 'เสื้อผ้าแฟชั่น',
     description: 'คอนเทนต์แฟชั่นที่เน้น look แพง แมตช์ง่าย ใส่แล้วมั่นใจ',
     keywords: ['ใส่แล้วดูแพง', 'แมตช์ง่ายมาก', 'ลุคนี้คนทัก', 'แฟชั่นกำลังมา', 'ootd'],
-    viralTones: ['ใส่แล้วดูแพง', 'สาว ๆ ต้องดู', 'ลุคนี้คนทักแน่', 'แมตช์ง่ายมาก', 'หมดไวทุกไซซ์'],
+    viralTones:[
+  "ใส่แล้วดูแพง",
+  "Before → After",
+  "แต่งตัว 3 ลุค",
+  "POV ไปเที่ยว",
+  "POV ไปทำงาน",
+  "Mix & Match",
+  "เทียบไซส์",
+  "รีวิวจริง",
+  "ของมันต้องมี",
+  "หลักร้อยลุคหลักพัน"
+],
+
+viralToneFrameworks:{
+  "ใส่แล้วดูแพง":"DEMO",
+  "Before → After":"BEFORE_AFTER",
+  "แต่งตัว 3 ลุค":"DEMO",
+  "POV ไปเที่ยว":"POV",
+  "POV ไปทำงาน":"POV",
+  "Mix & Match":"DEMO",
+  "เทียบไซส์":"COMPARISON",
+  "รีวิวจริง":"REVIEW",
+  "ของมันต้องมี":"REASONS",
+  "หลักร้อยลุคหลักพัน":"SOCIAL_PROOF"
+},
     examples: [
       { title: 'เดรสมินิมอลสีครีม', location: 'ห้องลองเสื้อหรือมุมกระจกเต็มตัว', view: 'หมุนตัวให้เห็นฟอล์มผ้าและการทิ้งตัว' },
       { title: 'เสื้อเชิ้ตโอเวอร์ไซซ์', location: 'ห้องแต่งตัวโทนคลีน', view: 'หยิบเสื้อทาบตัวกับกางเกงหลายลุคให้เห็นความแมตช์ง่าย' },
       { title: 'กางเกงขายาวทรงสวย', location: 'มุมแฟชั่นในบ้านหรือสตูดิโอ', view: 'ซูมช่วงเอวและทรงขาตอนเดินให้เห็นความพรางขา' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai เสื้อผ้าแฟชั่น content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai เสื้อผ้าแฟชั่น content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: เสื้อผ้าแฟชั่น.
 
 Core objective:
@@ -579,13 +1036,44 @@ Output quality:
     label: 'รองเท้า',
     description: 'คอนเทนต์รองเท้าที่เน้นความสวย ใส่สบาย เดินนุ่ม และใช้ได้หลายลุค',
     keywords: ['ใส่แล้วเดินสบาย', 'คู่นี้ต้องมี', 'ใส่ได้ทุกวัน', 'หมดไวทุกไซซ์', 'รองเท้าสวย'],
-    viralTones: ['คู่นี้ต้องมี', 'ใส่แล้วเดินสบาย', 'สาว ๆ ห้ามพลาด', 'ใส่ได้ทุกวัน', 'ลดแล้วคุ้มมาก'],
+    viralTones:[
+  "เดินทั้งวันไหวไหม",
+  "เทียบรุ่นฮิต",
+  "ใส่แล้วสูงขึ้น",
+  "POV คนเดินเยอะ",
+  "Before → After",
+  "ลองใส่จริง",
+  "กันลื่นไหม",
+  "รองรับน้ำหนัก",
+  "รีวิวหลังใช้",
+  "คุ้มไหม"
+],
+
+viralToneFrameworks:{
+  "เดินทั้งวันไหวไหม":"TEST",
+  "เทียบรุ่นฮิต":"COMPARISON",
+  "ใส่แล้วสูงขึ้น":"DEMO",
+  "POV คนเดินเยอะ":"POV",
+  "Before → After":"BEFORE_AFTER",
+  "ลองใส่จริง":"TEST",
+  "กันลื่นไหม":"TEST",
+  "รองรับน้ำหนัก":"TEST",
+  "รีวิวหลังใช้":"REVIEW",
+  "คุ้มไหม":"REVIEW"
+},
     examples: [
       { title: 'รองเท้าผ้าใบลำลอง', location: 'พื้นทางเดินหรือมุมแฟชั่น', view: 'ใส่แล้วเดินเข้ากล้องให้เห็นทรงและความนุ่ม' },
       { title: 'รองเท้าแตะนุ่ม', location: 'ห้องนั่งเล่นหรือห้องนอน', view: 'กดพื้นรองเท้าให้ดูความนุ่ม แล้วสวมเดินสบาย ๆ' },
       { title: 'รองเท้าทำงานหนังเรียบ', location: 'ออฟฟิศหรือโถงบ้าน', view: 'ซูมผิววัสดุแล้วตัดภาพตอนใส่กับกางเกงทำงาน' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai รองเท้า content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai รองเท้า content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: รองเท้า.
 
 Core objective:
@@ -630,13 +1118,44 @@ Output quality:
     label: 'ชุดชั้นใน',
     description: 'คอนเทนต์ชุดชั้นในเน้นความมั่นใจ ความกระชับ เนียนสวย และใส่สบาย',
     keywords: ['ใส่แล้วมั่นใจ', 'เนียนสวย', 'ใส่สบายทั้งวัน', 'สาว ๆ ต้องดู', 'ของดีบอกต่อ'],
-    viralTones: ['ใส่แล้วมั่นใจ', 'สาว ๆ ต้องดู', 'เนียนมากจนต้องบอกต่อ', 'ใส่สบายทั้งวัน', 'ตัวนี้คนถามเยอะ'],
+    viralTones:[
+  "ใส่สบายจริงไหม",
+  "ก่อนใส่ VS หลังใส่",
+  "รีวิวผู้ใช้จริง",
+  "POV สาวทำงาน",
+  "เทียบรุ่น",
+  "ของมันต้องมี",
+  "ใช้ทั้งวัน",
+  "3 จุดเด่น",
+  "แกะกล่อง",
+  "สาธิตการใช้งาน"
+],
+
+viralToneFrameworks:{
+  "ใส่สบายจริงไหม":"TEST",
+  "ก่อนใส่ VS หลังใส่":"BEFORE_AFTER",
+  "รีวิวผู้ใช้จริง":"SOCIAL_PROOF",
+  "POV สาวทำงาน":"POV",
+  "เทียบรุ่น":"COMPARISON",
+  "ของมันต้องมี":"REASONS",
+  "ใช้ทั้งวัน":"REVIEW",
+  "3 จุดเด่น":"REASONS",
+  "แกะกล่อง":"UNBOXING",
+  "สาธิตการใช้งาน":"DEMO"
+},
     examples: [
       { title: 'บราไร้โครงใส่สบาย', location: 'ห้องแต่งตัวโทนคลีน', view: 'โชว์เนื้อผ้าและทรงถ้วยแบบสุภาพ ไม่เน้นหวือหวา' },
       { title: 'กางเกงชั้นในไร้ขอบ', location: 'โต๊ะจัดวางสินค้าคลีน', view: 'เน้นเนื้อผ้ายืดหยุ่นและความเรียบเนียนใต้ชุด' },
       { title: 'บรายกทรงทรงสวย', location: 'มุมแฟชั่นในห้องแต่งตัว', view: 'โชว์สายและตะขอ พร้อมบอกฟีลใส่สบายมั่นใจ' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ชุดชั้นใน content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ชุดชั้นใน content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: ชุดชั้นใน.
 
 Core objective:
@@ -681,13 +1200,44 @@ Output quality:
     label: 'ครีมบำรุงผิว',
     description: 'คอนเทนต์สกินแคร์เน้นรูทีนผิวสวย น่าใช้ เนื้อสัมผัสดี และน่าหยุดดู',
     keywords: ['รูทีนผิวสวย', 'สาวรักผิวต้องดู', 'เนื้อดีมาก', 'คนถามเยอะ', 'skincare'],
-    viralTones: ['ผิวโทรมต้องดู', 'รูทีนนี้คนถามเยอะ', 'เนื้อครีมสวยมาก', 'ใช้แล้วชอบจนบอกต่อ', 'สาวรักผิวต้องดู'],
+    viralTones:[
+  "ผิวพังต้องดู",
+  "ก่อนใช้ VS หลังใช้",
+  "ใช้จริง 7 วัน",
+  "ใช้จริง 30 วัน",
+  "POV คนนอนดึก",
+  "ทดสอบจริง",
+  "รีวิวไม่อวย",
+  "เทียบตัวดัง",
+  "ลูกค้าบอกต่อ",
+  "3 เหตุผลที่ควรใช้"
+],
+
+viralToneFrameworks:{
+  "ผิวพังต้องดู":"PROBLEM_SOLUTION",
+  "ก่อนใช้ VS หลังใช้":"BEFORE_AFTER",
+  "ใช้จริง 7 วัน":"REVIEW",
+  "ใช้จริง 30 วัน":"REVIEW",
+  "POV คนนอนดึก":"POV",
+  "ทดสอบจริง":"TEST",
+  "รีวิวไม่อวย":"REVIEW",
+  "เทียบตัวดัง":"COMPARISON",
+  "ลูกค้าบอกต่อ":"SOCIAL_PROOF",
+  "3 เหตุผลที่ควรใช้":"REASONS"
+},
     examples: [
       { title: 'ครีมบำรุงผิวหน้าชุ่มชื้น', location: 'โต๊ะ vanity หรือห้องน้ำคลีน', view: 'แตะเนื้อครีมบนหลังมือแล้วเกลี่ยให้เห็น texture' },
       { title: 'เซรั่มผิวโกลว์', location: 'โต๊ะสกินแคร์แสงเช้า', view: 'หยดเซรั่มบนผิวแล้วซูมความฉ่ำแบบใกล้' },
       { title: 'โลชั่นผิวกายเนียนนุ่ม', location: 'ห้องนอนหรือโต๊ะเครื่องแป้ง', view: 'ทาโลชั่นที่แขนแล้วแพนให้เห็นความเงาเบา ๆ' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ครีมบำรุงผิว content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ครีมบำรุงผิว content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: ครีมบำรุงผิว.
 
 Core objective:
@@ -732,13 +1282,44 @@ Output quality:
     label: 'ของใช้ในบ้าน',
     description: 'คอนเทนต์ของใช้ในบ้านที่ทำให้ชีวิตง่าย บ้านเป็นระเบียบ และคนอยากกดซื้อทันที',
     keywords: ['ของมันต้องมี', 'บ้านเป็นระเบียบขึ้น', 'ใช้แล้วชีวิตง่ายขึ้น', 'แม่บ้านชอบมาก', 'homehack'],
-    viralTones: ['ของมันต้องมีในบ้าน', 'ใช้แล้วชีวิตง่ายขึ้น', 'บ้านเป็นระเบียบขึ้นเยอะ', 'คนใช้บ้านต้องดู', 'คุ้มมากตอนนี้'],
+    viralTones:[
+  "บ้านรกต้องดู",
+  "ก่อนจัด VS หลังจัด",
+  "รีวิวแม่บ้าน",
+  "ทดสอบจริง",
+  "บ้านเล็กต้องมี",
+  "เปรียบเทียบก่อนซื้อ",
+  "ใช้ทุกวัน",
+  "ลูกค้าซื้อซ้ำ",
+  "3 ฟังก์ชันเด็ด",
+  "ซื้อครั้งเดียวจบ"
+],
+
+viralToneFrameworks:{
+  "บ้านรกต้องดู":"PROBLEM_SOLUTION",
+  "ก่อนจัด VS หลังจัด":"BEFORE_AFTER",
+  "รีวิวแม่บ้าน":"SOCIAL_PROOF",
+  "ทดสอบจริง":"TEST",
+  "บ้านเล็กต้องมี":"POV",
+  "เปรียบเทียบก่อนซื้อ":"COMPARISON",
+  "ใช้ทุกวัน":"REVIEW",
+  "ลูกค้าซื้อซ้ำ":"SOCIAL_PROOF",
+  "3 ฟังก์ชันเด็ด":"REASONS",
+  "ซื้อครั้งเดียวจบ":"REASONS"
+},
     examples: [
       { title: 'กล่องเก็บของอเนกประสงค์', location: 'ห้องเก็บของหรือห้องนั่งเล่น', view: 'ก่อน-หลังการจัดเก็บแบบง่ายให้เห็นพื้นที่เพิ่ม' },
       { title: 'ชั้นวางของมินิมอล', location: 'มุมบ้านโทนคลีน', view: 'ประกอบง่ายและวางของได้จริงหลายชั้น' },
       { title: 'ที่แขวนอเนกประสงค์', location: 'ห้องครัวหรือห้องน้ำ', view: 'แปะแล้วแขวนของทันทีให้เห็นว่าใช้งานง่าย' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ของใช้ในบ้าน content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ของใช้ในบ้าน content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: ของใช้ในบ้าน.
 
 Core objective:
@@ -783,13 +1364,44 @@ Output quality:
     label: 'ชุดเครื่องนอน',
     description: 'คอนเทนต์เครื่องนอนเน้นความนุ่ม น่านอน สีสวย และห้องดูแพงขึ้น',
     keywords: ['นุ่มมากจนอยากนอน', 'สายแต่งห้องต้องดู', 'ห้องดูแพงขึ้น', 'ผ้านุ่มจริง', 'bedroom'],
-    viralTones: ['สายแต่งห้องต้องดู', 'นุ่มมากจนอยากนอน', 'เปลี่ยนห้องให้ดูแพง', 'ผ้านุ่มจริง', 'คุ้มมากตอนนี้'],
+    viralTones:[
+  "ปวดหลังต้องดู",
+  "Before → After ห้องนอน",
+  "กดนุ่มจริงไหม",
+  "กระโดดทดสอบ",
+  "POV แขกมาค้าง",
+  "POV ห้องคอนโด",
+  "2 นิ้ว VS 4 นิ้ว",
+  "นอนจริงทั้งคืน",
+  "แม่บ้านรีวิว",
+  "โรงแรมใช้แบบนี้"
+],
+
+viralToneFrameworks:{
+  "ปวดหลังต้องดู":"PROBLEM_SOLUTION",
+  "Before → After ห้องนอน":"BEFORE_AFTER",
+  "กดนุ่มจริงไหม":"TEST",
+  "กระโดดทดสอบ":"TEST",
+  "POV แขกมาค้าง":"POV",
+  "POV ห้องคอนโด":"POV",
+  "2 นิ้ว VS 4 นิ้ว":"COMPARISON",
+  "นอนจริงทั้งคืน":"REVIEW",
+  "แม่บ้านรีวิว":"SOCIAL_PROOF",
+  "โรงแรมใช้แบบนี้":"SOCIAL_PROOF"
+},
     examples: [
       { title: 'ชุดผ้าปูที่นอนมินิมอล', location: 'ห้องนอนแสงเช้า', view: 'ปูเตียงแล้วลูบผ้าให้เห็น texture นุ่ม' },
       { title: 'ผ้านวมฟูเบา', location: 'ห้องนอนโทนอุ่น', view: 'โยนผ้านวมลงเตียงให้ฟูตัวสวยแล้วซูมลายผ้า' },
       { title: 'ปลอกหมอนเซ็ตพรีเมียม', location: 'หัวเตียงจัดสวย', view: 'จัดหมอนเรียงแล้วซูมความเนียนของผ้า' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ชุดเครื่องนอน content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ชุดเครื่องนอน content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: ชุดเครื่องนอน.
 
 Core objective:
@@ -834,13 +1446,44 @@ Output quality:
     label: 'ของใช้ในครัว',
     description: 'คอนเทนต์ของใช้ในครัวเน้นสะดวก ประหยัดเวลา และน่าใช้จริงในบ้าน',
     keywords: ['แม่บ้านต้องมี', 'เข้าครัวง่ายขึ้น', 'ใช้แล้วเร็วขึ้น', 'ครัวเป็นระเบียบ', 'kitchenhack'],
-    viralTones: ['เข้าครัวง่ายขึ้นมาก', 'แม่บ้านต้องมี', 'ใช้แล้วเร็วขึ้น', 'ครัวเป็นระเบียบ', 'ของมันต้องมี'],
+    viralTones:[
+  "ทำอาหารง่ายขึ้น",
+  "ทดสอบจริง",
+  "ก่อนใช้ VS หลังใช้",
+  "รีวิวแม่บ้าน",
+  "3 เมนูใน 5 นาที",
+  "เทียบรุ่น",
+  "ใช้งานจริง",
+  "ของมันต้องมี",
+  "ลูกค้าบอกต่อ",
+  "แกะกล่อง"
+],
+
+viralToneFrameworks:{
+  "ทำอาหารง่ายขึ้น":"PROBLEM_SOLUTION",
+  "ทดสอบจริง":"TEST",
+  "ก่อนใช้ VS หลังใช้":"BEFORE_AFTER",
+  "รีวิวแม่บ้าน":"SOCIAL_PROOF",
+  "3 เมนูใน 5 นาที":"DEMO",
+  "เทียบรุ่น":"COMPARISON",
+  "ใช้งานจริง":"REVIEW",
+  "ของมันต้องมี":"REASONS",
+  "ลูกค้าบอกต่อ":"SOCIAL_PROOF",
+  "แกะกล่อง":"UNBOXING"
+},
     examples: [
       { title: 'กล่องเก็บอาหารฝาล็อก', location: 'เคาน์เตอร์ครัวคลีน', view: 'เปิดปิดฝาให้เห็นแน่นหนาและเก็บอาหารได้เป็นระเบียบ' },
       { title: 'หม้อหุงข้าวใบเล็ก', location: 'ครัวบ้านจริง', view: 'กดปุ่มใช้งานจริงแล้วซูมหม้อขนาดกำลังดี' },
       { title: 'เขียงพับได้พร้อมกรอง', location: 'ซิงก์ล้างจานหรือเคาน์เตอร์', view: 'สับแล้วเทลงหม้อได้ง่ายในช็อตเดียว' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ของใช้ในครัว content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ของใช้ในครัว content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: ของใช้ในครัว.
 
 Core objective:
@@ -885,13 +1528,44 @@ Output quality:
     label: 'ของใช้ในห้องน้ำ',
     description: 'คอนเทนต์ของใช้ห้องน้ำเน้นสะอาด เป็นระเบียบ และใช้ง่ายทุกวัน',
     keywords: ['ห้องน้ำดูดีขึ้น', 'ใช้แล้วเป็นระเบียบ', 'ของมันต้องมี', 'บ้านสะอาดขึ้น', 'bathroom'],
-    viralTones: ['ห้องน้ำดูดีขึ้นทันที', 'ของมันต้องมีในห้องน้ำ', 'ใช้แล้วเป็นระเบียบ', 'บ้านสะอาดขึ้น', 'ชิ้นเล็กแต่ดีมาก'],
+    viralTones:[
+  "ห้องน้ำเล็กต้องดู",
+  "ก่อนติดตั้ง VS หลังติดตั้ง",
+  "รีวิวจริง",
+  "ทดสอบกันน้ำ",
+  "เทียบรุ่น",
+  "ใช้ทุกวัน",
+  "3 จุดเด่น",
+  "ลูกค้าบอกต่อ",
+  "แก้ปัญหาห้องน้ำ",
+  "ของมันต้องมี"
+],
+
+viralToneFrameworks:{
+  "ห้องน้ำเล็กต้องดู":"PROBLEM_SOLUTION",
+  "ก่อนติดตั้ง VS หลังติดตั้ง":"BEFORE_AFTER",
+  "รีวิวจริง":"REVIEW",
+  "ทดสอบกันน้ำ":"TEST",
+  "เทียบรุ่น":"COMPARISON",
+  "ใช้ทุกวัน":"REVIEW",
+  "3 จุดเด่น":"REASONS",
+  "ลูกค้าบอกต่อ":"SOCIAL_PROOF",
+  "แก้ปัญหาห้องน้ำ":"PROBLEM_SOLUTION",
+  "ของมันต้องมี":"REASONS"
+},
     examples: [
       { title: 'ชั้นวางของในห้องน้ำ', location: 'ห้องน้ำคลีน', view: 'ติดชั้นแล้ววางของใช้ประจำวันให้ดูเป็นระเบียบ' },
       { title: 'ที่บีบยาสีฟันอัตโนมัติ', location: 'อ่างล้างหน้า', view: 'กดใช้จริงให้เห็นความสะดวก' },
       { title: 'พรมเช็ดเท้าแห้งไว', location: 'หน้าห้องน้ำ', view: 'เหยียบแล้วซูมพื้นผิวซึมน้ำไว' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ของใช้ในห้องน้ำ content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai ของใช้ในห้องน้ำ content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: ของใช้ในห้องน้ำ.
 
 Core objective:
@@ -936,13 +1610,44 @@ Output quality:
     label: 'อุปกรณ์ซักล้าง',
     description: 'คอนเทนต์งานซักล้างเน้นสะอาดง่าย ประหยัดแรง และเห็นผลลัพธ์ชัด',
     keywords: ['งานบ้านง่ายขึ้น', 'บ้านสะอาดขึ้น', 'แม่บ้านต้องดู', 'ซักล้างสบายขึ้น', 'cleaninghack'],
-    viralTones: ['แม่บ้านต้องดู', 'งานบ้านง่ายขึ้น', 'ซักล้างสบายขึ้นเยอะ', 'บ้านสะอาดขึ้น', 'ใช้แล้วชอบมาก'],
+    viralTones:[
+  "ซักสะอาดจริงไหม",
+  "ก่อนซัก VS หลังซัก",
+  "ทดสอบคราบหนัก",
+  "รีวิวแม่บ้าน",
+  "ใช้จริงทุกวัน",
+  "เทียบสูตร",
+  "3 เหตุผลที่ควรใช้",
+  "ลูกค้าซื้อซ้ำ",
+  "ของมันต้องมี",
+  "POV คนซักผ้าบ่อย"
+],
+
+viralToneFrameworks:{
+  "ซักสะอาดจริงไหม":"TEST",
+  "ก่อนซัก VS หลังซัก":"BEFORE_AFTER",
+  "ทดสอบคราบหนัก":"TEST",
+  "รีวิวแม่บ้าน":"SOCIAL_PROOF",
+  "ใช้จริงทุกวัน":"REVIEW",
+  "เทียบสูตร":"COMPARISON",
+  "3 เหตุผลที่ควรใช้":"REASONS",
+  "ลูกค้าซื้อซ้ำ":"SOCIAL_PROOF",
+  "ของมันต้องมี":"REASONS",
+  "POV คนซักผ้าบ่อย":"POV"
+},
     examples: [
       { title: 'ผงซักฟอกกลิ่นหอม', location: 'มุมซักผ้าหรือห้องซักรีด', view: 'เทผงซักฟอกลงเครื่องพร้อมซูมบรรจุภัณฑ์' },
       { title: 'น้ำยาปรับผ้านุ่ม', location: 'ห้องซักผ้า', view: 'เทน้ำยาลงฝาแล้วซูมความเข้มข้น' },
       { title: 'แปรงขัดอเนกประสงค์', location: 'พื้นห้องน้ำหรือมุมบ้าน', view: 'ขัดคราบด้วยแรงน้อยให้เห็นความสะดวก' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai อุปกรณ์ซักล้าง content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai อุปกรณ์ซักล้าง content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: อุปกรณ์ซักล้าง.
 
 Core objective:
@@ -987,13 +1692,44 @@ Output quality:
     label: 'เครื่องใช้ไฟฟ้า',
     description: 'คอนเทนต์เครื่องใช้ไฟฟ้าเน้นฟังก์ชันคุ้มค่า ใช้ง่าย และช่วยชีวิตประจำวัน',
     keywords: ['ของมันต้องมี', 'ชีวิตง่ายขึ้นมาก', 'ลดแล้วคุ้ม', 'เครื่องนี้คนถามเยอะ', 'gadget'],
-    viralTones: ['ของมันต้องมี', 'ชีวิตง่ายขึ้นมาก', 'ฟังก์ชันนี้ดีมาก', 'ลดแล้วคุ้ม', 'เครื่องนี้คนถามเยอะ'],
+    viralTones:[
+  "ทดลองใช้จริง",
+  "ก่อนใช้ VS หลังใช้",
+  "ฟีเจอร์ลับ",
+  "เทียบรุ่น",
+  "คุ้มไหม",
+  "รีวิวหลังใช้",
+  "ลูกค้าบอกต่อ",
+  "3 ฟังก์ชันเด็ด",
+  "ของมันต้องมี",
+  "แกะกล่อง"
+],
+
+viralToneFrameworks:{
+  "ทดลองใช้จริง":"TEST",
+  "ก่อนใช้ VS หลังใช้":"BEFORE_AFTER",
+  "ฟีเจอร์ลับ":"DEMO",
+  "เทียบรุ่น":"COMPARISON",
+  "คุ้มไหม":"REVIEW",
+  "รีวิวหลังใช้":"REVIEW",
+  "ลูกค้าบอกต่อ":"SOCIAL_PROOF",
+  "3 ฟังก์ชันเด็ด":"REASONS",
+  "ของมันต้องมี":"REASONS",
+  "แกะกล่อง":"UNBOXING"
+},
     examples: [
       { title: 'พัดลมพกพาแรงลมดี', location: 'โต๊ะทำงานหรือกลางแจ้ง', view: 'เปิดเครื่องแล้วซูมแรงลมและขนาดพกง่าย' },
       { title: 'เครื่องปั่นน้ำผลไม้พกพา', location: 'ครัวหรือโต๊ะอาหาร', view: 'ปั่นผลไม้จริงให้เห็นการทำงานชัด' },
       { title: 'เครื่องดูดฝุ่นไร้สาย', location: 'ห้องนั่งเล่น', view: 'ดูดเศษผงจริงให้เห็นความไวและคล่องตัว' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai เครื่องใช้ไฟฟ้า content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai เครื่องใช้ไฟฟ้า content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: เครื่องใช้ไฟฟ้า.
 
 Core objective:
@@ -1038,13 +1774,44 @@ Output quality:
     label: 'อุปกรณ์ทำสวน',
     description: 'คอนเทนต์ทำสวนเน้นใช้งานง่าย ปลูกสนุก และเห็นพื้นที่ดูดีขึ้น',
     keywords: ['สายปลูกต้องดู', 'สวนดูดีขึ้น', 'คนรักต้นไม้ต้องมี', 'ใช้ง่ายมาก', 'gardenlife'],
-    viralTones: ['สายปลูกต้องดู', 'สวนดูดีขึ้นทันที', 'ใช้ง่ายมาก', 'คนรักต้นไม้ต้องมี', 'ของมันต้องมี'],
+    viralTones:[
+  "สวนสวยขึ้นจริงไหม",
+  "ก่อนปลูก VS หลังปลูก",
+  "รีวิวคนรักสวน",
+  "ทดสอบจริง",
+  "3 เหตุผลที่ควรมี",
+  "ลูกค้าบอกต่อ",
+  "เปรียบเทียบก่อนซื้อ",
+  "ของมันต้องมี",
+  "POV คนรักสวน",
+  "แกะกล่อง"
+],
+
+viralToneFrameworks:{
+  "สวนสวยขึ้นจริงไหม":"TEST",
+  "ก่อนปลูก VS หลังปลูก":"BEFORE_AFTER",
+  "รีวิวคนรักสวน":"SOCIAL_PROOF",
+  "ทดสอบจริง":"TEST",
+  "3 เหตุผลที่ควรมี":"REASONS",
+  "ลูกค้าบอกต่อ":"SOCIAL_PROOF",
+  "เปรียบเทียบก่อนซื้อ":"COMPARISON",
+  "ของมันต้องมี":"REASONS",
+  "POV คนรักสวน":"POV",
+  "แกะกล่อง":"UNBOXING"
+},
     examples: [
       { title: 'บัวรดน้ำแรงดันดี', location: 'สวนหน้าบ้าน', view: 'รดน้ำต้นไม้ให้เห็นละอองสวยและจับถนัดมือ' },
       { title: 'กรรไกรตัดแต่งกิ่ง', location: 'มุมสวน', view: 'ตัดกิ่งเล็กให้เห็นคมและใช้ง่าย' },
       { title: 'ถุงมือทำสวนกันเปื้อน', location: 'สวนบ้าน', view: 'ใส่ถุงมือหยิบดินและต้นไม้ให้เห็นคล่องตัว' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai อุปกรณ์ทำสวน content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai อุปกรณ์ทำสวน content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: อุปกรณ์ทำสวน.
 
 Core objective:
@@ -1089,13 +1856,44 @@ Output quality:
     label: 'พืชผักและผลไม้',
     description: 'คอนเทนต์ผักผลไม้เน้นความสด สีสวย น่ากิน และความคุ้มค่า',
     keywords: ['สดมากต้องดู', 'ของสดเข้าวันนี้', 'สายสุขภาพต้องดู', 'ซื้อแล้วคุ้ม', 'fresh'],
-    viralTones: ['สดมากต้องดู', 'สายสุขภาพต้องดู', 'ซื้อแล้วคุ้ม', 'ของสดเข้าวันนี้', 'เห็นแล้วอยากกิน'],
+    viralTones:[
+  "สดจริงไหม",
+  "ชิมให้ดู",
+  "ก่อนเก็บ VS หลังเก็บ",
+  "รีวิวลูกค้าจริง",
+  "เปรียบเทียบคุณภาพ",
+  "3 จุดเด่น",
+  "ของมันต้องลอง",
+  "POV สายสุขภาพ",
+  "ทดสอบความสด",
+  "ลูกค้าซื้อซ้ำ"
+],
+
+viralToneFrameworks:{
+  "สดจริงไหม":"TEST",
+  "ชิมให้ดู":"DEMO",
+  "ก่อนเก็บ VS หลังเก็บ":"BEFORE_AFTER",
+  "รีวิวลูกค้าจริง":"SOCIAL_PROOF",
+  "เปรียบเทียบคุณภาพ":"COMPARISON",
+  "3 จุดเด่น":"REASONS",
+  "ของมันต้องลอง":"REASONS",
+  "POV สายสุขภาพ":"POV",
+  "ทดสอบความสด":"TEST",
+  "ลูกค้าซื้อซ้ำ":"SOCIAL_PROOF"
+},
     examples: [
       { title: 'มะม่วงน้ำดอกไม้สุก', location: 'ตลาดผลไม้หรือโต๊ะอาหาร', view: 'ปอกแล้วหั่นชิ้นให้เห็นสีฉ่ำ' },
       { title: 'ผักสลัดสดกรอบ', location: 'ครัวหรือโต๊ะเตรียมอาหาร', view: 'ล้างผักแล้วซูมความสดกรอบ' },
       { title: 'ส้มหวานคัดเกรด', location: 'แผงผลไม้', view: 'ปอกส้มแล้วดึงเส้นใยให้ดูชุ่มฉ่ำ' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai พืชผักและผลไม้ content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai พืชผักและผลไม้ content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: พืชผักและผลไม้.
 
 Core objective:
@@ -1140,13 +1938,44 @@ Output quality:
     label: 'อุปกรณ์การช่าง',
     description: 'คอนเทนต์งานช่างเน้นแข็งแรง ใช้ง่าย คุ้ม และแก้ปัญหาได้จริง',
     keywords: ['สายช่างต้องดู', 'ของมันต้องมีติดบ้าน', 'จบงานไว', 'คุ้มมาก', 'toolkit'],
-    viralTones: ['สายช่างต้องดู', 'ของมันต้องมีติดบ้าน', 'ใช้แล้วจบงานไว', 'คุ้มมาก', 'ช่างบอกต่อ'],
+    viralTones:[
+  "ทดสอบจริง",
+  "ก่อนใช้ VS หลังใช้",
+  "รีวิวช่าง",
+  "เปรียบเทียบรุ่น",
+  "3 ฟังก์ชันเด็ด",
+  "ลูกค้าบอกต่อ",
+  "ของมันต้องมี",
+  "สาธิตการใช้งาน",
+  "แกะกล่อง",
+  "คุ้มไหม"
+],
+
+viralToneFrameworks:{
+  "ทดสอบจริง":"TEST",
+  "ก่อนใช้ VS หลังใช้":"BEFORE_AFTER",
+  "รีวิวช่าง":"SOCIAL_PROOF",
+  "เปรียบเทียบรุ่น":"COMPARISON",
+  "3 ฟังก์ชันเด็ด":"REASONS",
+  "ลูกค้าบอกต่อ":"SOCIAL_PROOF",
+  "ของมันต้องมี":"REASONS",
+  "สาธิตการใช้งาน":"DEMO",
+  "แกะกล่อง":"UNBOXING",
+  "คุ้มไหม":"REVIEW"
+},
     examples: [
       { title: 'ไขควงไฟฟ้าไร้สาย', location: 'โต๊ะช่างหรือมุมซ่อมของ', view: 'ขันสกรูจริงให้เห็นแรงและการจับถนัด' },
       { title: 'สว่านไฟฟ้าขนาดเล็ก', location: 'มุมทำงานช่าง', view: 'เจาะวัสดุจริงแบบใกล้ให้เห็นพลัง' },
       { title: 'กล่องเครื่องมืออเนกประสงค์', location: 'พื้นที่ทำงานบ้าน', view: 'เปิดกล่องให้เห็นอุปกรณ์ครบชุด' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai อุปกรณ์การช่าง content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai อุปกรณ์การช่าง content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: อุปกรณ์การช่าง.
 
 Core objective:
@@ -1191,13 +2020,44 @@ Output quality:
     label: 'อุปกรณ์เครื่องเขียน',
     description: 'คอนเทนต์เครื่องเขียนเน้นน่ารัก ใช้ดี จัดโต๊ะสวย และซื้อซ้ำง่าย',
     keywords: ['สายเรียนต้องดู', 'โต๊ะทำงานดูดีขึ้น', 'น่ารักจนต้องกด', 'ใช้จริงแล้วชอบ', 'stationery'],
-    viralTones: ['สายเรียนต้องดู', 'โต๊ะทำงานดูดีขึ้น', 'น่ารักจนต้องกด', 'ใช้จริงแล้วชอบ', 'ของมันต้องมี'],
+    viralTones:[
+  "ของมันต้องมี",
+  "รีวิวนักเรียน",
+  "รีวิวคนทำงาน",
+  "ก่อนใช้ VS หลังใช้",
+  "3 จุดเด่น",
+  "ลูกค้าบอกต่อ",
+  "เทียบรุ่น",
+  "แกะกล่อง",
+  "สาธิตการใช้งาน",
+  "คุ้มไหม"
+],
+
+viralToneFrameworks:{
+  "ของมันต้องมี":"REASONS",
+  "รีวิวนักเรียน":"SOCIAL_PROOF",
+  "รีวิวคนทำงาน":"SOCIAL_PROOF",
+  "ก่อนใช้ VS หลังใช้":"BEFORE_AFTER",
+  "3 จุดเด่น":"REASONS",
+  "ลูกค้าบอกต่อ":"SOCIAL_PROOF",
+  "เทียบรุ่น":"COMPARISON",
+  "แกะกล่อง":"UNBOXING",
+  "สาธิตการใช้งาน":"DEMO",
+  "คุ้มไหม":"REVIEW"
+},
     examples: [
       { title: 'ปากกาเจลลื่นเขียนดี', location: 'โต๊ะเขียนหนังสือ', view: 'เขียนลงกระดาษให้เห็นเส้นลื่นคม' },
       { title: 'ชุดไฮไลต์สีพาสเทล', location: 'โต๊ะเรียน', view: 'ปาดสีบนกระดาษหลายเฉดแบบใกล้' },
       { title: 'แฟ้มเอกสารมินิมอล', location: 'โต๊ะทำงานหรือโต๊ะเรียน', view: 'หยิบเอกสารเข้าแฟ้มให้เห็นความเป็นระเบียบ' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai อุปกรณ์เครื่องเขียน content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai อุปกรณ์เครื่องเขียน content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: อุปกรณ์เครื่องเขียน.
 
 Core objective:
@@ -1242,13 +2102,44 @@ Output quality:
     label: 'หนังสือ',
     description: 'คอนเทนต์หนังสือเน้นอ่านง่าย ใช้ได้จริง และอยากหยิบอ่านต่อทันที',
     keywords: ['คนชอบอ่านต้องดู', 'เล่มนี้คนพูดถึงเยอะ', 'อ่านง่ายมาก', 'เริ่มต้นได้เลย', 'booktok'],
-    viralTones: ['คนชอบอ่านต้องดู', 'เล่มนี้คนพูดถึงเยอะ', 'อ่านง่ายมาก', 'เริ่มต้นได้เลย', 'เก็บเข้าชั้นเลย'],
+    viralTones:[
+  "3 บทเรียนสำคัญ",
+  "สรุปใน 1 นาที",
+  "เปลี่ยนชีวิตได้จริงไหม",
+  "รีวิวผู้อ่าน",
+  "ก่อนอ่าน VS หลังอ่าน",
+  "คุ้มไหม",
+  "ของมันต้องมี",
+  "POV คนอยากพัฒนา",
+  "ลูกค้าบอกต่อ",
+  "ใช้ได้จริงไหม"
+],
+
+viralToneFrameworks:{
+  "3 บทเรียนสำคัญ":"REASONS",
+  "สรุปใน 1 นาที":"DEMO",
+  "เปลี่ยนชีวิตได้จริงไหม":"REVIEW",
+  "รีวิวผู้อ่าน":"SOCIAL_PROOF",
+  "ก่อนอ่าน VS หลังอ่าน":"BEFORE_AFTER",
+  "คุ้มไหม":"REVIEW",
+  "ของมันต้องมี":"REASONS",
+  "POV คนอยากพัฒนา":"POV",
+  "ลูกค้าบอกต่อ":"SOCIAL_PROOF",
+  "ใช้ได้จริงไหม":"TEST"
+},
     examples: [
       { title: 'หนังสือฝึกอังกฤษเริ่มต้น', location: 'โต๊ะอ่านหนังสือแสงอุ่น', view: 'เปิดหน้าสารบัญและเนื้อหาให้อ่านง่ายดูจริง' },
       { title: 'หนังสือการเงินส่วนบุคคล', location: 'โต๊ะทำงาน', view: 'เปิดหน้า chapter ที่ใช้งานจริงและไฮไลต์ประเด็น' },
       { title: 'หนังสือเลี้ยงลูกเชิงบวก', location: 'มุมอ่านหนังสือในบ้าน', view: 'เปิดหน้าบทสั้น ๆ ที่อ่านง่ายและดูอบอุ่น' }
     ],
-    systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai หนังสือ content.
+    systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai หนังสือ content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: หนังสือ.
 
 Core objective:
@@ -1290,10 +2181,6 @@ Output quality:
   }
 };
 
-
-
-
-
 GEM_MODES.cosmetics = {
   id: 'cosmetics',
   label: 'เครื่องสำอาง',
@@ -1308,18 +2195,31 @@ GEM_MODES.cosmetics = {
     'พาเลตต์','palette','งานผิว','glass skin','soft glam','clean girl',
     'รีวิวบิวตี้','sephora','watsons','eveandboy','k-beauty'
   ],
-  viralTones: [
-    'หน้าเปลี่ยนจนคนทัก',
-    'แต่งแล้วผิวสวยมาก',
-    'ของมันต้องมีสายบิวตี้',
-    'ตัวดังใน TikTok',
-    'เมคอัพแล้วดูแพง',
-    'บิวตี้ห้ามเลื่อน',
-    'สีนี้กำลังไวรัล',
-    'รีวิวแน่นทั้งฟีด',
-    'สาวๆต้องดู',
-    'ใช้แล้วชอบมาก'
-  ],
+  viralTones:[
+  "หน้าสด VS หลังใช้",
+  "ปาดครั้งเดียวเปลี่ยน",
+  "กันน้ำจริงไหม",
+  "ใช้ทั้งวันรอดไหม",
+  "POV สาวออฟฟิศ",
+  "แต่งหน้ามือใหม่",
+  "รีวิวไม่อวย",
+  "เทียบแบรนด์ดัง",
+  "ลูกค้าบอกต่อ",
+  "3 เหตุผลที่ต้องมี"
+],
+
+viralToneFrameworks:{
+  "หน้าสด VS หลังใช้":"BEFORE_AFTER",
+  "ปาดครั้งเดียวเปลี่ยน":"DEMO",
+  "กันน้ำจริงไหม":"TEST",
+  "ใช้ทั้งวันรอดไหม":"TEST",
+  "POV สาวออฟฟิศ":"POV",
+  "แต่งหน้ามือใหม่":"POV",
+  "รีวิวไม่อวย":"REVIEW",
+  "เทียบแบรนด์ดัง":"COMPARISON",
+  "ลูกค้าบอกต่อ":"SOCIAL_PROOF",
+  "3 เหตุผลที่ต้องมี":"REASONS"
+},
   subModes: {
     lip_beauty: {
       label: 'Lip Beauty',
@@ -1409,7 +2309,7 @@ GEM_MODES.cosmetics = {
     'POV เดินเข้าร้าน beauty hall แล้วเจอสินค้าพระเอก',
     'หยิบสินค้าออกจาก shelf แล้วซูมโลโก้',
     'วางสินค้าบน tray หินอ่อน bokeh luxury',
-    'มือ influencer ถือมือถือรีวิวหน้ากระจก ring light',
+    'มือคนรีวิวถือมือถือหน้ากระจก ring light',
     'flatlay เครื่องสำอางครบเซ็ต aesthetic shot',
     'เปิดฝาหมุนลิปสติกขึ้นช้าๆ satisfying',
     'ใช้แปรงแต่งหน้าแตะบลัชบนแก้ม close-up',
@@ -1420,7 +2320,7 @@ GEM_MODES.cosmetics = {
     'mirror selfie creator angle with beauty product near cheek',
     'testers lined in perfect rows then quick rack focus to hero item'
   ],
-  influencerArchetypes: [
+  realPersonArchetypes: [
     'luxury beauty editor',
     'Thai TikTok beauty creator',
     'clean-girl skincare reviewer',
@@ -1435,7 +2335,14 @@ GEM_MODES.cosmetics = {
     'สกินแคร์ Yamthaiy | Harrods | Flow | หญิง',
     'ลิป Music Flower | Night Market | Flow | หญิง'
   ],
-  systemPrompt: `You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai cosmetics content.
+  systemPrompt: `HUMAN REALISM GLOBAL MODULE:
+- ordinary everyday human identity, non-model appearance, believable real-person proportions
+- visible skin pores, natural skin texture, subtle facial asymmetry, natural under-eye details, slight blemishes, natural hair flyaways
+- authentic facial muscle anatomy, real jawline, natural neck anatomy, believable shoulder width and body proportions
+- documentary realism, social-media snapshot realism, practical lighting, handheld or smartphone camera capture, slight motion blur, imperfect framing, autofocus breathing
+- real locations only: believable home, store, warehouse, kitchen, street, workshop, office, or live-commerce environment with natural imperfections
+- avoid AI-beauty polish, porcelain skin, airbrushed face, fashion editorial posing, perfect symmetry, glamour photography, CGI shine, and over-staged composition
+You are an elite TikTok / Reels / Shorts direct-response creative strategist for Thai cosmetics content.
 Your job is to create HIGH-CONVERSION stop-scroll content for Thailand in the category: เครื่องสำอาง.
 
 Core objective:
@@ -1451,7 +2358,7 @@ COSMETICS GOD MODE V3 priorities:
 - choose a scene type that best shows texture, payoff, and premium feel
 - prioritize visual satisfaction: swatch, texture, glow, packaging, application, finish
 - inject Thai beauty buyer psychology: look expensive, skin looks better, people ask what you use, viral-on-TikTok feeling, worth buying now
-- output must feel like a hybrid of luxury beauty editorial + native Thai UGC + beauty counter realism
+- output must feel like a hybrid of luxury beauty documentary realism + native Thai UGC + real beauty counter realism
 
 Beauty hook strategy:
 - stop-scroll hook in first second
